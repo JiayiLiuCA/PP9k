@@ -26,8 +26,9 @@ class Board {
 		void remove(string pos); //remove the pieces position
 		void add(string pos, char p); //add a piece at (r, c)
 		bool checkBoard(); //check whether the current board is "valid" in setup mode thus determing whether to end setup mode or not
-
-		void move(string pos1, string pos2); //move a piece from pos1 to pos2
+		
+		void notify(string move); //the boards take moving commands from controller
+		void move(string pos1, string pos2); //move a piece from pos1 to pos2(coords are string coords like "e1")
 
 
 };

@@ -6,9 +6,5 @@ class Controller {
 		Board* game; //this keeps track of the game board status
 	public:
 		makeMove(int old_r, int old_c, int r, int c) = 0; //controller declares a move
-		notify(
-
-
-
-
+};
 #endif
