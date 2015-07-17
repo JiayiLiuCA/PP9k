@@ -13,6 +13,8 @@ class Board {
 		<vector <vector <Pieces* > > > theBoard; //the board
 		Controller* p1;  //Player 1 (white-player)
 		Controller* p2;  //Player 2 (black-player)
+		int p1Score;
+		int p2Score;
 		View* gd; // the graphical display
 		View* td; // the text display
 		Board();  //Constructor constructs an empty board
@@ -21,14 +23,16 @@ class Board {
 	public:
 		void play(); //this command begins the whole game 
 		static Board* getInstance(); 
-		//the methods below are designed to use in setup mode
-		Pieces* convert(string pos); //this translates the string coordinates and return the pointer at that position
-		void remove(string pos); //remove the pieces position
-		void add(string pos, char p); //add a piece at (r, c)
+		std::vector<int> convert(string pos); //this translates the string coordinates and return the number coords in a vector of int
+//the methods below are designed to use in setup mode
+//---------------------------------------------------------------
+		void remove(int r, int c); //remove the pieces at (r, c)
+		void add(int r, int c, char p); //add a piece at (r, c)
 		bool checkBoard(); //check whether the current board is "valid" in setup mode thus determing whether to end setup mode or not
-		
+//---------------------------------------------------------------		
 		void notify(string move); //the boards take moving commands from controller
-		void move(string pos1, string pos2); //move a piece from pos1 to pos2(coords are string coords like "e1")
+		void move(int oldr, int oldc, int newr, int newc); //move a piece fromoldrow oldcol to new row new col
+		bool ruleCheck(int oldr, int oldc, int newr, int newc);//this checks whether this move is legal or not
 
 
 };
