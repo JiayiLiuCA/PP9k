@@ -14,7 +14,7 @@ bool Pawn::moveCheck(int row, int col, int new_row, int new_col) {
 			return true;
 		}
 		else if ((diff_row == 2) && (diff_col == 0)) {
-			if (row == 1) {
+			if (row == 6) {
 				return true;
 			}
 			else {
@@ -30,7 +30,7 @@ bool Pawn::moveCheck(int row, int col, int new_row, int new_col) {
 			return true;
 		}
 		else if ((diff_row == -2) && (diff_col == 0)) {
-			if (row == 7) {
+			if (row == 1) {
 				return true;
 			}
 			else {
