@@ -1,5 +1,5 @@
 #include "board.h"
-#include "view.h"
+#include "textdisplay.h"
 #include "concrete_pieces.h"
 #include <vector>
 #include <sstream>
@@ -88,6 +88,9 @@ void Board::play() {
 		std::string command;
 		std::cin >> command;
 		if(command == "setup") {
+			delete td;
+			td = new TextDisplay();
+			td->print();
 			std::string opt;
 			std::cin >> opt;
 			if(opt == "-") {
