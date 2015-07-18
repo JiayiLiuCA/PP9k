@@ -69,14 +69,14 @@ void Board::add(int r, int c, char p) {
 	else std::cout << "not valid add" << std::endl;
 }
 
-std::pair<int> Board::convert(std::string pos) {
+std::vector <int> Board::convert(std::string pos) {
 	std::stringstream ss(pos);
 	char c;
 	int n;
 	std::vector <int> result;
 	ss >> c >> n;
-	result.first = (8 - n);
-	result.second = (c - 'a');
+	result.push_back(8 - n);
+	result.push_back(c - 'a');
 	return result;
 }
 
@@ -98,8 +98,8 @@ void Board::play() {
 			}
 			else {
 				char piece;
-				std::string opt;
-				std::cin >> piece >> opt;
+				std::string pos;
+				std::cin >> piece >> pos;
 				add(convert(pos)[0], convert(pos)[1], piece);
 				td->print();
 			}

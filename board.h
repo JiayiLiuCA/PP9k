@@ -29,7 +29,7 @@ class Board {
 	public:
 		void play(); //this command begins the whole game 
 		static Board* getInstance(); 
-		std::pair<int, int> convert(std::string pos); //this translates the string coordinates and return the number coords in a vector of int
+		std::vector<int> convert(std::string pos); //this translates the string coordinates and return the number coords in a vector of int
 //the methods below are designed to use in setup mode
 //---------------------------------------------------------------
 		void remove(int r, int c); //remove the pieces at (r, c)
