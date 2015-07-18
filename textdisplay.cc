@@ -47,7 +47,7 @@ void TextDisplay::print() {
 				j != i->end(); j++) {
 			std::cout << *j;
 			if (j == i->end() - 1) {
-				std::cout << std::endl；
+				std::cout << std::endl;
 			}
 		}
 	}
