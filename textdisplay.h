@@ -6,7 +6,7 @@
 class TextDisplay: public View {
 		char **theDisplay; //the text visualization of the board
 	public:
-		notify(char opt, int r, int c);
+		notify(char opt, int r, int c, char pieces);
 		print();
 };
 #endif

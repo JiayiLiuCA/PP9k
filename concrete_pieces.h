@@ -4,7 +4,9 @@
 #include "pieces.h"
 
 class King:public Pieces {
+		vector <Pieces*> attackers;
 	public:
+		King(int r, int c, char name,vector <Pieces*> attackers): row(r), col(c), name(name), attackers(attackers);
 		moveCheck();
 };
 
@@ -29,7 +31,9 @@ class Knight:public Pieces {
 };
 
 class Pawn:public Pieces {
+		bool doubleMove; //if a Pawn has just moved 2 cells then this is true
 	public:
 		moveCheck();
+		bool getStatus(); //a getter for doubleMove
 };
-
+#endif
