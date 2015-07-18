@@ -5,6 +5,10 @@
 
 
 bool Bishop::moveCheck(int row, int col, int new_row, int new_col) {
+	if ((row < 0) || (row > 7) || (col < 0) || (col > 0) ||
+		(new_row < 0) || (new_row > 7) || (new_col < 0) || (new_row > 7)) {
+		return false;
+	}
 	bool tmp;
 	int diff_row = abs(row - new_row);
 	if (diff_row == 0) {
