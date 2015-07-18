@@ -45,7 +45,10 @@ void TextDisplay::print() {
 			i != display.end(); i++) {
 		for (std::vector <char>::iterator j = i->begin();
 				j != i->end(); j++) {
-			std::cout << *j << std::endl;
+			std::cout << *j;
+			if (j == i->end() - 1) {
+				std::cout << std::endl；
+			}
 		}
 	}
 }
