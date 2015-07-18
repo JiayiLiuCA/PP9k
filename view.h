@@ -3,9 +3,8 @@
 
 class View {
 	public:
-		virtual notify(char opt, int r, int c, char pieces); //this notifies the display of the changes of the board
-		virtual notify(char opt, int r, int c);
-		virtual print() = 0;
+		void virtual notify(int r, int c, char pieces = '-') = 0; //this notifies the display of the changes of the board
+		void virtual print() = 0;
 		virtual ~View() = 0;
 };
 #endif
