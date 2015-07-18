@@ -47,7 +47,7 @@ void Board::remove(int r, int c) {
 	if(0 <= r && r < 8 && 0 <= c && c < 8 && theBoard[r][c]) {
 		delete theBoard[r][c];
 		theBoard[r][c] = NULL;
-		td->notify("-", r, c);
+		td->notify(r, c);
 	}
 	else std::cout << "invalid remove" << std::endl;
 }
@@ -63,8 +63,8 @@ void Board::add(int r, int c, char p) {
 		if(p == 'b' || p == 'B') theBoard[r][c] = new Bishop(r, c, p);
 		if(p == 'q' || p == 'Q') theBoard[r][c] = new Queen(r, c, p);
 		if(p == 'k' || p == 'K') theBoard[r][c] = new King(r, c, p);
-		if(p == 'p' || p == 'P') theBoard[r][c] = new Pawn(r, c, p);
-		td->notify("+", r, c, p);
+		if(p == 'p' || p == 'P') theBoard[r][c] = new Pawn(r, c, p, false);
+		td->notify(r, c, p);
 	}
 	else std::cout << "not valid add" << std::endl;
 }

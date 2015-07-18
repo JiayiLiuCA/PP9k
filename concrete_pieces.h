@@ -7,7 +7,7 @@
 class King:public Pieces {
 		std::vector <Pieces*> attackers;
 	public:
-		King(int r, int c, char name, std::vector <Pieces*> attackers): Pieces(r, c, name), attackers(attackers) {}
+		King(int r, int c, char name): Pieces(r, c, name) {}
 		bool moveCheck(int row, int col, int new_row, int new_col);
 };
 
