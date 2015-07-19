@@ -109,8 +109,20 @@ bool Board::ruleCheck(int row, int col, int new_row, int new_col) {
 	char n = tmp->getName();
 	int diff_row = std::abs(row - new_row);
 	int diff_col = std::abs(col - new_col);
-	int dir_row = diff_row / (new_row - row);
-	int dir_col = diff_col / (new_col - col);
+	int dir_row;
+	int dir_col;
+	if (!diff_row) {
+		dir_row = diff_row / (new_row - row);
+	}
+	else {
+		dir_row = 0;
+	}
+	if (!diff_col) {
+		dir_col = diff_col / (new_col - col);
+	}
+	else {
+		dir_col = 0;
+	}
 	if (tmp->moveCheck(row,col,new_row,new_col) == false) {
 		return false;
 	}
@@ -163,6 +175,7 @@ bool Board::ruleCheck(int row, int col, int new_row, int new_col) {
 		}
 	}
 }
+
 		
 
 bool Board::check(int side) {
