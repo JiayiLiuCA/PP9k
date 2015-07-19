@@ -98,6 +98,7 @@ bool Board::checkBoard() {
 		else if((it == pieces.begin() + 15 || it == pieces.begin() + 47) && *it > 8) return false; //can have at most 8 Pawn
 		else if(*it > 2)  return false; //everything else must have at most 2
 	}
+	if(check(1) || check(0)) return false;
 	return true;
 }
 
@@ -111,13 +112,13 @@ bool Board::ruleCheck(int row, int col, int new_row, int new_col) {
 	int diff_col = std::abs(col - new_col);
 	int dir_row;
 	int dir_col;
-	if (!diff_row) {
+	if (diff_row != 0) {
 		dir_row = diff_row / (new_row - row);
 	}
 	else {
 		dir_row = 0;
 	}
-	if (!diff_col) {
+	if (diff_col != 0) {
 		dir_col = diff_col / (new_col - col);
 	}
 	else {
