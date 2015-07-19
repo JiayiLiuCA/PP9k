@@ -8,7 +8,7 @@ bool Pawn::moveCheck(int row, int col, int new_row, int new_col) {
 		return false;
 	}
 	int diff_row = new_row - row;
-	int diff_col = abs(new_col -col);
+	int diff_col = std::abs(new_col -col);
 	if (name == 'P') {
 		if ((diff_row == 1) && (diff_col <= 1)) {
 			return true;

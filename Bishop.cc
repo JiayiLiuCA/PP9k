@@ -10,11 +10,11 @@ bool Bishop::moveCheck(int row, int col, int new_row, int new_col) {
 		return false;
 	}
 	bool tmp;
-	int diff_row = abs(row - new_row);
+	int diff_row = std::abs(row - new_row);
 	if (diff_row == 0) {
 		return false;
 	}
-	int diff_col = abs(col - new_col);
+	int diff_col = std::abs(col - new_col);
 	tmp = (diff_row == diff_col);
 	return tmp;
 }
