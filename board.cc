@@ -80,7 +80,24 @@ std::vector <int> Board::convert(std::string pos) {
 	return result;
 }
 
-
+bool Board::checkBoard() {
+	std::vector <int> pieces (60, 0);
+	for(std::vector < std::vector <Pieces*> >::iterator it = theBoard.begin(); it != theBoard.end(); it ++) {
+		for(std::vector <Pieces*>::iterator i = it->begin(); i != it->end(); i ++) {
+			if(*i != NULL) {
+				pieces[(*i)->getName() - 'A'] += 1;
+			}
+		}
+	}
+	std::cout << "Out first loop" << std::endl;
+	for(std::vector <int>::iterator it = pieces.begin(); it != pieces.end(); it ++) {
+		if((it != pieces.begin() + 14 && it != pieces.begin() + 46) && *it > 2) return false; //everything other than King, Queen and Pawn can only have at most 2
+		else if((it == pieces.begin() + 41 || it == pieces.begin() + 10 ) && (*it != 1))  return false;  //must have 1 King on each side 
+		else if ((it == pieces.begin() + 15 || it == pieces.begin() + 47) && *it > 1) return false; //can have at most one Queen
+		else if(*it > 8) return false; //can have at most 8 Pawn
+	}
+	return true;
+}
 
 
 void Board::play() {
@@ -88,25 +105,41 @@ void Board::play() {
 		std::string command;
 		std::cin >> command;
 		if(command == "setup") {
-			delete td;
-			td = new TextDisplay();
-			td->print();
-			std::string opt;
-			std::cin >> opt;
-			if(opt == "-") {
-				std::string pos;
-				std::cin >> pos;
-				remove(convert(pos)[0], convert(pos)[1]);
+				delete td;
+				td = new TextDisplay();
 				td->print();
-			}
-			else {
-				char piece;
-				std::string pos;
-				std::cin >> piece >> pos;
-				add(convert(pos)[0], convert(pos)[1], piece);
-				td->print();
+			while(true) {
+				std::string opt;
+				std::cin >> opt;
+				if(opt == "-") {
+					std::string pos;
+					std::cin >> pos;
+					remove(convert(pos)[0], convert(pos)[1]);
+					td->print();
+				}
+				else if(opt == "+") {
+					char piece;
+					std::string pos;
+					std::cin >> pos >> piece;
+					add(convert(pos)[0], convert(pos)[1], piece);
+					td->print();
+				}
+				else if(opt == "=") {
+					std::string color;
+					std::cin >> color;
+					if(color == "white") turn = 0;
+					else if(color == "black") turn = 1;
+					else std::cout << "not valid color" << std::endl;
+				}
+				else if(opt == "done") {
+					if(checkBoard()) break;
+					else {
+						std::cout << "the current board is invalid you cannot exit setup mode" << std::endl;
+					}
+				}
 			}
 		}
+		
 	}
 }
 
