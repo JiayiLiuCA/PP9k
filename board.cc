@@ -66,7 +66,7 @@ void Board::add(int r, int c, char p) {
 		if(p == 'q' || p == 'Q') theBoard[r][c] = new Queen(r, c, p);
 		if(p == 'k' || p == 'K') theBoard[r][c] = new King(r, c, p);
 		if(p == 'p' || p == 'P') theBoard[r][c] = new Pawn(r, c, p);
-		td->notify(r, c, p);
+		//td->notify(r, c, p);
 	}
 	else std::cout << "not valid add" << std::endl;
 }
@@ -98,7 +98,7 @@ bool Board::checkBoard() {
 		else if((it == pieces.begin() + 15 || it == pieces.begin() + 47) && *it > 8) return false; //can have at most 8 Pawn
 		else if(*it > 2)  return false; //everything else must have at most 2
 	}
-	if(check(1) || check(0)) return false;
+	if(!check(0)) std::cout << "white is not in check" << std::endl;
 	return true;
 }
 
@@ -188,12 +188,14 @@ bool Board::check(int side) {
 					if((*i)->getName() == 'K') {
 						newr = (*i)->getr();
 						newc = (*i)->getc();
+						std::cout << newr << " " << newc << std::endl;
 					}}}}
 		for(std::vector< std::vector <Pieces*> >::iterator it = theBoard.begin(); it != theBoard.end(); it ++) {
 			for(std::vector <Pieces*>::iterator i = it->begin(); i != it->end(); i ++) {
 				if(*i != NULL) {
 					oldr = (*i)->getr();
 					oldc = (*i)->getc();
+					std::cout << oldr << " " << oldc << std::endl;
 					if(ruleCheck(oldr, oldc, newr, newc)) return true;
 				}}}}
 	else {
@@ -263,5 +265,4 @@ void Board::play() {
 	}
 }
 				
-
 
