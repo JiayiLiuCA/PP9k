@@ -91,10 +91,19 @@ bool Board::checkBoard() {
 		}
 	}
 	for(std::vector <int>::iterator it = pieces.begin(); it != pieces.end(); it ++) {
-		if((it != pieces.begin() + 14 && it != pieces.begin() + 46) && *it > 2) return false; //everything other than King, Queen and Pawn can only have at most 2
-		else if((it == pieces.begin() + 41 || it == pieces.begin() + 10 ) && (*it != 1))  return false;  //must have 1 King on each side 
-		else if ((it == pieces.begin() + 15 || it == pieces.begin() + 47) && *it > 1) return false; //can have at most one Queen
-		else if(*it > 8) return false; //can have at most 8 Pawn
+		if((it == pieces.begin() + 42 || it == pieces.begin() + 10) && (*it != 1))  {
+			std::cout << "king invalid" << std::endl;
+			return false;  //must have 1 King on each side
+		}	
+		else if ((it == pieces.begin() + 16 || it == pieces.begin() + 48) && *it > 1) {
+			std::cout << "Queen invalid" << std::endl;
+			return false; //can have at most one Queen
+		}
+		else if((it == pieces.begin() + 15 || it == pieces.begin() + 47) && *it > 8) {
+			std::cout << "Pawn invalid" << std::endl;
+			return false; //can have at most 8 Pawn
+		}
+		else if(*it > 2)  return false; //everything else must have at most 2
 	}
 	return true;
 }
