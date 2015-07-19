@@ -5,6 +5,7 @@
 #include <string>
 #include <sstream>
 #include <iostream>
+#include <cmath>
 
 Board* Board::singleton = NULL;
 
@@ -64,11 +65,12 @@ void Board::add(int r, int c, char p) {
 		if(p == 'b' || p == 'B') theBoard[r][c] = new Bishop(r, c, p);
 		if(p == 'q' || p == 'Q') theBoard[r][c] = new Queen(r, c, p);
 		if(p == 'k' || p == 'K') theBoard[r][c] = new King(r, c, p);
-		if(p == 'p' || p == 'P') theBoard[r][c] = new Pawn(r, c, p, false);
+		if(p == 'p' || p == 'P') theBoard[r][c] = new Pawn(r, c, p);
 		td->notify(r, c, p);
 	}
 	else std::cout << "not valid add" << std::endl;
 }
+
 
 std::vector <int> Board::convert(std::string pos) {
 	std::stringstream ss(pos);
@@ -98,6 +100,73 @@ bool Board::checkBoard() {
 	}
 	return true;
 }
+
+bool Board::ruleCheck(int row, int col, int new_row, int new_col) {
+	if (theBoard[row][col] == NULL) {
+		return false;
+	}
+	Pieces *tmp = theBoard[row][col];
+	char n = tmp->getName();
+	int diff_row = std::abs(row - new_row);
+	int diff_col = std::abs(col - new_col);
+	int dir_row = diff_row / (new_row - row);
+	int dir_col = diff_col / (new_col - col);
+	if (tmp->moveCheck(row,col,new_row,new_col) == false) {
+		return false;
+	}
+	else if (n == 'N' || n == 'n' || n == 'K' || n == 'k') {
+	    return true;
+	}
+	else if (n == 'R' || n == 'r' || n == 'Q' || n == 'q' || n == 'B' || n == 'b') {
+		for (int i = 0; i < diff_row; i++) {
+			if (theBoard[row + dir_row][col + dir_col] != NULL) {
+				return false;
+			}
+		}
+	}
+	else if (n == 'P' && diff_col == 0) {
+		if (theBoard[row+1][col] != NULL) {
+			return false;
+		}
+		if (diff_row == 2 && theBoard[row+2][col] != NULL) {
+			return false;
+		}
+		else {
+			return true;
+		}
+	}
+	else if (n == 'P' && diff_col == 1) {
+		if (theBoard[new_row][new_col] != NULL || (*theBoard[row][new_col]).getStatus()) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+	else if (n == 'p' && diff_col == 0) {
+		if (theBoard[row-1][col] != NULL) {
+			return false;
+		}
+		if (diff_row == 2 && theBoard[row-2][col] != NULL) {
+			return false;
+		}
+		else {
+			return true;
+		}
+	}
+	else if (n == 'p' && diff_col == 1) {
+		if (theBoard[new_row][new_col] != NULL || (*theBoard[row][new_col]).getStatus()) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+}
+		
+
+
+		
 
 
 void Board::play() {

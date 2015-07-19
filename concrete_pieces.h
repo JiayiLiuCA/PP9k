@@ -36,10 +36,8 @@ class Knight:public Pieces {
 };
 
 class Pawn:public Pieces {
-		bool doubleMove; //if a Pawn has just moved 2 cells then this is true
 	public:
-		Pawn(int r, int c, char name, bool move): Pieces(r, c, name), doubleMove(move) {}
+		Pawn(int r, int c, char name): Pieces(r, c, name) {}
 		bool moveCheck(int row, int col, int new_row, int new_col);
-		bool getStatus(); //a getter for doubleMove
 };
 #endif

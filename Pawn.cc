@@ -43,8 +43,5 @@ bool Pawn::moveCheck(int row, int col, int new_row, int new_col) {
 	}
 }
 
-bool Pawn::getStatus() {
-	return doubleMove;
-}
 	
 
