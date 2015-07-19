@@ -2,6 +2,7 @@
 #include "textdisplay.h"
 #include "concrete_pieces.h"
 #include <vector>
+#include <string>
 #include <sstream>
 #include <iostream>
 
