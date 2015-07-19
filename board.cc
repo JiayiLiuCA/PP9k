@@ -165,6 +165,46 @@ bool Board::ruleCheck(int row, int col, int new_row, int new_col) {
 }
 		
 
+bool Board::check(int side) {
+	int newr, newc, oldr, oldc;
+	if(side == 0) {
+		for(std::vector < std::vector <Pieces*> >::iterator it = theBoard.begin(); it != theBoard.end(); it ++) {
+			for(std::vector <Pieces*>::iterator i = it->begin(); i != it->end(); i ++) {
+				if(*i != NULL) {
+					if((*i)->getName() == 'K') {
+						newr = (*i)->getr();
+						newc = (*i)->getc();
+					}}}}
+		for(std::vector< std::vector <Pieces*> >::iterator it = theBoard.begin(); it != theBoard.end(); it ++) {
+			for(std::vector <Pieces*>::iterator i = it->begin(); i != it->end(); i ++) {
+				if(*i != NULL) {
+					oldr = (*i)->getr();
+					oldc = (*i)->getc();
+					if(ruleCheck(oldr, oldc, newr, newc)) return true;
+				}}}}
+	else {
+		for(std::vector< std::vector <Pieces*> >::iterator it = theBoard.begin(); it != theBoard.end(); it ++) {
+			for(std::vector <Pieces*>::iterator i = it->begin(); i != it->end(); i ++) {
+				if(*i != NULL) {
+					if((*i)->getName() == 'k') {
+						newr = (*i)->getr();
+						newc = (*i)->getc();
+					}}}}
+		for(std::vector< std::vector <Pieces*> >::iterator it = theBoard.begin(); it != theBoard.end(); it ++) {
+			for(std::vector <Pieces*>::iterator i = it->begin(); i != it->end(); i ++) {
+				if(*i != NULL) {
+					oldr = (*i)->getr();
+					oldc = (*i)->getc();
+					if(ruleCheck(oldr, oldc, newr, newc)) return true;
+				}}}}
+	return false;
+}
+
+				
+
+
+
+					
 
 		
 

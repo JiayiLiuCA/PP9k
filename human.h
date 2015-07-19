@@ -4,7 +4,7 @@
 #include "controller.h"
 
 
-class Human: public {
+class Human: public Controller{
 	public: 
 		string makeMove();
 };

@@ -12,6 +12,8 @@ class Pieces {
 		Pieces(int r, int c, int name,bool doubleMove = false): r(r), c(c), name(name) {}
 		char getName();
 		void setMove(bool move);
+		int getr();
+		int getc();
 		~Pieces();	
 };
 #endif

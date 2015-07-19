@@ -11,3 +11,7 @@ void Pieces::setMove(bool move) {
 }
 
 char Pieces::getName() { return name; }
+
+int Pieces::getr() { return r; }
+
+int Pieces::getc() { return c; }
