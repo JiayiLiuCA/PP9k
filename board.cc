@@ -90,7 +90,6 @@ bool Board::checkBoard() {
 			}
 		}
 	}
-	std::cout << "Out first loop" << std::endl;
 	for(std::vector <int>::iterator it = pieces.begin(); it != pieces.end(); it ++) {
 		if((it != pieces.begin() + 14 && it != pieces.begin() + 46) && *it > 2) return false; //everything other than King, Queen and Pawn can only have at most 2
 		else if((it == pieces.begin() + 41 || it == pieces.begin() + 10 ) && (*it != 1))  return false;  //must have 1 King on each side 
