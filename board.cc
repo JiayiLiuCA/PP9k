@@ -125,6 +125,8 @@ bool Board::ruleCheck(int row, int col, int new_row, int new_col) {
 		dir_col = 0;
 	}
 	if (tmp->moveCheck(row,col,new_row,new_col) == false) {
+		std::cout << tmp->getName() << std::endl;
+		std::cout << tmp->moveCheck(row,col,new_row,new_col) << std::endl;
 		return false;
 	}
 	else if (n == 'N' || n == 'n' || n == 'K' || n == 'k') {
