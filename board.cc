@@ -66,7 +66,7 @@ void Board::add(int r, int c, char p) {
 		if(p == 'q' || p == 'Q') theBoard[r][c] = new Queen(r, c, p);
 		if(p == 'k' || p == 'K') theBoard[r][c] = new King(r, c, p);
 		if(p == 'p' || p == 'P') theBoard[r][c] = new Pawn(r, c, p);
-		//td->notify(r, c, p);
+		td->notify(r, c, p);
 	}
 	else std::cout << "not valid add" << std::endl;
 }
@@ -93,13 +93,27 @@ bool Board::checkBoard() {
 		}
 	}
 	for(std::vector <int>::iterator it = pieces.begin(); it != pieces.end(); it ++) {
-		if((it == pieces.begin() + 42 || it == pieces.begin() + 10) && (*it != 1))  return false;  //must have 1 King on each side	
+		if((it == pieces.begin() + 42 || it == pieces.begin() + 10) && (*it != 1))  return false;  //must have exactly 1 King on each side	
 		else if ((it == pieces.begin() + 16 || it == pieces.begin() + 48) && *it > 1) return false; //can have at most one Queen
 		else if((it == pieces.begin() + 15 || it == pieces.begin() + 47) && *it > 8) return false; //can have at most 8 Pawn
 		else if(*it > 2)  return false; //everything else must have at most 2
 	}
-	if(!check(0)) std::cout << "white is not in check" << std::endl;
-	return true;
+	if(check(0) || check(1)) {
+		std::cout << "King is in check!" << std::endl;
+		return false;
+	}
+	for(int i = 0; i < 8; i ++) {
+		Pieces* tmp = theBoard[1][i];
+		Pieces* tmp2 = theBoard[7][i];
+		if(tmp != NULL && (tmp->getName() == 'P' || tmp->getName() == 'p')) {
+			std::cout << "Pawn(s) are not in valid position" << std::endl;
+			return false;
+		}
+		if (tmp2 != NULL && (tmp2->getName() == 'p' || tmp2->getName() == 'P')) {
+			std::cout << "Pawn(s) are not in valid position" << std::endl;
+			return false;
+		}
+	}
 }
 
 bool Board::ruleCheck(int row, int col, int new_row, int new_col) {
