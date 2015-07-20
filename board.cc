@@ -168,8 +168,9 @@ bool Board::ruleCheck(int row, int col, int new_row, int new_col) {
 				return false;
 			}
 		}
+		return true;
 	}
-	else if (n == 'P' && diff_col == 0) {
+	else if (n == 'p' && diff_col == 0) {
 		if (theBoard[row+1][col] != NULL) {
 			return false;
 		}
@@ -180,7 +181,7 @@ bool Board::ruleCheck(int row, int col, int new_row, int new_col) {
 			return true;
 		}
 	}
-	else if (n == 'P' && diff_col == 1) {
+	else if (n == 'p' && diff_col == 1) {
 		if (theBoard[new_row][new_col] != NULL || (*theBoard[row][new_col]).getStatus()) {
 			return true;
 		}
@@ -188,7 +189,7 @@ bool Board::ruleCheck(int row, int col, int new_row, int new_col) {
 			return false;
 		}
 	}
-	else if (n == 'p' && diff_col == 0) {
+	else if (n == 'P' && diff_col == 0) {
 		if (theBoard[row-1][col] != NULL) {
 			return false;
 		}
@@ -199,7 +200,7 @@ bool Board::ruleCheck(int row, int col, int new_row, int new_col) {
 			return true;
 		}
 	}
-	else if (n == 'p' && diff_col == 1) {
+	else if (n == 'P' && diff_col == 1) {
 		if (theBoard[new_row][new_col] != NULL || (*theBoard[row][new_col]).getStatus()) {
 			return true;
 		}
@@ -229,6 +230,11 @@ void Board::notify(std::string move) {
 		oldc = convert(pos1)[1];
 		newr = convert(pos2)[0];
 		newc = convert(pos2)[1];
+		std::cout << "in game notify: " << std::endl;
+		std::cout << "oldr: " << oldr << std::endl;
+		std::cout << "oldc: " << oldc << std::endl;
+		std::cout << "newr: " << newr << std::endl;
+		std::cout << "newc: " << newc << std::endl;
 		if(!ruleCheck(oldr, oldc, newr, newc)) {
 			std::cout << "invalid move please enter again" << std::endl;
 			if(turn == 0) p1->makeMove();
@@ -358,6 +364,7 @@ void Board::play() {
 				else {
 					std::cout << "black's turn to move" << std::endl;
 					p2->makeMove();
+				}
 				turn = !turn;
 			}
 		}
