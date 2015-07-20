@@ -93,7 +93,9 @@ bool Board::checkBoard() {
 			}
 		}
 	}
+	int i = 0;
 	for(std::vector <int>::iterator it = pieces.begin(); it != pieces.end(); it ++) {
+		std::cout << i << ":" << *it << std::endl;
 		if((it == pieces.begin() + 42 || it == pieces.begin() + 10) && (*it != 1))  {
 			std::cout << "invalid number of Kings" << std::endl;
 			return false;  //must have exactly 1 King on each side
@@ -110,6 +112,7 @@ bool Board::checkBoard() {
 			std::cout << "invalid number of other pieces (e.g. Bishops, Knights or Rooks)" << std::endl;
 			return false; //everything else must have at most 2
 		}
+		i ++;
 	}
 	if(check('K') || check('k')) {
 		std::cout << "King is in check!" << std::endl;
@@ -153,8 +156,6 @@ bool Board::ruleCheck(int row, int col, int new_row, int new_col) {
 		dir_col = 0;
 	}
 	if (tmp->moveCheck(row,col,new_row,new_col) == false) {
-		std::cout << tmp->getName() << std::endl;
-		std::cout << tmp->moveCheck(row,col,new_row,new_col) << std::endl;
 		return false;
 	}
 	else if (n == 'N' || n == 'n' || n == 'K' || n == 'k') {
@@ -235,14 +236,12 @@ bool Board::check(char king) {
 					if((*i)->getName() == king) {
 						newr = (*i)->getr();
 						newc = (*i)->getc();
-						std::cout << newr << " " << newc << std::endl;
 					}}}}
 		for(std::vector< std::vector <Pieces*> >::iterator it = theBoard.begin(); it != theBoard.end(); it ++) {
 			for(std::vector <Pieces*>::iterator i = it->begin(); i != it->end(); i ++) {
 				if(*i != NULL) {
 					oldr = (*i)->getr();
 					oldc = (*i)->getc();
-					std::cout << oldr << " " << oldc << std::endl;
 					if(ruleCheck(oldr, oldc, newr, newc)) return true;
 				}}}
 	return false;
