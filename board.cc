@@ -93,9 +93,7 @@ bool Board::checkBoard() {
 			}
 		}
 	}
-	int i = 0;
 	for(std::vector <int>::iterator it = pieces.begin(); it != pieces.end(); it ++) {
-		std::cout << i << ":" << *it << std::endl;
 		if((it == pieces.begin() + 42 || it == pieces.begin() + 10) && (*it != 1))  {
 			std::cout << "invalid number of Kings" << std::endl;
 			return false;  //must have exactly 1 King on each side
@@ -108,18 +106,21 @@ bool Board::checkBoard() {
 			std::cout << "invalid number of Pawns" << std::endl;
 			return false; //can have at most 8 Pawn
 		}
-		else if(*it > 2)  {
+		else if((it != pieces.begin() + 15 && it != pieces.begin() + 47) && *it > 2)  {
 			std::cout << "invalid number of other pieces (e.g. Bishops, Knights or Rooks)" << std::endl;
 			return false; //everything else must have at most 2
 		}
-		i ++;
 	}
-	if(check('K') || check('k')) {
-		std::cout << "King is in check!" << std::endl;
+	if(check('K')) {
+		std::cout << "white king is in check" << std::endl;
+		return false;
+	}
+	if(check('k')) {
+		std::cout << "black king is in check" << std::endl;
 		return false;
 	}
 	for(int i = 0; i < 8; i ++) {
-		Pieces* tmp = theBoard[1][i];
+		Pieces* tmp = theBoard[0][i];
 		Pieces* tmp2 = theBoard[7][i];
 		if(tmp != NULL && (tmp->getName() == 'P' || tmp->getName() == 'p')) {
 			std::cout << "Pawn(s) are not in valid position" << std::endl;
@@ -209,20 +210,32 @@ bool Board::ruleCheck(int row, int col, int new_row, int new_col) {
 }
 
 void Board::notify(std::string move) {
-	std::stringstream ss(move);
-	std::string pos1, pos2;
-	ss >> pos1 >> pos2;
-	int oldr, oldc, newr, newc;
-	oldr = convert(pos1)[0];
-	oldc = convert(pos1)[1];
-	newr = convert(pos2)[0];
-	newc = convert(pos2)[1];
-	if(!ruleCheck(oldr, oldc, newr, newc)) {
-		std::cout << "invalid move please enter again" << std::endl;
-		if(turn == 0) p1->makeMove();
-		else p2->makeMove();
+	if(move == "resign") {
+		if(turn == 0) {
+			std::cout << "black wins!" << std::endl;
+			p2Score ++;
+		}
+		else {
+			std::cout << "white wins!" << std::endl;
+			p1Score ++;
+		}
 	}
-	else this->move(oldr, oldc, newr, newc);
+	else {
+		std::stringstream ss(move);
+		std::string pos1, pos2;
+		ss >> pos1 >> pos2;
+		int oldr, oldc, newr, newc;
+		oldr = convert(pos1)[0];
+		oldc = convert(pos1)[1];
+		newr = convert(pos2)[0];
+		newc = convert(pos2)[1];
+		if(!ruleCheck(oldr, oldc, newr, newc)) {
+			std::cout << "invalid move please enter again" << std::endl;
+			if(turn == 0) p1->makeMove();
+			else p2->makeMove();
+		}
+		else this->move(oldr, oldc, newr, newc);
+	}
 }
 
 
@@ -230,24 +243,26 @@ void Board::notify(std::string move) {
 
 bool Board::check(char king) {
 	int newr, newc, oldr, oldc;
-		for(std::vector < std::vector <Pieces*> >::iterator it = theBoard.begin(); it != theBoard.end(); it ++) {
-			for(std::vector <Pieces*>::iterator i = it->begin(); i != it->end(); i ++) {
-				if(*i != NULL) {
-					if((*i)->getName() == king) {
-						newr = (*i)->getr();
-						newc = (*i)->getc();
-					}}}}
-		for(std::vector< std::vector <Pieces*> >::iterator it = theBoard.begin(); it != theBoard.end(); it ++) {
-			for(std::vector <Pieces*>::iterator i = it->begin(); i != it->end(); i ++) {
-				if(*i != NULL) {
-					oldr = (*i)->getr();
-					oldc = (*i)->getc();
-					if(ruleCheck(oldr, oldc, newr, newc)) return true;
-				}}}
+	char piece;
+	for(std::vector < std::vector <Pieces*> >::iterator it = theBoard.begin(); it != theBoard.end(); it ++) {
+		for(std::vector <Pieces*>::iterator i = it->begin(); i != it->end(); i ++) {
+			if(*i != NULL) {
+				if((*i)->getName() == king) {
+					newr = (*i)->getr();
+					newc = (*i)->getc();
+				}}}}
+	for(std::vector< std::vector <Pieces*> >::iterator it = theBoard.begin(); it != theBoard.end(); it ++) {
+		for(std::vector <Pieces*>::iterator i = it->begin(); i != it->end(); i ++) {
+			if(*i != NULL) {
+				oldr = (*i)->getr();
+				oldc = (*i)->getc();
+				piece = theBoard[oldr][oldc]->getName();
+				if(ruleCheck(oldr, oldc, newr, newc) && abs(piece - king) > 15 ) return true;
+			}}}
 	return false;
 }
 
-				
+
 
 void Board::move(int oldr, int oldc, int newr, int newc) {
 	char name = theBoard[oldr][oldc]->getName();
@@ -258,6 +273,7 @@ void Board::move(int oldr, int oldc, int newr, int newc) {
 	theBoard[newr][newc] = theBoard[oldr][oldc];
 	td->notify(oldr, oldc);
 	td->notify(newr, newc, name);
+	td->print();
 }
 
 
@@ -292,7 +308,7 @@ void Board::play() {
 					else if(color == "black") turn = 1;
 					else std::cout << "not valid color" << std::endl;
 				}
-				else if(opt == "stdinit") {
+				else if(opt == "stdinit") {              //this command provide a standard initial state of a chess
 					for(int i = 0; i < 8; i ++) {
 						add(1, i, 'p');
 						add(6, i, 'P');
@@ -317,6 +333,7 @@ void Board::play() {
 							add(i, 4, 'K');
 						}
 					}
+					td->print();
 				}
 				else if(opt == "done") {
 					if(checkBoard()) break;
@@ -331,19 +348,20 @@ void Board::play() {
 			else std::cout << "not support for AI now" << std::endl;
 			if(player2 == "human") p2 = new Human(this);
 			else std::cout << "not support for AI now" << std::endl;
+			td->print();
+			std::cout << "the battle begins!" << std::endl;
 			while(true) {
 				if(turn == 0) {
+					std::cout << "white's turn to move" << std::endl;
 					p1->makeMove();
-					turn = 1;
 				}
 				else {
+					std::cout << "black's turn to move" << std::endl;
 					p2->makeMove();
-					turn = 0;
-				}
+				turn = !turn;
 			}
 		}
-
 	}
 }
-				
+
 
