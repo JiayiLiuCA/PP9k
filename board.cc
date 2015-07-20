@@ -94,10 +94,22 @@ bool Board::checkBoard() {
 		}
 	}
 	for(std::vector <int>::iterator it = pieces.begin(); it != pieces.end(); it ++) {
-		if((it == pieces.begin() + 42 || it == pieces.begin() + 10) && (*it != 1))  return false;  //must have exactly 1 King on each side	
-		else if ((it == pieces.begin() + 16 || it == pieces.begin() + 48) && *it > 1) return false; //can have at most one Queen
-		else if((it == pieces.begin() + 15 || it == pieces.begin() + 47) && *it > 8) return false; //can have at most 8 Pawn
-		else if(*it > 2)  return false; //everything else must have at most 2
+		if((it == pieces.begin() + 42 || it == pieces.begin() + 10) && (*it != 1))  {
+			std::cout << "invalid number of Kings" << std::endl;
+			return false;  //must have exactly 1 King on each side
+		}	
+		else if ((it == pieces.begin() + 16 || it == pieces.begin() + 48) && *it > 1) {
+			std::cout << "invalid number fo Queens" << std::endl;
+			return false; //can have at most one Queen
+		}
+		else if((it == pieces.begin() + 15 || it == pieces.begin() + 47) && *it > 8) {
+			std::cout << "invalid number of Pawns" << std::endl;
+			return false; //can have at most 8 Pawn
+		}
+		else if(*it > 2)  {
+			std::cout << "invalid number of other pieces (e.g. Bishops, Knights or Rooks)" << std::endl;
+			return false; //everything else must have at most 2
+		}
 	}
 	if(check('K') || check('k')) {
 		std::cout << "King is in check!" << std::endl;
@@ -115,6 +127,7 @@ bool Board::checkBoard() {
 			return false;
 		}
 	}
+	return true;
 }
 
 bool Board::ruleCheck(int row, int col, int new_row, int new_col) {
@@ -194,7 +207,25 @@ bool Board::ruleCheck(int row, int col, int new_row, int new_col) {
 	}
 }
 
-		
+void Board::notify(std::string move) {
+	std::stringstream ss(move);
+	std::string pos1, pos2;
+	ss >> pos1 >> pos2;
+	int oldr, oldc, newr, newc;
+	oldr = convert(pos1)[0];
+	oldc = convert(pos1)[1];
+	newr = convert(pos2)[0];
+	newc = convert(pos2)[1];
+	if(!ruleCheck(oldr, oldc, newr, newc)) {
+		std::cout << "invalid move please enter again" << std::endl;
+		if(turn == 0) p1->makeMove();
+		else p2->makeMove();
+	}
+	else this->move(oldr, oldc, newr, newc);
+}
+
+
+
 
 bool Board::check(char king) {
 	int newr, newc, oldr, oldc;
@@ -219,11 +250,16 @@ bool Board::check(char king) {
 
 				
 
-
-
-					
-
-		
+void Board::move(int oldr, int oldc, int newr, int newc) {
+	char name = theBoard[oldr][oldc]->getName();
+	if(theBoard[newr][newc] != NULL) {
+		delete theBoard[newr][newc];
+		td->notify(newr, newc);
+	}
+	theBoard[newr][newc] = theBoard[oldr][oldc];
+	td->notify(oldr, oldc);
+	td->notify(newr, newc, name);
+}
 
 
 void Board::play() {
@@ -256,6 +292,32 @@ void Board::play() {
 					if(color == "white") turn = 0;
 					else if(color == "black") turn = 1;
 					else std::cout << "not valid color" << std::endl;
+				}
+				else if(opt == "stdinit") {
+					for(int i = 0; i < 8; i ++) {
+						add(1, i, 'p');
+						add(6, i, 'P');
+						if(i == 0) {
+							add(i, 0, 'r');
+							add(i, 7, 'r');
+							add(i, 1, 'n');
+							add(i, 6, 'n');
+							add(i, 2, 'b');
+							add(i, 5, 'b');
+							add(i, 3, 'q');
+							add(i, 4, 'k');
+						}
+						if(i == 7) {
+							add(i, 0, 'R');
+							add(i, 7, 'R');
+							add(i, 1, 'N');
+							add(i, 6, 'N');
+							add(i, 2, 'B');
+							add(i, 5, 'B');
+							add(i, 3, 'Q');
+							add(i, 4, 'K');
+						}
+					}
 				}
 				else if(opt == "done") {
 					if(checkBoard()) break;
