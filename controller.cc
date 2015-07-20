@@ -2,6 +2,6 @@
 
 
 Controller::~Controller() {
-	gmae = NULL;
+	game = NULL;
 }
 

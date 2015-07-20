@@ -6,6 +6,7 @@
 
 class Human: public Controller{
 	public: 
-		string makeMove();
+		void makeMove();
+		Human(Board* game);
 };
 #endif

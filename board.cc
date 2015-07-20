@@ -1,6 +1,7 @@
 #include "board.h"
 #include "textdisplay.h"
 #include "concrete_pieces.h"
+#include "human.h"
 #include <vector>
 #include <string>
 #include <sstream>
@@ -230,9 +231,9 @@ void Board::play() {
 		std::string command;
 		std::cin >> command;
 		if(command == "setup") {
-				delete td;
-				td = new TextDisplay();
-				td->print();
+			delete td;
+			td = new TextDisplay();
+			td->print();
 			while(true) {
 				std::string opt;
 				std::cin >> opt;
@@ -262,6 +263,25 @@ void Board::play() {
 				}
 			}
 		}
+		else if(command == "game") {
+			std::string player1, player2;
+			std::cin >> player1 >> player2;
+			if(player1 == "human") p1 = new Human(this);
+			else std::cout << "not support for AI now" << std::endl;
+			if(player2 == "human") p2 = new Human(this);
+			else std::cout << "not support for AI now" << std::endl;
+			while(true) {
+				if(turn == 0) {
+					p1->makeMove();
+					turn = 1;
+				}
+				else {
+					p2->makeMove();
+					turn = 0;
+				}
+			}
+		}
+
 	}
 }
 				
