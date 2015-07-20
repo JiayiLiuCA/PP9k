@@ -98,7 +98,7 @@ bool Board::checkBoard() {
 		else if((it == pieces.begin() + 15 || it == pieces.begin() + 47) && *it > 8) return false; //can have at most 8 Pawn
 		else if(*it > 2)  return false; //everything else must have at most 2
 	}
-	if(check(0) || check(1)) {
+	if(check('K') || check('k')) {
 		std::cout << "King is in check!" << std::endl;
 		return false;
 	}
@@ -195,13 +195,12 @@ bool Board::ruleCheck(int row, int col, int new_row, int new_col) {
 
 		
 
-bool Board::check(int side) {
+bool Board::check(char king) {
 	int newr, newc, oldr, oldc;
-	if(side == 0) {
 		for(std::vector < std::vector <Pieces*> >::iterator it = theBoard.begin(); it != theBoard.end(); it ++) {
 			for(std::vector <Pieces*>::iterator i = it->begin(); i != it->end(); i ++) {
 				if(*i != NULL) {
-					if((*i)->getName() == 'K') {
+					if((*i)->getName() == king) {
 						newr = (*i)->getr();
 						newc = (*i)->getc();
 						std::cout << newr << " " << newc << std::endl;
@@ -213,22 +212,7 @@ bool Board::check(int side) {
 					oldc = (*i)->getc();
 					std::cout << oldr << " " << oldc << std::endl;
 					if(ruleCheck(oldr, oldc, newr, newc)) return true;
-				}}}}
-	else {
-		for(std::vector< std::vector <Pieces*> >::iterator it = theBoard.begin(); it != theBoard.end(); it ++) {
-			for(std::vector <Pieces*>::iterator i = it->begin(); i != it->end(); i ++) {
-				if(*i != NULL) {
-					if((*i)->getName() == 'k') {
-						newr = (*i)->getr();
-						newc = (*i)->getc();
-					}}}}
-		for(std::vector< std::vector <Pieces*> >::iterator it = theBoard.begin(); it != theBoard.end(); it ++) {
-			for(std::vector <Pieces*>::iterator i = it->begin(); i != it->end(); i ++) {
-				if(*i != NULL) {
-					oldr = (*i)->getr();
-					oldc = (*i)->getc();
-					if(ruleCheck(oldr, oldc, newr, newc)) return true;
-				}}}}
+				}}}
 	return false;
 }
 
