@@ -168,8 +168,11 @@ bool Board::ruleCheck(int row, int col, int new_row, int new_col) {
 		return false;
 	}
 	else if (n == 'N' || n == 'n' || n == 'K' || n == 'k') {
-		if(abs(newtmp->getName() - tmp->getName()) <= 25) return false;
-	    return true;
+		if(newtmp != NULL) {
+			if(abs(newtmp->getName() - tmp->getName()) <= 25) return false;
+			else return true;
+		}
+		else return true;
 	}
 	else if (n == 'R' || n == 'r' || n == 'Q' || n == 'q' || n == 'B' || n == 'b') {
 		if((diff_col == 1 || diff_row == 1) && abs(newtmp->getName() - tmp->getName()) <= 25) return false;
@@ -247,16 +250,16 @@ void Board::notify(std::string move, char team) {
 		oldc = convert(pos1)[1];
 		newr = convert(pos2)[0];
 		newc = convert(pos2)[1];
-		char piece = theBoard[oldr][oldc]->getName();
-		std::cout << "piece is :" << piece << std::endl;
-		std::cout << "team is: " << team << std::endl;
-		std::cout << "piece - team = " << piece - team << std::endl;
-		if(!ruleCheck(oldr, oldc, newr, newc) || abs(piece - team) > 25) {
+		if(theBoard[oldr][oldc] != NULL)char piece = theBoard[oldr][oldc]->getName();
+		if(theBoard[oldr][oldc] == NULL ||!ruleCheck(oldr, oldc, newr, newc) || abs(piece - team) > 25) {
 			std::cout << "invalid move please enter again" << std::endl;
 			if(turn == 0) p1->makeMove();
 			else p2->makeMove();
+			return;
 		}
-		else this->move(oldr, oldc, newr, newc);
+		else {
+			this->move(oldr, oldc, newr, newc);
+		}
 	}
 }
 
@@ -287,6 +290,7 @@ bool Board::check(char king) {
 
 
 void Board::move(int oldr, int oldc, int newr, int newc) {
+	std::cout << "into the move " << std::endl;
 	char name = theBoard[oldr][oldc]->getName();
 	if(name == 'p' || name == 'P') {
 		if(abs(newr - oldr) == 2) {
