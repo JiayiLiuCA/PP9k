@@ -315,6 +315,7 @@ void Board::move(int oldr, int oldc, int newr, int newc) {
 		updateEnpassant = false;
 	}
 	theBoard[newr][newc] = theBoard[oldr][oldc];
+	theBoard[oldr][oldc] = NULL;
 	td->notify(oldr, oldc);
 	td->notify(newr, newc, name);
 	td->print();
