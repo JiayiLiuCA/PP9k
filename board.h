@@ -44,7 +44,8 @@ class Board {
 		void move(int oldr, int oldc, int newr, int newc); //move a piece fromoldrow oldcol to new row new col
 		bool ruleCheck(int oldr, int oldc, int newr, int newc);//this checks whether this move is legal or not
 		void setPlayer(Controller* player); // set the players
-		bool check(char king); //determine whether a king is in check or not('K' or 'k') 
+		bool check(char king); //determine whether a king is in check or not('K' or 'k')
+		bool virtualCheck(int oldr, int oldc, int newr, int newc);	
 		bool checkMate(); //determine whether it is a checkmate
 
 };

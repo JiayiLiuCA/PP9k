@@ -257,7 +257,32 @@ void Board::notify(std::string move, char team) {
 				else p2->makeMove();
 				return;
 			}
-			else this->move(oldr, oldc, newr, newc);
+			else {
+				Pieces* tmp1 = theBoard[oldr][oldc];
+				Pieces* tmp2 = theBoard[newr][newc];
+				theBoard[oldr][oldc] = NULL;
+				theBoard[newr][newc] = tmp1;
+				if(team == 'z' && check('k')) {
+					std::cout << "this move will put your king in check!" << std::endl;
+					theBoard[oldr][oldc] = tmp1;
+					theBoard[newr][newc] = tmp2;
+					tmp1 = NULL;
+					tmp2 = NULL;
+					p2->makeMove();
+					return;
+				}
+				else if(team == 'A' && check('K')) {
+					std::cout << "this move will put your king in check!" << std::endl;
+					theBoard[oldr][oldc] = tmp1;
+					theBoard[newr][newc] = tmp2;
+					tmp1 = NULL;
+					tmp2 = NULL;
+					p1->makeMove();
+					return;
+				}
+				else this->move(oldr, oldc, newr, newc);
+
+			}
 		}
 	}
 }
@@ -320,6 +345,7 @@ void Board::move(int oldr, int oldc, int newr, int newc) {
 	td->notify(newr, newc, name);
 	td->print();
 }
+
 
 
 void Board::play() {
