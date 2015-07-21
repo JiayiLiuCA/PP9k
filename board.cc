@@ -303,6 +303,7 @@ void Board::move(int oldr, int oldc, int newr, int newc) {
 			delete theBoard[oldr][newc];
 			theBoard[oldr][newc] = NULL;
 			td->notify(oldr, newc);
+			updateEnpassant = false;
 		}
 
 	}
@@ -311,6 +312,7 @@ void Board::move(int oldr, int oldc, int newr, int newc) {
 		delete theBoard[newr][newc];
 		theBoard[newr][newc] = NULL;
 		td->notify(newr, newc);
+		updateEnpassant = false;
 	}
 	theBoard[newr][newc] = theBoard[oldr][oldc];
 	td->notify(oldr, oldc);
