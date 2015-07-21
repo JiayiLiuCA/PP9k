@@ -9,6 +9,9 @@ bool King::moveCheck(int row, int col, int new_row, int new_col) {
 	}
 	int diff_row = std::abs(row - new_row);
 	int diff_col = std::abs(col - new_col);
+	if (getStatus() == false && diff_row == 0 && diff_col == 2) {
+		return true;
+	}
 	if (diff_row + diff_col == 1 || diff_row * diff_col == 1) {
 		return true;
 	}
