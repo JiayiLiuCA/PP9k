@@ -140,10 +140,6 @@ bool Board::checkBoard() {
 }
 
 bool Board::ruleCheck(int row, int col, int new_row, int new_col) {
-	if (theBoard[row][col] == NULL) {
-		std::cout << "pieces does not exist" << std::endl;
-		return false;
-	}
 	Pieces *tmp = theBoard[row][col];
 	Pieces *newtmp = theBoard[new_row][new_col];
 	char n = tmp->getName();
@@ -151,6 +147,7 @@ bool Board::ruleCheck(int row, int col, int new_row, int new_col) {
 	int diff_col = std::abs(col - new_col);
 	int dir_row;
 	int dir_col;
+	if((newtmp != NULL) && (abs(newtmp->getName() - n) < 25)) return false;
 	if (diff_row != 0) {
 		dir_row = diff_row / (new_row - row);
 	}
@@ -175,16 +172,12 @@ bool Board::ruleCheck(int row, int col, int new_row, int new_col) {
 		else return true;
 	}
 	else if (n == 'R' || n == 'r' || n == 'Q' || n == 'q' || n == 'B' || n == 'b') {
-		if((diff_col == 1 || diff_row == 1) && abs(newtmp->getName() - tmp->getName()) <= 25) return false;
-		else if((diff_col == 1 || diff_row == 1) && abs(newtmp->getName() - tmp->getName()) > 25) return true;
-		else if(diff_col != 1 && diff_row != 1) {
-			for (int i = 2; i < diff_row; i++) {
-				if (theBoard[row + dir_row * i][col + dir_col * i] != NULL) {
-					return false;
-				}
+		for (int i = 1; i < diff_row; i++) {
+			if (theBoard[row + dir_row * i][col + dir_col * i] != NULL) {
+				return false;
 			}
-			return true;
 		}
+		return true;
 	}
 	else if (n == 'p' && diff_col == 0) {
 		if (theBoard[row+1][col] != NULL) {
@@ -198,8 +191,8 @@ bool Board::ruleCheck(int row, int col, int new_row, int new_col) {
 		}
 	}
 	else if (n == 'p' && diff_col == 1) {
-		if (theBoard[new_row][new_col] != NULL || (theBoard[row][new_col] == enpassant)) {
-			return true;
+		if (theBoard[new_row][new_col] != NULL || (static_cast<Pawn *>(theBoard[row][new_col]) == enpassant)) {
+				return true;
 		}
 		else {
 			return false;
@@ -219,7 +212,7 @@ bool Board::ruleCheck(int row, int col, int new_row, int new_col) {
 		}
 	}
 	else if (n == 'P' && diff_col == 1) {
-		if (theBoard[new_row][new_col] != NULL || (theBoard[row][new_col] == enpassant)) {
+		if (theBoard[new_row][new_col] != NULL || ((static_cast<Pawn *>(theBoard[row][new_col]) == enpassant) && enpassant != NULL)) {
 			return true;
 		}
 		else {
@@ -250,15 +243,21 @@ void Board::notify(std::string move, char team) {
 		oldc = convert(pos1)[1];
 		newr = convert(pos2)[0];
 		newc = convert(pos2)[1];
-		if(theBoard[oldr][oldc] != NULL)char piece = theBoard[oldr][oldc]->getName();
-		if(theBoard[oldr][oldc] == NULL ||!ruleCheck(oldr, oldc, newr, newc) || abs(piece - team) > 25) {
+		if(theBoard[oldr][oldc] == NULL ||!ruleCheck(oldr, oldc, newr, newc)) {
 			std::cout << "invalid move please enter again" << std::endl;
 			if(turn == 0) p1->makeMove();
 			else p2->makeMove();
 			return;
 		}
 		else {
-			this->move(oldr, oldc, newr, newc);
+			char piece = theBoard[oldr][oldc]->getName();
+			if(abs(piece - team) > 25) {
+				std::cout << "you cannot move your opponents pieces" << std::endl;
+				if(turn == 0) p1->makeMove();
+				else p2->makeMove();
+				return;
+			}
+			else this->move(oldr, oldc, newr, newc);
 		}
 	}
 }
@@ -294,18 +293,20 @@ void Board::move(int oldr, int oldc, int newr, int newc) {
 	char name = theBoard[oldr][oldc]->getName();
 	if(name == 'p' || name == 'P') {
 		if(abs(newr - oldr) == 2) {
-			enpassant = theBoard[oldr][oldc];
+			enpassant = static_cast<Pawn *>(theBoard[oldr][oldc]);
 			updateEnpassant = true;
 		}
 	}
 	if(theBoard[newr][newc] != NULL) {
-		if(theBoard[newr][newc] == enpassant) enpassant = NULL;
+		if(static_cast<Pawn *>(theBoard[newr][newc]) == enpassant) enpassant = NULL;
 		delete theBoard[newr][newc];
+		theBoard[newr][newc] = NULL;
 		td->notify(newr, newc);
 	}
 	theBoard[newr][newc] = theBoard[oldr][oldc];
 	if((name == 'p' || 'P') && theBoard[newr][newc] == NULL){
 		delete theBoard[oldr][newc];
+		theBoard[oldr][newc] = NULL;
 		td->notify(oldr, newc);
 	}
 	td->notify(oldr, oldc);

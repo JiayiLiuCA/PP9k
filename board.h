@@ -5,7 +5,7 @@
 #include <cstdlib>
 #include <string>
 
-
+class Pawn;
 
 class Controller;
 
@@ -23,7 +23,7 @@ class Board {
 		int p1Score;
 		int p2Score;
 		bool playing; //determine whether a game is running or not
-		Pieces* enpassant; //whether there is a Pawn could be enpassant
+		Pawn* enpassant; //whether there is a Pawn could be enpassant
 		bool updateEnpassant; //whether the enpassant is update or not
 		View* gd; // the graphical display
 		View* td; // the text display

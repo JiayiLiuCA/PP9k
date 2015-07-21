@@ -1,6 +1,10 @@
 #include "pieces.h"
 
-Pieces::~Pieces() {}
+Pieces::~Pieces() {
+	r = -1;
+	c = -1;
+	Move = false;
+}
 
 bool Pieces::getStatus() {
 	return Move;
