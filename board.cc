@@ -305,6 +305,7 @@ void Board::move(int oldr, int oldc, int newr, int newc) {
 	}
 	theBoard[newr][newc] = theBoard[oldr][oldc];
 	if((name == 'p' || 'P') && theBoard[newr][newc] == NULL){
+		std::cout << "in enpassant" << std::endl;
 		delete theBoard[oldr][newc];
 		theBoard[oldr][newc] = NULL;
 		td->notify(oldr, newc);
