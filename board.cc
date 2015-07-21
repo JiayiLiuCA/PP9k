@@ -292,10 +292,19 @@ void Board::move(int oldr, int oldc, int newr, int newc) {
 	std::cout << "into the move " << std::endl;
 	char name = theBoard[oldr][oldc]->getName();
 	if(name == 'p' || name == 'P') {
+		std::cout << "in p/P" << std::endl;
 		if(abs(newr - oldr) == 2) {
+			std::cout << "in move 2" << std::endl;
 			enpassant = static_cast<Pawn *>(theBoard[oldr][oldc]);
 			updateEnpassant = true;
 		}
+		else if(theBoard[newr][newc] == NULL) {
+			std::cout << "in enpassant" << std::endl;
+			delete theBoard[oldr][newc];
+			theBoard[oldr][newc] = NULL;
+			td->notify(oldr, newc);
+		}
+
 	}
 	if(theBoard[newr][newc] != NULL) {
 		if(static_cast<Pawn *>(theBoard[newr][newc]) == enpassant) enpassant = NULL;
@@ -304,12 +313,6 @@ void Board::move(int oldr, int oldc, int newr, int newc) {
 		td->notify(newr, newc);
 	}
 	theBoard[newr][newc] = theBoard[oldr][oldc];
-	if((name == 'p' || 'P') && theBoard[newr][newc] == NULL){
-		std::cout << "in enpassant" << std::endl;
-		delete theBoard[oldr][newc];
-		theBoard[oldr][newc] = NULL;
-		td->notify(oldr, newc);
-	}
 	td->notify(oldr, oldc);
 	td->notify(newr, newc, name);
 	td->print();
