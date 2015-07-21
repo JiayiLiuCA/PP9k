@@ -3,11 +3,11 @@
 Pieces::~Pieces() {}
 
 bool Pieces::getStatus() {
-	return doubleMove;
+	return Move;
 }
 
 void Pieces::setMove(bool move) {
-	doubleMove = move;
+	Move = move;
 }
 
 char Pieces::getName() { return name; }

@@ -2,7 +2,7 @@
 #include <iostream>
 
 
-Human::Human(Board *game): Controller(game) {}
+Human::Human(Board *game, char team): Controller(game, team) {}
 
 
 void Human::makeMove() {
@@ -13,9 +13,9 @@ void Human::makeMove() {
 	if(opt == "move") {
 		std::cin >> pos1 >> pos2;
 		std::cout << "the notify sent to game is " << pos1 << " " << pos2 << std::endl;
-		game->notify(pos1 + " " + pos2);
+		game->notify(pos1 + " " + pos2, this->getTeam());
 	}
-	else if(opt == "resign") game->notify(opt);
+	else if(opt == "resign") game->notify(opt, this->getTeam());
 	else {
 		std::cout << "invalid command please enter again" << std::endl;
 		this->makeMove();

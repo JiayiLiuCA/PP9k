@@ -21,7 +21,9 @@ Board::Board() {
 	p1 = NULL;
 	p2 = NULL;
 	gd = NULL;
-	td = NULL;	
+	td = NULL;
+	playing = false;
+	enpassant = NULL;	
 }
 
 Board::~Board() {
@@ -31,6 +33,9 @@ Board::~Board() {
 	delete p2;
 	p1Score = 0;
 	p2Score = 0;
+	playing = false;
+	enpassant = NULL;
+	updateEnpassant = false;
 }
 	
 	
@@ -136,9 +141,11 @@ bool Board::checkBoard() {
 
 bool Board::ruleCheck(int row, int col, int new_row, int new_col) {
 	if (theBoard[row][col] == NULL) {
+		std::cout << "pieces does not exist" << std::endl;
 		return false;
 	}
 	Pieces *tmp = theBoard[row][col];
+	Pieces *newtmp = theBoard[new_row][new_col];
 	char n = tmp->getName();
 	int diff_row = std::abs(row - new_row);
 	int diff_col = std::abs(col - new_col);
@@ -157,18 +164,24 @@ bool Board::ruleCheck(int row, int col, int new_row, int new_col) {
 		dir_col = 0;
 	}
 	if (tmp->moveCheck(row,col,new_row,new_col) == false) {
+		std::cout << "moveCheck() fail" << std::endl;
 		return false;
 	}
 	else if (n == 'N' || n == 'n' || n == 'K' || n == 'k') {
+		if(abs(newtmp->getName() - tmp->getName()) <= 25) return false;
 	    return true;
 	}
 	else if (n == 'R' || n == 'r' || n == 'Q' || n == 'q' || n == 'B' || n == 'b') {
-		for (int i = 0; i < diff_row; i++) {
-			if (theBoard[row + dir_row][col + dir_col] != NULL) {
-				return false;
+		if((diff_col == 1 || diff_row == 1) && abs(newtmp->getName() - tmp->getName()) <= 25) return false;
+		else if((diff_col == 1 || diff_row == 1) && abs(newtmp->getName() - tmp->getName()) > 25) return true;
+		else if(diff_col != 1 && diff_row != 1) {
+			for (int i = 2; i < diff_row; i++) {
+				if (theBoard[row + dir_row * i][col + dir_col * i] != NULL) {
+					return false;
+				}
 			}
+			return true;
 		}
-		return true;
 	}
 	else if (n == 'p' && diff_col == 0) {
 		if (theBoard[row+1][col] != NULL) {
@@ -182,7 +195,7 @@ bool Board::ruleCheck(int row, int col, int new_row, int new_col) {
 		}
 	}
 	else if (n == 'p' && diff_col == 1) {
-		if (theBoard[new_row][new_col] != NULL || (*theBoard[row][new_col]).getStatus()) {
+		if (theBoard[new_row][new_col] != NULL || (theBoard[row][new_col] == enpassant)) {
 			return true;
 		}
 		else {
@@ -191,9 +204,11 @@ bool Board::ruleCheck(int row, int col, int new_row, int new_col) {
 	}
 	else if (n == 'P' && diff_col == 0) {
 		if (theBoard[row-1][col] != NULL) {
+			std::cout << "1 invalid" << std::endl;
 			return false;
 		}
 		if (diff_row == 2 && theBoard[row-2][col] != NULL) {
+			std::cout << "2 invalid" << std::endl;
 			return false;
 		}
 		else {
@@ -201,7 +216,7 @@ bool Board::ruleCheck(int row, int col, int new_row, int new_col) {
 		}
 	}
 	else if (n == 'P' && diff_col == 1) {
-		if (theBoard[new_row][new_col] != NULL || (*theBoard[row][new_col]).getStatus()) {
+		if (theBoard[new_row][new_col] != NULL || (theBoard[row][new_col] == enpassant)) {
 			return true;
 		}
 		else {
@@ -210,15 +225,17 @@ bool Board::ruleCheck(int row, int col, int new_row, int new_col) {
 	}
 }
 
-void Board::notify(std::string move) {
+void Board::notify(std::string move, char team) {
 	if(move == "resign") {
 		if(turn == 0) {
 			std::cout << "black wins!" << std::endl;
 			p2Score ++;
+			playing = false;
 		}
 		else {
 			std::cout << "white wins!" << std::endl;
 			p1Score ++;
+			playing = false;
 		}
 	}
 	else {
@@ -230,12 +247,11 @@ void Board::notify(std::string move) {
 		oldc = convert(pos1)[1];
 		newr = convert(pos2)[0];
 		newc = convert(pos2)[1];
-		std::cout << "in game notify: " << std::endl;
-		std::cout << "oldr: " << oldr << std::endl;
-		std::cout << "oldc: " << oldc << std::endl;
-		std::cout << "newr: " << newr << std::endl;
-		std::cout << "newc: " << newc << std::endl;
-		if(!ruleCheck(oldr, oldc, newr, newc)) {
+		char piece = theBoard[oldr][oldc]->getName();
+		std::cout << "piece is :" << piece << std::endl;
+		std::cout << "team is: " << team << std::endl;
+		std::cout << "piece - team = " << piece - team << std::endl;
+		if(!ruleCheck(oldr, oldc, newr, newc) || abs(piece - team) > 25) {
 			std::cout << "invalid move please enter again" << std::endl;
 			if(turn == 0) p1->makeMove();
 			else p2->makeMove();
@@ -272,11 +288,22 @@ bool Board::check(char king) {
 
 void Board::move(int oldr, int oldc, int newr, int newc) {
 	char name = theBoard[oldr][oldc]->getName();
+	if(name == 'p' || name == 'P') {
+		if(abs(newr - oldr) == 2) {
+			enpassant = theBoard[oldr][oldc];
+			updateEnpassant = true;
+		}
+	}
 	if(theBoard[newr][newc] != NULL) {
+		if(theBoard[newr][newc] == enpassant) enpassant = NULL;
 		delete theBoard[newr][newc];
 		td->notify(newr, newc);
 	}
 	theBoard[newr][newc] = theBoard[oldr][oldc];
+	if((name == 'p' || 'P') && theBoard[newr][newc] == NULL){
+		delete theBoard[oldr][newc];
+		td->notify(oldr, newc);
+	}
 	td->notify(oldr, oldc);
 	td->notify(newr, newc, name);
 	td->print();
@@ -348,20 +375,22 @@ void Board::play() {
 			}
 		}
 		else if(command == "game") {
+			playing = true;
 			std::string player1, player2;
 			std::cin >> player1 >> player2;
-			if(player1 == "human") p1 = new Human(this);
+			if(player1 == "human") p1 = new Human(this, 'A');
 			else std::cout << "not support for AI now" << std::endl;
-			if(player2 == "human") p2 = new Human(this);
+			if(player2 == "human") p2 = new Human(this, 'z');
 			else std::cout << "not support for AI now" << std::endl;
 			td->print();
 			std::cout << "the battle begins!" << std::endl;
 			while(true) {
-				if(turn == 0) {
+				if(!updateEnpassant) enpassant = NULL;
+				if(turn == 0 && playing) {
 					std::cout << "white's turn to move" << std::endl;
 					p1->makeMove();
 				}
-				else {
+				else if(turn == 1 && playing) {
 					std::cout << "black's turn to move" << std::endl;
 					p2->makeMove();
 				}

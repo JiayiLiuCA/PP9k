@@ -22,6 +22,9 @@ class Board {
 		Controller* p2;  //Player 2 (black-player)
 		int p1Score;
 		int p2Score;
+		bool playing; //determine whether a game is running or not
+		Pieces* enpassant; //whether there is a Pawn could be enpassant
+		bool updateEnpassant; //whether the enpassant is update or not
 		View* gd; // the graphical display
 		View* td; // the text display
 		Board();  //Constructor constructs an empty board
@@ -37,7 +40,7 @@ class Board {
 		void add(int r, int c, char p); //add a piece at (r, c)
 		bool checkBoard(); //check whether the current board is "valid" in setup mode thus determing whether to end setup mode or not
 //---------------------------------------------------------------		
-		void notify(std::string move); //the boards take moving commands from controller
+		void notify(std::string move, char team); //the boards take moving commands from controller
 		void move(int oldr, int oldc, int newr, int newc); //move a piece fromoldrow oldcol to new row new col
 		bool ruleCheck(int oldr, int oldc, int newr, int newc);//this checks whether this move is legal or not
 		void setPlayer(Controller* player); // set the players

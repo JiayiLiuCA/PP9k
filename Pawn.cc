@@ -9,12 +9,12 @@ bool Pawn::moveCheck(int row, int col, int new_row, int new_col) {
 	}
 	int diff_row = new_row - row;
 	int diff_col = std::abs(new_col -col);
-	if (name == 'P') {
+	if (name == 'p') {
 		if ((diff_row == 1) && (diff_col <= 1)) {
 			return true;
 		}
 		else if ((diff_row == 2) && (diff_col == 0)) {
-			if (row == 6) {
+			if (row == 1) {
 				return true;
 			}
 			else {
@@ -30,7 +30,7 @@ bool Pawn::moveCheck(int row, int col, int new_row, int new_col) {
 			return true;
 		}
 		else if ((diff_row == -2) && (diff_col == 0)) {
-			if (row == 1) {
+			if (row == 6) {
 				return true;
 			}
 			else {

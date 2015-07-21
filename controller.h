@@ -4,10 +4,12 @@
 
 class Controller {
 	protected:
+		char team;
 		Board* game; //this keeps track of the game board status
 	public:
 		virtual void makeMove() = 0; //controller declares a move
-		Controller(Board* gameboard): game(gameboard) {}//constructor for Controller
+		Controller(Board* gameboard, int team): game(gameboard), team(team) {}//constructor for Controller
 		virtual ~Controller() = 0;
+		char getTeam();
 };
 #endif
