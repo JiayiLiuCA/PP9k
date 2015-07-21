@@ -191,7 +191,7 @@ bool Board::ruleCheck(int row, int col, int new_row, int new_col) {
 		}
 	}
 	else if (n == 'p' && diff_col == 1) {
-		if (theBoard[new_row][new_col] != NULL || (static_cast<Pawn *>(theBoard[row][new_col]) == enpassant)) {
+		if (theBoard[new_row][new_col] != NULL || (static_cast<Pawn *>(theBoard[row][new_col]) == enpassant) && enpassant != NULL) {
 				return true;
 		}
 		else {
