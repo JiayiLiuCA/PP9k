@@ -14,8 +14,8 @@ class Pieces {
 		void setMove(bool move);
 		int getr();
 		int getc();
-		void setr();
-		void setc();
+		void setr(int row);
+		void setc(int col);
 		~Pieces();	
 };
 #endif
