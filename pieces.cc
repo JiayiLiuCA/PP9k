@@ -19,3 +19,7 @@ char Pieces::getName() { return name; }
 int Pieces::getr() { return r; }
 
 int Pieces::getc() { return c; }
+
+void Pieces::setr(int row) { r = row; }
+
+void Pieces::setc(int col) { c = col; }

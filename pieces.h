@@ -14,6 +14,8 @@ class Pieces {
 		void setMove(bool move);
 		int getr();
 		int getc();
+		void setr();
+		void setc();
 		~Pieces();	
 };
 #endif

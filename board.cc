@@ -293,18 +293,18 @@ void Board::notify(std::string move, char team) {
 bool Board::check(char king) {
 	int newr, newc, oldr, oldc;
 	char piece;
-	for(std::vector < std::vector <Pieces*> >::iterator it = theBoard.begin(); it != theBoard.end(); it ++) {
-		for(std::vector <Pieces*>::iterator i = it->begin(); i != it->end(); i ++) {
-			if(*i != NULL) {
-				if((*i)->getName() == king) {
-					newr = (*i)->getr();
-					newc = (*i)->getc();
+	for(int i = 0; i < 8; i ++) {
+		for(int j = 0; j < 8; j ++) {
+			if(theBoard[i][j] != NULL) {
+				if(theBoard[i][j]->getName() == king) {
+					newr = i;
+					newc = j;
 				}}}}
-	for(std::vector< std::vector <Pieces*> >::iterator it = theBoard.begin(); it != theBoard.end(); it ++) {
-		for(std::vector <Pieces*>::iterator i = it->begin(); i != it->end(); i ++) {
-			if(*i != NULL) {
-				oldr = (*i)->getr();
-				oldc = (*i)->getc();
+	for(int i = 0; i < 8; i ++) {
+		for(int j = 0; j < 8; j ++) {
+			if(theBoard[i][j] != NULL) {
+				oldr = i;
+				oldc = j;
 				piece = theBoard[oldr][oldc]->getName();
 				if(ruleCheck(oldr, oldc, newr, newc) && abs(piece - king) > 15 ) return true;
 			}}}
@@ -341,6 +341,8 @@ void Board::move(int oldr, int oldc, int newr, int newc) {
 	}
 	theBoard[newr][newc] = theBoard[oldr][oldc];
 	theBoard[oldr][oldc] = NULL;
+	theBoard[newr][newc]->setr(newr);
+	theBoard[newr][newc]->setc(newc);
 	td->notify(oldr, oldc);
 	td->notify(newr, newc, name);
 	td->print();
