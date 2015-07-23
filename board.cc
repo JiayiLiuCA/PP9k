@@ -74,32 +74,26 @@ void Board::add(int r, int c, char p) {
 		}
 		if(p == 'r' || p == 'R') {
 			theBoard[r][c] = new Rook(r, c, p);
-			theBoard[r][c]->setRange();
 			updatePiece(r, c);
 		}
 		if(p == 'n' || p == 'N') {
-			theBoard[r][c] = new Knight(r, c, p);
-			theBoard[r][c]->setRange();
+			theBoard[r][c] = new Knight(r, c, p);	
 			updatePiece(r, c);
 		}
 		if(p == 'b' || p == 'B') {
 			theBoard[r][c] = new Bishop(r, c, p);
-			theBoard[r][c]->setRange();
 			updatePiece(r, c);
 		}
 		if(p == 'q' || p == 'Q') {
 			theBoard[r][c] = new Queen(r, c, p);
-			theBoard[r][c]->setRange();
 			updatePiece(r, c);
 		}
 		if(p == 'k' || p == 'K') {
 			theBoard[r][c] = new King(r, c, p);
-			theBoard[r][c]->setRange();
 			updatePiece(r, c);
 		}
 		if(p == 'p' || p == 'P') {
 			theBoard[r][c] = new Pawn(r, c, p);
-			theBoard[r][c]->setRange();
 			updatePiece(r, c);
 		}
 		td->notify(r, c, p);

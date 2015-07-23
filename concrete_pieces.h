@@ -3,6 +3,7 @@
 	
 #include "pieces.h"
 #include <vector>
+#include <iostream>
 
 class King:public Pieces {
 	public:
@@ -41,7 +42,10 @@ class Knight:public Pieces {
 
 class Pawn:public Pieces {
 	public:
-		Pawn(int r, int c, char name): Pieces(r, c, name) { setRange(); }
+		Pawn(int r, int c, char name): Pieces(r, c, name) { 
+			std::cout << "new a Pawn" << std::endl;
+			setRange(); 
+		}
 		bool moveCheck(int row, int col, int new_row, int new_col);
 		void setRange();
 };
