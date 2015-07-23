@@ -20,17 +20,16 @@ std::string string_convert(int a, int b) {
 	
 
 std::string Computer::makeMove() {
-	std::vector <string> tmp;
+	std::vector <std::string> tmp;
 	for (int i = 0; i < 7; i++) {
 		for (int j = 0; j < 7; j++) {
-			Pieces * tmp_p = game->theBoard[i][j];
-			char name = tmp_p->getName();
-			std::vector< std::pair <int, int> > range = tmp_p->getRange();
+			char name = game->theBoard[i][j]->getName();
+			std::vector< std::pair <int, int> > range = game->theBoard[i][j]->getRange();
 			if (name >= 'A' && name <= 'Z' && team == 'A') {
 				for (int x = 0; x < range.size(); x++) {
-					std::pair <int, int> tmp_pair = tmp_range[x];
-					if (ruleCheck(i,j,tmp_pair.first,tmp_pair.second)) {
-						string s = string_convert(i,j) + " " +
+					std::pair <int, int> tmp_pair = range[x];
+					if (game->ruleCheck(i,j,tmp_pair.first,tmp_pair.second)) {
+						std::string s = string_convert(i,j) + " " +
 							   string_convert(tmp_pair.first,tmp_pair.second);
 						tmp.push_back(s);
 					}
@@ -38,9 +37,9 @@ std::string Computer::makeMove() {
 			}
 			else if (name >= 'a' && name <= 'z' && team == 'z') {
 				for (int x = 0; x < range.size(); x++) {
-					std::pair <int, int> tmp_pair = tmp_range[x];
-					if (ruleCheck(i,j,tmp_pair.first,tmp_pair.second)) {
-						string s = string_convert(i,j) + " " +
+					std::pair <int, int> tmp_pair = range[x];
+					if (game->ruleCheck(i,j,tmp_pair.first,tmp_pair.second)) {
+						std::string s = string_convert(i,j) + " " +
 							   string_convert(tmp_pair.first, tmp_pair.second);
 						tmp.push_back(s);
 					}
@@ -50,7 +49,7 @@ std::string Computer::makeMove() {
 	}
 	srand(time(NULL));
 	int random = rand()%(tmp.size()-1);
-	string str_rtn =  tmp[random];
+	std::string str_rtn =  tmp[random];
 	return str_rtn;
 }
 
