@@ -63,13 +63,24 @@ void Pawn::setRange() {
 	else {
 		tmp.first = r - 2;
 		tmp.second = c;
-		if(r == 6)range.push_back(tmp);
+		if(r == 6) {
+			std::cout << "true" << std::endl;
+			range.push_back(tmp);
+		}
 		tmp.first = r - 1;
-		if(moveCheck(r, c, r - 1, c))range.push_back(tmp);
+		if(moveCheck(r, c, r - 1, c)) {
+			std::cout << "true" << std::endl;
+			range.push_back(tmp);
+		}
 		tmp.second = c + 1;
-		if(moveCheck(r, c, r - 1, c + 1))range.push_back(tmp);
+		if(moveCheck(r, c, r - 1, c + 1)){
+			std::cout << "true" << std::endl;
+			range.push_back(tmp);
+		}
 		tmp.second = c - 1;
-		if(moveCheck(r, c, r - 1, c - 1))range.push_back(tmp);
+		if(moveCheck(r, c, r - 1, c - 1)) {
+			std::cout << "true" << std::endl;
+			range.push_back(tmp);
 	}
 }
 
