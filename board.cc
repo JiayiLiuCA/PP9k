@@ -111,6 +111,7 @@ void Board::removeRange(int r, int c) {
 	Pieces* current = theBoard[r][c];
 	std::vector < std::pair <int, int> > range = theBoard[r][c]->getRange();
 	for(std::vector < std::pair <int, int> >::iterator it = range.begin(); it != range.end(); it ++) {
+		std::cout << "first loop" << std::endl;
 		int newr = it->first;
 		int newc = it->second;
 		std::vector <Pieces*> attack = attackBoard[newr][newc];
