@@ -115,6 +115,7 @@ void Board::removeRange(int r, int c) {
 		int newc = it->second;
 		std::vector <Pieces*> attack = attackBoard[newr][newc];
 		if(attack.size() != 0) {
+			std::cout << "inside loop" << std::endl;
 			for( std::vector < Pieces* >::iterator ait = attack.begin(); ait != attack.end(); ait ++) {
 				if(*ait == current) attack.erase(ait);
 			}
