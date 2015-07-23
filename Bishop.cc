@@ -19,3 +19,19 @@ bool Bishop::moveCheck(int row, int col, int new_row, int new_col) {
 	return tmp;
 }
 
+
+void Bishop::setRange() {
+	int dx[] = {1, -1, 1, -1};
+	int dy[] = {1, -1, -1, 1};
+	while(range.size() != 0) {
+		range.pop_back();
+	}
+	std::pair <int, int> tmp;
+	for(int i = 0; i < 4; i ++) {
+		for(int j = 1; j < 8; j++) {
+			tmp.first = (r + j * dy[i]);
+			tmp.second = (c + j * dx[i]);
+			range.push_back(tmp);
+		}
+	}
+}

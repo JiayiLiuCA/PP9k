@@ -43,5 +43,33 @@ bool Pawn::moveCheck(int row, int col, int new_row, int new_col) {
 	}
 }
 
-	
+
+void Pawn::setRange() {
+	while(range.size() != 0) {
+		range.pop_back();
+	}
+	std::pair <int, int> tmp;
+	if(getName == 'p') {
+		tmp.first = r + 2;
+		tmp.second = c;
+		range.push_back(tmp);
+		tmp.first = r + 1;
+		range.push_back(tmp);
+		tmp.second = c + 1;
+		range.push_back(tmp);
+		tmp.second = c - 1;
+		range.push_back(tmp);
+	}
+	else {
+		tmp.first = r - 2;
+		tmp.second = c;
+		range.push_back(tmp);
+		tmp.first = r - 1;
+		range.push_back(tmp);
+		tmp.second = c + 1;
+		range.push_back(tmp);
+		tmp.second = c - 1;
+		range.push_back(tmp);
+
+}
 

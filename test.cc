@@ -2,24 +2,21 @@
 #include <iostream>
 #include <algorithm>
 #include <sstream>
+#include <utility>
 
 
 
-
-std::vector <int> convert(std::string pos) {
-	std::stringstream ss(pos);
-	char c;
-	int n;
-	std::vector <int> result;
-	ss >> c >> n;
-	result.push_back(8 - n);
-	result.push_back(c - 'a');
-	return result;
-}
 
 
 int main (){
-	std::string s;
-	std::cin >> s;
-	std::cout << convert(s)[0] << " " << convert(s)[1] << " " << std::endl;
+	std::vector < std::pair<int, int> > tmp;
+	std::pair <int, int> tmp2;
+	
+	tmp.push_back(tmp2);
+	tmp2.first = 2;
+	tmp2.second = 3;
+	tmp.push_back(tmp2);
+	for(int i = 0; i < tmp.size(); i ++) {
+	std::cout << tmp[i].first << " " << tmp[i].second << " " << std::endl;
+	}
 }

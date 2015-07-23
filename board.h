@@ -16,6 +16,7 @@ class View;
 class Board {
 		//to make sure we only have one game board, we use the singleton pattern
 		static Board* singleton;
+		sd::vector < std::vector < std::vector <Pieces*> > > attackBoard; //the board indecating which pieces can attack the 
 		int turn; //determines whose turn to move, 0 represents white and 1 represents black
 		std::vector <std::vector <Pieces* > > theBoard; //the board
 		Controller* p1;  //Player 1 (white-player)
@@ -32,7 +33,8 @@ class Board {
 		static void cleanup();
 	public:
 		void play(); //this command begins the whole game 
-		static Board* getInstance(); 
+		static Board* getInstance();
+		void update(int r, int c);//update the attackBoard	
 		std::vector<int> convert(std::string pos); //this translates the string coordinates and return the number coords in a vector of int
 //the methods below are designed to use in setup mode
 //---------------------------------------------------------------

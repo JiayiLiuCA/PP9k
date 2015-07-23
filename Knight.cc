@@ -19,3 +19,18 @@ bool Knight::moveCheck(int row, int col, int new_row, int new_col) {
 		return false;
 	}
 }
+
+
+void Knight::setRange() {
+	int dx[] = {1, -1, 1, -1, 2, -2, 2, -2};
+	int dy[] = {2, 2, -2, -2, 1, 1, -1, -1};
+	while(range.size() != 0) {
+		range.pop_back();
+	}
+	std::pair <int, int> tmp;
+	for(int i = 0; i < 8; i ++) {
+		tmp.first = (r + dy[i]);
+		tmp.second = (c + dx[i]);
+		range.push_back(tmp);
+	}
+}

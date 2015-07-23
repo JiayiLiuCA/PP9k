@@ -29,4 +29,16 @@ bool King::moveCheck(int row, int col, int new_row, int new_col) {
 }
 
 	
-
+void King::setRange() {
+	int dx[] = {0, 1, 0, -1, 1, -1, 1, -1};
+	int dy[] = {1, 0, -1, 0, 1, -1, -1, 1};
+	while(range.size() != 0) {
+		range.pop_back();
+	}
+	std::pair <int, int> tmp;
+	for(int i = 0; i < 8; i ++) {
+		tmp.first = (r + dy[i]);
+		tmp.second = (c + dx[i]);
+		if(moveCheck(r, c, r + dy[i], c + dx[i])) range.push_back(tmp);
+	}
+}
