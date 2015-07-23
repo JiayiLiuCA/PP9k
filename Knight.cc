@@ -31,6 +31,6 @@ void Knight::setRange() {
 	for(int i = 0; i < 8; i ++) {
 		tmp.first = (r + dy[i]);
 		tmp.second = (c + dx[i]);
-		range.push_back(tmp);
+		if(moveCheck(r, c, r + dy[i], c + dx[i])) range.push_back(tmp);
 	}
 }

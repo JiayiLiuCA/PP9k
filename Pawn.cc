@@ -49,27 +49,27 @@ void Pawn::setRange() {
 		range.pop_back();
 	}
 	std::pair <int, int> tmp;
-	if(getName == 'p') {
+	if(getName() == 'p') {
 		tmp.first = r + 2;
 		tmp.second = c;
-		range.push_back(tmp);
+		if(r == 1)range.push_back(tmp);
 		tmp.first = r + 1;
-		range.push_back(tmp);
+		if(moveCheck(r, c, r + 1, c))range.push_back(tmp);
 		tmp.second = c + 1;
-		range.push_back(tmp);
+		if(moveCheck(r, c, r + 1, c + 1))range.push_back(tmp);
 		tmp.second = c - 1;
-		range.push_back(tmp);
+		if(moveCheck(r, c, r + 1, c - 1))range.push_back(tmp);
 	}
 	else {
 		tmp.first = r - 2;
 		tmp.second = c;
-		range.push_back(tmp);
+		if(r == 6)range.push_back(tmp);
 		tmp.first = r - 1;
-		range.push_back(tmp);
+		if(moveCheck(r, c, r - 1, c))range.push_back(tmp);
 		tmp.second = c + 1;
-		range.push_back(tmp);
+		if(moveCheck(r, c, r - 1, c + 1))range.push_back(tmp);
 		tmp.second = c - 1;
-		range.push_back(tmp);
+		if(moveCheck(r, c, r - 1, c - 1))range.push_back(tmp);
 
 }
 

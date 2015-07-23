@@ -33,7 +33,7 @@ void Rook::setRange() {
 		for(int j = 1; j < 8; j++) {
 			tmp.first = (r + j * dy[i]);
 			tmp.second = (c + j * dx[i]);
-			range.push_back(tmp);
+			if(moveCheck(r, c, r + j * dy[i], c + j * dx[i])) range.push_back(tmp);
 		}
 	}
 }

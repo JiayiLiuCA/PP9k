@@ -5,7 +5,6 @@
 #include <vector>
 
 class King:public Pieces {
-		std::vector <Pieces*> attackers;
 	public:
 		King(int r, int c, char name): Pieces(r, c, name) { setRange(); }
 		bool moveCheck(int row, int col, int new_row, int new_col);
