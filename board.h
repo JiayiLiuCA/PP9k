@@ -34,7 +34,8 @@ class Board {
 	public:
 		void play(); //this command begins the whole game 
 		static Board* getInstance();
-		void update(int r, int c);//update the attackBoard	
+		void updatePiece(int r, int c);//update the attackBoard	
+		void updateGrid(int r, int c);
 		std::vector<int> convert(std::string pos); //this translates the string coordinates and return the number coords in a vector of int
 //the methods below are designed to use in setup mode
 //---------------------------------------------------------------
@@ -47,8 +48,9 @@ class Board {
 		bool ruleCheck(int oldr, int oldc, int newr, int newc);//this checks whether this move is legal or not
 		void setPlayer(Controller* player); // set the players
 		bool check(char king); //determine whether a king is in check or not('K' or 'k')
-		bool virtualCheck(int oldr, int oldc, int newr, int newc);	
+		bool preCheck(int row, int col, int new_row, int new_col);	
 		bool checkMate(); //determine whether it is a checkmate
+		void removeRange(int r, int c);
 
 };
 #endif

@@ -70,6 +70,6 @@ void Pawn::setRange() {
 		if(moveCheck(r, c, r - 1, c + 1))range.push_back(tmp);
 		tmp.second = c - 1;
 		if(moveCheck(r, c, r - 1, c - 1))range.push_back(tmp);
-
+	}
 }
 

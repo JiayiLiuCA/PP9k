@@ -24,4 +24,4 @@ void Pieces::setr(int row) { r = row; }
 
 void Pieces::setc(int col) { c = col; }
 
-std::vector< std::pair <int, int> > getRange() { return range; }
+std::vector< std::pair <int, int> > Pieces::getRange() { return range; }

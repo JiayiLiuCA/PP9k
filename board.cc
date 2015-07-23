@@ -56,6 +56,7 @@ void Board::cleanup() {
 
 void Board::remove(int r, int c) {
 	if(0 <= r && r < 8 && 0 <= c && c < 8 && theBoard[r][c]) {
+		removeRange(r, c);
 		delete theBoard[r][c];
 		theBoard[r][c] = NULL;
 		td->notify(r, c);
@@ -72,49 +73,75 @@ void Board::add(int r, int c, char p) {
 		if(p == 'r' || p == 'R') {
 			theBoard[r][c] = new Rook(r, c, p);
 			theBoard[r][c]->setRange();
-			update(r, c);
+			updatePiece(r, c);
 		}
 		if(p == 'n' || p == 'N') {
 			theBoard[r][c] = new Knight(r, c, p);
 			theBoard[r][c]->setRange();
-			update(r, c);
+			updatePiece(r, c);
 		}
 		if(p == 'b' || p == 'B') {
 			theBoard[r][c] = new Bishop(r, c, p);
 			theBoard[r][c]->setRange();
-			update(r, c);
+			updatePiece(r, c);
 		}
 		if(p == 'q' || p == 'Q') {
 			theBoard[r][c] = new Queen(r, c, p);
 			theBoard[r][c]->setRange();
-			update(r, c)
+			updatePiece(r, c);
 		}
 		if(p == 'k' || p == 'K') {
 			theBoard[r][c] = new King(r, c, p);
 			theBoard[r][c]->setRange();
-			update(r, c);
+			updatePiece(r, c);
 		}
 		if(p == 'p' || p == 'P') {
 			theBoard[r][c] = new Pawn(r, c, p);
 			theBoard[r][c]->setRange();
-			update(r. c);
+			updatePiece(r, c);
 		}
 		td->notify(r, c, p);
 	}
 	else std::cout << "not valid add" << std::endl;
 }
 
-void updatePiece(int r, int c) {
-	char name = theBoard[r][c]->getName();
+void Board::removeRange(int r, int c) {
+	Pieces* current = theBoard[r][c];
 	std::vector < std::pair <int, int> > range = theBoard[r][c]->getRange();
-	for(std::vector < std::pair <int, int> >::iterator it = range.begin(); it != range.end(); i ++) {
+	for(std::vector < std::pair <int, int> >::iterator it = range.begin(); it != range.end(); it ++) {
 		int newr = it->first;
 		int newc = it->second;
-		if(preCheck(r, c, newr, newc)) attackBoard[newr][newc]->push_back(theBoard[r][c]);
+		std::vector <Pieces*> attack = attackBoard[newr][newc];
+		for( std::vector < Pieces* >::iterator ait = attack.begin(); ait != attack.end(); ait ++) {
+			if(*ait == current) attack.erase(ait);
+		}
 	}
 }
 
-void updateGrid(int r, int c) {
+
+void Board::updatePiece(int r, int c) {
+	removeRange(r, c);
+	std::vector < std::pair <int, int> > range = theBoard[r][c]->getRange();
+	for(std::vector < std::pair <int, int> >::iterator it = range.begin(); it != range.end(); it ++) {
+		int newr = it->first;
+		int newc = it->second;
+		std::vector <Pieces*> attack = attackBoard[newr][newc];
+		if(preCheck(r, c, newr, newc)) attackBoard[newr][newc].push_back(theBoard[r][c]);
+	}
+}
+
+void Board::updateGrid(int r, int c) {
+	std::vector < Pieces *> attack = attackBoard[r][c];
+	if(attack.size() == 0) return ;
+	else {
+		for(int i = 0; i < attack.size(); i ++) {
+			Pieces* tmp = attack[i];
+			updatePiece(tmp->getr(), tmp->getc());
+		}
+	}
+}
+
+
 		
 
 std::vector <int> Board::convert(std::string pos) {
@@ -186,7 +213,6 @@ bool Board::preCheck(int row, int col, int new_row, int new_col) {
 	int diff_col = std::abs(col - new_col);
 	int dir_row;
 	int dir_col;
-	if((newtmp != NULL) && (abs(newtmp->getName() - n) < 25)) return false;
 	if (diff_row != 0) {
 		dir_row = diff_row / (new_row - row);
 	}
@@ -204,11 +230,7 @@ bool Board::preCheck(int row, int col, int new_row, int new_col) {
 		return false;
 	}
 	else if (n == 'N' || n == 'n' || n == 'K' || n == 'k') {
-		if(newtmp != NULL) {
-			if(abs(newtmp->getName() - tmp->getName()) <= 25) return false;
-			else return true;
-		}
-		else return true;
+		return true;
 	}
 	else if (n == 'R' || n == 'r' || n == 'Q' || n == 'q' || n == 'B' || n == 'b') {
 		for (int i = 1; i < diff_row; i++) {
@@ -239,11 +261,9 @@ bool Board::preCheck(int row, int col, int new_row, int new_col) {
 	}
 	else if (n == 'P' && diff_col == 0) {
 		if (theBoard[row-1][col] != NULL) {
-			std::cout << "1 invalid" << std::endl;
 			return false;
 		}
 		if (diff_row == 2 && theBoard[row-2][col] != NULL) {
-			std::cout << "2 invalid" << std::endl;
 			return false;
 		}
 		else {
@@ -263,86 +283,43 @@ bool Board::preCheck(int row, int col, int new_row, int new_col) {
 
 
 bool Board::ruleCheck(int row, int col, int new_row, int new_col) {
-	Pieces *tmp = theBoard[row][col];
-	Pieces *newtmp = theBoard[new_row][new_col];
-	char n = tmp->getName();
-	int diff_row = std::abs(row - new_row);
-	int diff_col = std::abs(col - new_col);
-	int dir_row;
-	int dir_col;
-	if((newtmp != NULL) && (abs(newtmp->getName() - n) < 25)) return false;
-	if (diff_row != 0) {
-		dir_row = diff_row / (new_row - row);
+	bool isMove = false;
+	Pieces* tmp1 = theBoard[row][col];
+	for(std::vector <Pieces*>::iterator it = attackBoard[new_row][new_col].begin(); it != attackBoard[new_row][new_col].end(); it ++) {
+		if(*it == tmp1) isMove = true;
 	}
+
+	if((theBoard[new_row][new_col] != NULL) && abs(tmp1->getName() - theBoard[new_row][new_col]->getName()) < 25) return false;
 	else {
-		dir_row = 0;
-	}
-	if (diff_col != 0) {
-		dir_col = diff_col / (new_col - col);
-	}
-	else {
-		dir_col = 0;
-	}
-	if (tmp->moveCheck(row,col,new_row,new_col) == false) {
-		std::cout << "moveCheck() fail" << std::endl;
-		return false;
-	}
-	else if (n == 'N' || n == 'n' || n == 'K' || n == 'k') {
-		if(newtmp != NULL) {
-			if(abs(newtmp->getName() - tmp->getName()) <= 25) return false;
-			else return true;
+		Pieces* tmp = NULL;
+		if(theBoard[new_row][new_col] != NULL) {
+			tmp = theBoard[new_row][new_col];
+			removeRange(new_row, new_col);
 		}
-		else return true;
-	}
-	else if (n == 'R' || n == 'r' || n == 'Q' || n == 'q' || n == 'B' || n == 'b') {
-		for (int i = 1; i < diff_row; i++) {
-			if (theBoard[row + dir_row * i][col + dir_col * i] != NULL) {
-				return false;
-			}
-		}
-		return true;
-	}
-	else if (n == 'p' && diff_col == 0) {
-		if (theBoard[row+1][col] != NULL) {
-			return false;
-		}
-		if (diff_row == 2 && theBoard[row+2][col] != NULL) {
+		theBoard[new_row][new_col] = theBoard[row][col];
+		theBoard[row][col] = NULL;
+		updateGrid(row, col);
+		updateGrid(new_row, new_col);
+		if((turn == 0 && check('K')) || (turn == 1 && check('k'))) {
+			std::cout << "this move will put your king in check" << std::endl;
+			theBoard[row][col] = theBoard[new_row][new_col];
+			theBoard[new_row][new_col] = tmp;
+			updateGrid(row, col);
+			updateGrid(new_row, new_col);
+			if(tmp != NULL) updatePiece(new_row, new_col);
 			return false;
 		}
 		else {
+			theBoard[row][col] = theBoard[new_row][new_col];
+			theBoard[new_row][new_col] = tmp;
+			updateGrid(row, col);
+			updateGrid(new_row, new_col);
+			if(tmp != NULL) updatePiece(new_row, new_col);
 			return true;
-		}
-	}
-	else if (n == 'p' && diff_col == 1) {
-		if (theBoard[new_row][new_col] != NULL || (static_cast<Pawn *>(theBoard[row][new_col]) == enpassant) && enpassant != NULL) {
-				return true;
-		}
-		else {
-			return false;
-		}
-	}
-	else if (n == 'P' && diff_col == 0) {
-		if (theBoard[row-1][col] != NULL) {
-			std::cout << "1 invalid" << std::endl;
-			return false;
-		}
-		if (diff_row == 2 && theBoard[row-2][col] != NULL) {
-			std::cout << "2 invalid" << std::endl;
-			return false;
-		}
-		else {
-			return true;
-		}
-	}
-	else if (n == 'P' && diff_col == 1) {
-		if (theBoard[new_row][new_col] != NULL || ((static_cast<Pawn *>(theBoard[row][new_col]) == enpassant) && enpassant != NULL)) {
-			return true;
-		}
-		else {
-			return false;
 		}
 	}
 }
+
 
 void Board::notify(std::string move, char team) {
 	if(move == "resign") {
@@ -381,37 +358,9 @@ void Board::notify(std::string move, char team) {
 				return;
 			}
 			else {
-				Pieces* tmp1 = theBoard[oldr][oldc];
-				Pieces* tmp2 = theBoard[newr][newc];
-				theBoard[oldr][oldc] = NULL;
-				theBoard[newr][newc] = tmp1;
-				if(team == 'z' && check('k')) {
-					std::cout << "this move will put your king in check!" << std::endl;
-					theBoard[oldr][oldc] = tmp1;
-					theBoard[newr][newc] = tmp2;
-					tmp1 = NULL;
-					tmp2 = NULL;
-					p2->makeMove();
-					return;
-				}
-				else if(team == 'A' && check('K')) {
-					std::cout << "this move will put your king in check!" << std::endl;
-					theBoard[oldr][oldc] = tmp1;
-					theBoard[newr][newc] = tmp2;
-					tmp1 = NULL;
-					tmp2 = NULL;
-					p1->makeMove();
-					return;
-				}
-				else {
-					theBoard[oldr][oldc] = tmp1;
-					theBoard[newr][newc] = tmp2;
-					tmp1 = NULL;
-					tmp2 = NULL;
-					this->move(oldr, oldc, newr, newc);
-				}
-
+				this->move(oldr, oldc, newr, newc);
 			}
+
 		}
 	}
 }
@@ -420,23 +369,19 @@ void Board::notify(std::string move, char team) {
 
 
 bool Board::check(char king) {
-	int newr, newc, oldr, oldc;
+	int row, col;
 	char piece;
 	for(int i = 0; i < 8; i ++) {
 		for(int j = 0; j < 8; j ++) {
 			if(theBoard[i][j] != NULL) {
 				if(theBoard[i][j]->getName() == king) {
-					newr = i;
-					newc = j;
+					row = i;
+					col = j;
 				}}}}
-	for(int i = 0; i < 8; i ++) {
-		for(int j = 0; j < 8; j ++) {
-			if(theBoard[i][j] != NULL) {
-				oldr = i;
-				oldc = j;
-				piece = theBoard[oldr][oldc]->getName();
-				if(ruleCheck(oldr, oldc, newr, newc) && abs(piece - king) > 15 ) return true;
-			}}}
+	std::vector< Pieces* > tmp = attackBoard[row][col];
+	for(std::vector< Pieces* >::iterator it = tmp.begin(); it != tmp.end(); it ++) {
+		if(abs((*it)->getName() - king) > 25) return true;
+	}
 	return false;
 }
 
