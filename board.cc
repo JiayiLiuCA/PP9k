@@ -343,6 +343,7 @@ void Board::notify(std::string move, char team) {
 		oldc = convert(pos1)[1];
 		newr = convert(pos2)[0];
 		newc = convert(pos2)[1];
+		std::cout << "initial over" << std::endl;
 		if(theBoard[oldr][oldc] == NULL ||!ruleCheck(oldr, oldc, newr, newc)) {
 			std::cout << "invalid move please enter again" << std::endl;
 			if(turn == 0) p1->makeMove();
@@ -389,6 +390,7 @@ bool Board::check(char king) {
 
 void Board::move(int oldr, int oldc, int newr, int newc) {
 	std::cout << "into the move " << std::endl;
+	removeRange(oldr, oldc);
 	char name = theBoard[oldr][oldc]->getName();
 	if(name == 'p' || name == 'P') {
 		std::cout << "in p/P" << std::endl;
@@ -399,18 +401,14 @@ void Board::move(int oldr, int oldc, int newr, int newc) {
 		}
 		else if(theBoard[newr][newc] == NULL && abs(newc - oldc) == 1) {
 			std::cout << "in enpassant" << std::endl;
-			delete theBoard[oldr][newc];
-			theBoard[oldr][newc] = NULL;
-			td->notify(oldr, newc);
+			remove(oldr, newc);
 			updateEnpassant = false;
 		}
 
 	}
 	if(theBoard[newr][newc] != NULL) {
 		if(static_cast<Pawn *>(theBoard[newr][newc]) == enpassant) enpassant = NULL;
-		delete theBoard[newr][newc];
-		theBoard[newr][newc] = NULL;
-		td->notify(newr, newc);
+		remove(newr, newc);
 		updateEnpassant = false;
 	}
 	theBoard[oldr][oldc]->setMove(true);
@@ -418,6 +416,9 @@ void Board::move(int oldr, int oldc, int newr, int newc) {
 	theBoard[oldr][oldc] = NULL;
 	theBoard[newr][newc]->setr(newr);
 	theBoard[newr][newc]->setc(newc);
+	updatePiece(newr, newc);
+	updateGrid(newr, newc);
+	updateGrid(oldr, oldc);	
 	td->notify(oldr, oldc);
 	td->notify(newr, newc, name);
 	td->print();
@@ -458,9 +459,11 @@ void Board::play() {
 				}
 				else if(opt == "stdinit") {              //this command provide a standard initial state of a chess
 					for(int i = 0; i < 8; i ++) {
+						std::cout << "first loop" << std::endl;
 						add(1, i, 'p');
 						add(6, i, 'P');
 						if(i == 0) {
+							std::cout << "second loop" << std::endl;
 							add(i, 0, 'r');
 							add(i, 7, 'r');
 							add(i, 1, 'n');
