@@ -4,22 +4,22 @@
 #include <vector>
 #include <stdlib.h>
 #include <time.h>
+#include <sstream>
 
-string string_convert(std::pair <int, int> p) {
-	string str = "";
-	istringstream ss(p.first);
+std::string string_convert(int a, int b) {
+	std::string str = "";
+	int a1 = 8-a;
+	std::istringstream ss(a1);
 	char c1;
 	ss >> c1;
-	istringstream ss(p.second);
-	char c2;
-	ss >> c2;
-	str = str + c1 + " " + c2;
+	char c2 = 'a' + b;
+	str = str + c2 + c1;
 	return str;
 }
 	
 	
 
-string Computer::makeMove() {
+std::string Computer::makeMove() {
 	std::vector <string> tmp;
 	for (int i = 0; i < 7; i++) {
 		for (int j = 0; j < 7; j++) {
@@ -30,7 +30,9 @@ string Computer::makeMove() {
 				for (int x = 0; x < range.size(); x++) {
 					std::pair <int, int> tmp_pair = tmp_range[x];
 					if (ruleCheck(i,j,tmp_pair.first,tmp_pair.second)) {
-						tmp.push_back(string_convert(tmp_pair));
+						string s = string_convert(i,j) + " " +
+							   string_convert(tmp_pair.first,tmp_pair.second);
+						tmp.push_back(s);
 					}
 				}
 			}
@@ -38,7 +40,9 @@ string Computer::makeMove() {
 				for (int x = 0; x < range.size(); x++) {
 					std::pair <int, int> tmp_pair = tmp_range[x];
 					if (ruleCheck(i,j,tmp_pair.first,tmp_pair.second)) {
-						tmp.push_back(string_convert(tmp_pair));
+						string s = string_convert(i,j) + " " +
+							   string_convert(tmp_pair.first, tmp_pair.second);
+						tmp.push_back(s);
 					}
 				}
 			}
@@ -46,7 +50,7 @@ string Computer::makeMove() {
 	}
 	srand(time(NULL));
 	int random = rand()%(tmp.size()-1);
-	string str_rtn = tmp[random];
+	string str_rtn =  tmp[random];
 	return str_rtn;
 }
 
