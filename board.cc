@@ -108,15 +108,16 @@ void Board::add(int r, int c, char p) {
 }
 
 void Board::removeRange(int r, int c) {
-	if(attackBoard[r][c].size() == 0) return ;
 	Pieces* current = theBoard[r][c];
 	std::vector < std::pair <int, int> > range = theBoard[r][c]->getRange();
 	for(std::vector < std::pair <int, int> >::iterator it = range.begin(); it != range.end(); it ++) {
 		int newr = it->first;
 		int newc = it->second;
 		std::vector <Pieces*> attack = attackBoard[newr][newc];
-		for( std::vector < Pieces* >::iterator ait = attack.begin(); ait != attack.end(); ait ++) {
-			if(*ait == current) attack.erase(ait);
+		if(attack.size() != 0) {
+			for( std::vector < Pieces* >::iterator ait = attack.begin(); ait != attack.end(); ait ++) {
+				if(*ait == current) attack.erase(ait);
+			}
 		}
 	}
 }
@@ -145,7 +146,7 @@ void Board::updateGrid(int r, int c) {
 }
 
 
-		
+
 
 std::vector <int> Board::convert(std::string pos) {
 	std::stringstream ss(pos);
@@ -256,7 +257,7 @@ bool Board::preCheck(int row, int col, int new_row, int new_col) {
 	}
 	else if (n == 'p' && diff_col == 1) {
 		if (theBoard[new_row][new_col] != NULL || (static_cast<Pawn *>(theBoard[row][new_col]) == enpassant) && enpassant != NULL) {
-				return true;
+			return true;
 		}
 		else {
 			return false;
@@ -282,7 +283,7 @@ bool Board::preCheck(int row, int col, int new_row, int new_col) {
 		}
 	}
 }
-	
+
 
 
 bool Board::ruleCheck(int row, int col, int new_row, int new_col) {
