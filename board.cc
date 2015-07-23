@@ -56,8 +56,10 @@ void Board::cleanup() {
 
 void Board::remove(int r, int c) {
 	if(0 <= r && r < 8 && 0 <= c && c < 8 && theBoard[r][c]) {
-		removeRange(r, c);
-		delete theBoard[r][c];
+		if(theBoard[r][c] != NULL) {
+			removeRange(r, c);
+			delete theBoard[r][c];
+		}
 		theBoard[r][c] = NULL;
 		td->notify(r, c);
 	}
@@ -65,10 +67,10 @@ void Board::remove(int r, int c) {
 }
 
 void Board::add(int r, int c, char p) {
+	std::cout << "addding " << std::endl;
 	if(0 <= r && r < 8 && 0 <= c && c < 8) {
 		if(theBoard[r][c]) {
-			delete theBoard[r][c];
-			theBoard[r][c] = NULL;
+			remove(r, c);
 		}
 		if(p == 'r' || p == 'R') {
 			theBoard[r][c] = new Rook(r, c, p);
@@ -106,6 +108,7 @@ void Board::add(int r, int c, char p) {
 }
 
 void Board::removeRange(int r, int c) {
+	if(attackBoard[r][c].size() == 0) return ;
 	Pieces* current = theBoard[r][c];
 	std::vector < std::pair <int, int> > range = theBoard[r][c]->getRange();
 	for(std::vector < std::pair <int, int> >::iterator it = range.begin(); it != range.end(); it ++) {
@@ -459,31 +462,25 @@ void Board::play() {
 				}
 				else if(opt == "stdinit") {              //this command provide a standard initial state of a chess
 					for(int i = 0; i < 8; i ++) {
-						std::cout << "first loop" << std::endl;
 						add(1, i, 'p');
 						add(6, i, 'P');
-						if(i == 0) {
-							std::cout << "second loop" << std::endl;
-							add(i, 0, 'r');
-							add(i, 7, 'r');
-							add(i, 1, 'n');
-							add(i, 6, 'n');
-							add(i, 2, 'b');
-							add(i, 5, 'b');
-							add(i, 3, 'q');
-							add(i, 4, 'k');
-						}
-						if(i == 7) {
-							add(i, 0, 'R');
-							add(i, 7, 'R');
-							add(i, 1, 'N');
-							add(i, 6, 'N');
-							add(i, 2, 'B');
-							add(i, 5, 'B');
-							add(i, 3, 'Q');
-							add(i, 4, 'K');
-						}
 					}
+					add(0, 0, 'r');
+					add(0, 7, 'r');
+					add(0, 1, 'n');
+					add(0, 6, 'n');
+					add(0, 2, 'b');
+					add(0, 5, 'b');
+					add(0, 3, 'q');
+					add(0, 4, 'k');
+					add(7, 0, 'R');
+					add(7, 7, 'R');
+					add(7, 1, 'N');
+					add(7, 6, 'N');
+					add(7, 2, 'B');
+					add(7, 5, 'B');
+					add(7, 3, 'Q');
+					add(7, 4, 'K');
 					td->print();
 				}
 				else if(opt == "done") {
