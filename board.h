@@ -16,7 +16,7 @@ class View;
 class Board {
 		//to make sure we only have one game board, we use the singleton pattern
 		static Board* singleton;
-		sd::vector < std::vector < std::vector <Pieces*> > > attackBoard; //the board indecating which pieces can attack the 
+		std::vector < std::vector < std::vector <Pieces*> > > attackBoard; //the board indecating which pieces can attack the 
 		int turn; //determines whose turn to move, 0 represents white and 1 represents black
 		std::vector <std::vector <Pieces* > > theBoard; //the board
 		Controller* p1;  //Player 1 (white-player)
