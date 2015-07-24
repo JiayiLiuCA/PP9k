@@ -281,8 +281,8 @@ bool Board::preCheck(int row, int col, int new_row, int new_col) {
 bool Board::ruleCheck(int row, int col, int new_row, int new_col) {
 	std::cout << "in rule" << std::endl;
 	int col_diff, row_diff;
-	col_diff = abs(new_row - row);
-	row_diff = abs(new_col - col);
+	row_diff = abs(new_row - row);
+	col_diff = abs(new_col - col);
 	bool isMove = false;
 	Pieces* tmp1 = theBoard[row][col];
 	for(std::vector <Pieces*>::iterator it = attackBoard[new_row][new_col].begin(); it != attackBoard[new_row][new_col].end(); it ++) {
@@ -294,19 +294,23 @@ bool Board::ruleCheck(int row, int col, int new_row, int new_col) {
 			isMove = true;
 		}
 	}
-	if(tmp1->getName() == 'p' || tmp1->getName() == 'P') {
-		if(col_diff == 1) {
-			if(theBoard[new_row][new_col] != NULL || (static_cast< Pawn* >(theBoard[row][col]) == enpassant && enpassant != NULL)) isMove = true;
-			else {
-				std::cout << "setting move to false again" << std::endl;
-				isMove = false;
-			}
+	if((tmp1->getName() == 'p' || tmp1->getName() == 'P') && col_diff == 1) {
+		std::cout << "in speacial cond" << std::endl;
+		std::cout << col_diff << std::endl;
+		if(enpassant == NULL) std::cout << "no enpassant" << std::endl;
+		else {
+			std::cout << "the coords of enpassant is " << enpassant->getr() << " " << enpassant->getc() << std::endl;
+		}
+		if(theBoard[new_row][new_col] != NULL || (static_cast< Pawn* >(theBoard[row][new_col]) == enpassant && enpassant != NULL)) isMove = true;
+		else {
+			std::cout << "setting move to false again" << std::endl;
+			isMove = false;
 		}
 	}
 	std::cout << "isMove is " << isMove << std::endl;
 	if(theBoard[new_row][new_col] != NULL && abs(tmp1->getName() - theBoard[new_row][new_col]->getName()) < 25) {
-			std::cout << "you cannot eat allies " << std::endl;
-			return false;
+		std::cout << "you cannot eat allies " << std::endl;
+		return false;
 	}
 	else {
 		std::cout << "in else " << std::endl;
@@ -387,7 +391,6 @@ void Board::notify(std::string move, char team) {
 		}
 		std::cout << "initial over" << std::endl;
 		if(theBoard[oldr][oldc] == NULL ||!ruleCheck(oldr, oldc, newr, newc)) {
-			if(theBoard[oldr][oldc] == NULL) std::cout << "NULLLL" << std::endl;
 			std::cout << "invalid move please enter again" << std::endl;
 			if(turn == 0) p1->makeMove();
 			else p2->makeMove();
@@ -545,13 +548,18 @@ void Board::play() {
 			td->print();
 			std::cout << "the battle begins!" << std::endl;
 			while(true) {
-				if(!updateEnpassant) enpassant = NULL;
+				if(!updateEnpassant) {
+					std::cout << "erasing enpassant" << std::endl;
+					enpassant = NULL;
+				}
 				if(turn == 0 && playing) {
 					std::cout << "white's turn to move" << std::endl;
+					if(enpassant != NULL) std::cout << "you can enpassant now !!!" << std::endl;
 					p1->makeMove();
 				}
 				else if(turn == 1 && playing) {
 					std::cout << "black's turn to move" << std::endl;
+					if(enpassant != NULL) std::cout << "you can enpassant now !!!" << std::endl;
 					p2->makeMove();
 				}
 				turn = !turn;
