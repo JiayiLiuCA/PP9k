@@ -7,6 +7,7 @@
 #include <sstream>
 #include <iostream>
 #include <cmath>
+#include <algorithm>
 
 Board* Board::singleton = NULL;
 
@@ -74,26 +75,32 @@ void Board::add(int r, int c, char p) {
 		if(p == 'r' || p == 'R') {
 			theBoard[r][c] = new Rook(r, c, p);
 			updatePiece(r, c);
+			updateGrid(r, c);
 		}
 		if(p == 'n' || p == 'N') {
 			theBoard[r][c] = new Knight(r, c, p);	
 			updatePiece(r, c);
+			updateGrid(r, c);
 		}
 		if(p == 'b' || p == 'B') {
 			theBoard[r][c] = new Bishop(r, c, p);
 			updatePiece(r, c);
+			updateGrid(r, c);
 		}
 		if(p == 'q' || p == 'Q') {
 			theBoard[r][c] = new Queen(r, c, p);
 			updatePiece(r, c);
+			updateGrid(r, c);
 		}
 		if(p == 'k' || p == 'K') {
 			theBoard[r][c] = new King(r, c, p);
 			updatePiece(r, c);
+			updateGrid(r, c);
 		}
 		if(p == 'p' || p == 'P') {
 			theBoard[r][c] = new Pawn(r, c, p);
 			updatePiece(r, c);
+			updateGrid(r, c);
 		}
 		td->notify(r, c, p);
 	}
@@ -117,7 +124,8 @@ void Board::removeRange(int r, int c) {
 
 
 void Board::updatePiece(int r, int c) {
-	std::cout << "updating piece" << std::endl;
+	std::cout << "updating piece ";
+	std::cout << theBoard[r][c]->getName() << std::endl;
 	removeRange(r, c);
 	std::vector < std::pair <int, int> > range = theBoard[r][c]->getRange();
 	for(std::vector < std::pair <int, int> >::iterator it = range.begin(); it != range.end(); it ++) {
@@ -237,7 +245,7 @@ bool Board::preCheck(int row, int col, int new_row, int new_col) {
 		return true;
 	}
 	else if (n == 'R' || n == 'r' || n == 'Q' || n == 'q' || n == 'B' || n == 'b') {
-		for (int i = 1; i < diff_row; i++) {
+		for (int i = 1; i < std::max(diff_row, diff_col); i++) {
 			if (theBoard[row + dir_row * i][col + dir_col * i] != NULL) {
 				return false;
 			}
@@ -295,10 +303,12 @@ bool Board::ruleCheck(int row, int col, int new_row, int new_col) {
 		if(*it == tmp1) isMove = true;
 	}
 
-	if(theBoard[new_row][new_col] != NULL) {
-		if(abs(tmp1->getName() - theBoard[new_row][new_col]->getName()) < 25) return false;
+	if(theBoard[new_row][new_col] != NULL && abs(tmp1->getName() - theBoard[new_row][new_col]->getName()) < 25) {
+			std::cout << "you cannot eat allies " << std::endl;
+			return false;
 	}
 	else {
+		std::cout << "in else " << std::endl;
 		Pieces* tmp = NULL;
 		if(theBoard[new_row][new_col] != NULL) {
 			tmp = theBoard[new_row][new_col];
@@ -313,6 +323,7 @@ bool Board::ruleCheck(int row, int col, int new_row, int new_col) {
 		updateGrid(row, col);
 		updateGrid(new_row, new_col);
 		updatePiece(new_row, new_col);
+		std::cout << "233" << std::endl;
 		if((turn == 0 && check('K')) || (turn == 1 && check('k'))) {
 			std::cout << "this move will put your king in check" << std::endl;
 			removeRange(new_row, new_col);
@@ -340,7 +351,7 @@ bool Board::ruleCheck(int row, int col, int new_row, int new_col) {
 			if(tmp) updatePiece(new_row, new_col);
 			updatePiece(row, col);
 			std::cout << "end rule" << std::endl;
-			return true;	
+			if(isMove) return true;	
 		}
 	}
 }
@@ -368,8 +379,15 @@ void Board::notify(std::string move, char team) {
 		oldc = convert(pos1)[1];
 		newr = convert(pos2)[0];
 		newc = convert(pos2)[1];
+		if(oldr < 0 || oldr > 7 || oldc < 0 || oldc > 7 || newr < 0 || newr > 7 || newc < 0 || newc > 7) {
+			std::cout << "out of range please enter again" << std::endl;
+			if(turn == 0) p1->makeMove();
+			else p2->makeMove();
+			return;
+		}
 		std::cout << "initial over" << std::endl;
 		if(theBoard[oldr][oldc] == NULL ||!ruleCheck(oldr, oldc, newr, newc)) {
+			if(theBoard[oldr][oldc] == NULL) std::cout << "NULLLL" << std::endl;
 			std::cout << "invalid move please enter again" << std::endl;
 			if(turn == 0) p1->makeMove();
 			else p2->makeMove();
@@ -403,6 +421,7 @@ bool Board::check(char king) {
 				if(theBoard[i][j]->getName() == king) {
 					row = i;
 					col = j;
+				//	std::cout << "the king locatets at" << row << " " << col << std::endl;
 				}}}}
 	std::vector< Pieces* > tmp = attackBoard[row][col];
 	for(std::vector< Pieces* >::iterator it = tmp.begin(); it != tmp.end(); it ++) {
@@ -441,9 +460,10 @@ void Board::move(int oldr, int oldc, int newr, int newc) {
 	theBoard[oldr][oldc] = NULL;
 	theBoard[newr][newc]->setr(newr);
 	theBoard[newr][newc]->setc(newc);
-	updatePiece(newr, newc);
+	theBoard[newr][newc]->setRange();
+	updateGrid(oldr, oldc);
 	updateGrid(newr, newc);
-	updateGrid(oldr, oldc);	
+	updatePiece(newr, newc);
 	td->notify(oldr, oldc);
 	td->notify(newr, newc, name);
 	td->print();
