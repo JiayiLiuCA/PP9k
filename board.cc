@@ -421,11 +421,14 @@ bool Board::check(char king) {
 				if(theBoard[i][j]->getName() == king) {
 					row = i;
 					col = j;
-				//	std::cout << "the king locatets at" << row << " " << col << std::endl;
+					std::cout << "the king locatets at" << row << " " << col << std::endl;
 				}}}}
 	std::vector< Pieces* > tmp = attackBoard[row][col];
 	for(std::vector< Pieces* >::iterator it = tmp.begin(); it != tmp.end(); it ++) {
-		if(abs((*it)->getName() - king) > 25) return true;
+		if(abs((*it)->getName() - king) > 22) {
+			std::cout << "in check" << std::endl;
+			return true;
+		}
 	}
 	return false;
 }
