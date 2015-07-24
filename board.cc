@@ -310,6 +310,8 @@ bool Board::ruleCheck(int row, int col, int new_row, int new_col) {
 		removeRange(row, col);
 		theBoard[new_row][new_col] = theBoard[row][col];
 		theBoard[row][col] = NULL;
+		theBoard[new_row][new_col]->setr(new_row);
+		theBoard[new_row][new_col]->setc(new_col);
 		theBoard[new_row][new_col]->setRange();
 		updateGrid(row, col);
 		updateGrid(new_row, new_col);
@@ -319,21 +321,26 @@ bool Board::ruleCheck(int row, int col, int new_row, int new_col) {
 			removeRange(new_row, new_col);
 			theBoard[row][col] = theBoard[new_row][new_col];
 			theBoard[new_row][new_col] = tmp;
+			theBoard[row][col]->setr(row);
+			theBoard[row][col]->setc(col);
 			theBoard[row][col]->setRange();
 			updateGrid(row, col);
 			updateGrid(new_row, new_col);
-			updatePiece(new_row, new_col);
+			if(tmp) updatePiece(new_row, new_col);
 			updatePiece(row, col);
 			return false;
 		}
 		else {
+			std::cout << "king is not in check" << std::endl;
 			removeRange(new_row, new_col);
 			theBoard[row][col] = theBoard[new_row][new_col];
 			theBoard[new_row][new_col] = tmp;
+			theBoard[row][col]->setr(row);
+			theBoard[row][col]->setc(col);
 			theBoard[row][col]->setRange();
 			updateGrid(row, col);
 			updateGrid(new_row, new_col);
-			updatePiece(new_row, new_col);
+			if(tmp) updatePiece(new_row, new_col);
 			updatePiece(row, col);
 			std::cout << "end rule" << std::endl;
 			return true;
