@@ -101,44 +101,40 @@ void Board::add(int r, int c, char p) {
 }
 
 void Board::removeRange(int r, int c) {
-	std::cout << "in range" << std::endl;
 	Pieces* current = theBoard[r][c];
 	std::vector < std::pair <int, int> > range = theBoard[r][c]->getRange();
 	for(std::vector < std::pair <int, int> >::iterator it = range.begin(); it != range.end(); it ++) {
-		std::cout << "first loop" << std::endl;
 		int newr = it->first;
 		int newc = it->second;
-		std::cout << newr << " " << newc << std::endl;
 		std::vector <Pieces*> attack = attackBoard[newr][newc];
 		if(attack.size() != 0) {
 			for( std::vector < Pieces* >::iterator ait = attackBoard[newr][newc].begin(); ait < attackBoard[newr][newc].end(); ait ++) {
-		//		std::cout << "second loop" << std::endl;
-		//		std::cout << "before : " << attack.size() << std::endl;
 				if(*ait == current) attackBoard[newr][newc].erase(ait);
 			}
 		}
 	}
-	std::cout << "out range" << std::endl;
 }
 
 
 void Board::updatePiece(int r, int c) {
+	std::cout << "updating piece" << std::endl;
 	removeRange(r, c);
 	std::vector < std::pair <int, int> > range = theBoard[r][c]->getRange();
 	for(std::vector < std::pair <int, int> >::iterator it = range.begin(); it != range.end(); it ++) {
 		int newr = it->first;
 		int newc = it->second;
 		std::vector <Pieces*> attack = attackBoard[newr][newc];
-		if(preCheck(r, c, newr, newc)) attackBoard[newr][newc].push_back(theBoard[r][c]);
+		if(preCheck(r, c, newr, newc)) {
+			attackBoard[newr][newc].push_back(theBoard[r][c]);
+			std::cout << newr << " " << newc << std::endl;
+		}
 	}
 }
 
 void Board::updateGrid(int r, int c) {
-	std::cout << "in the grid the size is ";
 	std::vector < Pieces *> attack = attackBoard[r][c];
-	std::cout << attack.size() << std::endl;
 	if(attack.size() == 0) {
-		std::cout << "this is an empty grid" << std::endl;
+
 		return ;
 	}
 	else {
@@ -261,6 +257,7 @@ bool Board::preCheck(int row, int col, int new_row, int new_col) {
 	}
 	else if (n == 'p' && diff_col == 1) {
 		if (theBoard[new_row][new_col] != NULL || (static_cast<Pawn *>(theBoard[row][new_col]) == enpassant) && enpassant != NULL) {
+			std::cout << "enpassant is true" << std::endl;
 			return true;
 		}
 		else {
@@ -343,7 +340,7 @@ bool Board::ruleCheck(int row, int col, int new_row, int new_col) {
 			if(tmp) updatePiece(new_row, new_col);
 			updatePiece(row, col);
 			std::cout << "end rule" << std::endl;
-			return true;
+			return true;	
 		}
 	}
 }
