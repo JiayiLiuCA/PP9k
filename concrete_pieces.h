@@ -43,7 +43,6 @@ class Knight:public Pieces {
 class Pawn:public Pieces {
 	public:
 		Pawn(int r, int c, char name): Pieces(r, c, name) { 
-			std::cout << "new a Pawn" << std::endl;
 			setRange(); 
 		}
 		bool moveCheck(int row, int col, int new_row, int new_col);

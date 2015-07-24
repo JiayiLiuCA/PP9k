@@ -67,7 +67,6 @@ void Board::remove(int r, int c) {
 }
 
 void Board::add(int r, int c, char p) {
-	std::cout << "addding " << std::endl;
 	if(0 <= r && r < 8 && 0 <= c && c < 8) {
 		if(theBoard[r][c]) {
 			remove(r, c);
@@ -102,20 +101,24 @@ void Board::add(int r, int c, char p) {
 }
 
 void Board::removeRange(int r, int c) {
+	std::cout << "in range" << std::endl;
 	Pieces* current = theBoard[r][c];
 	std::vector < std::pair <int, int> > range = theBoard[r][c]->getRange();
 	for(std::vector < std::pair <int, int> >::iterator it = range.begin(); it != range.end(); it ++) {
 		std::cout << "first loop" << std::endl;
 		int newr = it->first;
 		int newc = it->second;
+		std::cout << newr << " " << newc << std::endl;
 		std::vector <Pieces*> attack = attackBoard[newr][newc];
 		if(attack.size() != 0) {
-			std::cout << "inside loop" << std::endl;
-			for( std::vector < Pieces* >::iterator ait = attack.begin(); ait != attack.end(); ait ++) {
+			for( std::vector < Pieces* >::iterator ait = attack.begin(); ait < attack.end(); ait ++) {
+				std::cout << "second loop" << std::endl;
 				if(*ait == current) attack.erase(ait);
+				std::cout << attack.size() << std::endl;
 			}
 		}
 	}
+	std::cout << "out range" << std::endl;
 }
 
 
@@ -131,8 +134,12 @@ void Board::updatePiece(int r, int c) {
 }
 
 void Board::updateGrid(int r, int c) {
+	std::cout << "in the grid" << std::endl;
 	std::vector < Pieces *> attack = attackBoard[r][c];
-	if(attack.size() == 0) return ;
+	if(attack.size() == 0) {
+		std::cout << "this is an empty grid" << std::endl;
+		return ;
+	}
 	else {
 		for(int i = 0; i < attack.size(); i ++) {
 			Pieces* tmp = attack[i];
@@ -283,38 +290,48 @@ bool Board::preCheck(int row, int col, int new_row, int new_col) {
 
 
 bool Board::ruleCheck(int row, int col, int new_row, int new_col) {
+	std::cout << "in rule" << std::endl;
 	bool isMove = false;
 	Pieces* tmp1 = theBoard[row][col];
 	for(std::vector <Pieces*>::iterator it = attackBoard[new_row][new_col].begin(); it != attackBoard[new_row][new_col].end(); it ++) {
 		if(*it == tmp1) isMove = true;
 	}
 
-	if((theBoard[new_row][new_col] != NULL) && abs(tmp1->getName() - theBoard[new_row][new_col]->getName()) < 25) return false;
+	if(theBoard[new_row][new_col] != NULL) {
+		if(abs(tmp1->getName() - theBoard[new_row][new_col]->getName()) < 25) return false;
+	}
 	else {
 		Pieces* tmp = NULL;
 		if(theBoard[new_row][new_col] != NULL) {
 			tmp = theBoard[new_row][new_col];
 			removeRange(new_row, new_col);
 		}
+		removeRange(row, col);
 		theBoard[new_row][new_col] = theBoard[row][col];
 		theBoard[row][col] = NULL;
 		updateGrid(row, col);
 		updateGrid(new_row, new_col);
+		updatePiece(new_row, new_col);
 		if((turn == 0 && check('K')) || (turn == 1 && check('k'))) {
 			std::cout << "this move will put your king in check" << std::endl;
+			removeRange(new_row, new_col);
 			theBoard[row][col] = theBoard[new_row][new_col];
 			theBoard[new_row][new_col] = tmp;
 			updateGrid(row, col);
 			updateGrid(new_row, new_col);
-			if(tmp != NULL) updatePiece(new_row, new_col);
+			updatePiece(new_row, new_col);
+			updatePiece(row, col);
 			return false;
 		}
 		else {
+			removeRange(new_row, new_col);
 			theBoard[row][col] = theBoard[new_row][new_col];
 			theBoard[new_row][new_col] = tmp;
 			updateGrid(row, col);
 			updateGrid(new_row, new_col);
-			if(tmp != NULL) updatePiece(new_row, new_col);
+			updatePiece(new_row, new_col);
+			updatePiece(row, col);
+			std::cout << "end rule" << std::endl;
 			return true;
 		}
 	}
