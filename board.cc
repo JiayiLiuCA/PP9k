@@ -131,7 +131,6 @@ void Board::updatePiece(int r, int c) {
 	for(std::vector < std::pair <int, int> >::iterator it = range.begin(); it != range.end(); it ++) {
 		int newr = it->first;
 		int newc = it->second;
-		std::vector <Pieces*> attack = attackBoard[newr][newc];
 		if(preCheck(r, c, newr, newc)) {
 			attackBoard[newr][newc].push_back(theBoard[r][c]);
 			std::cout << newr << " " << newc << std::endl;
@@ -287,14 +286,24 @@ bool Board::ruleCheck(int row, int col, int new_row, int new_col) {
 	bool isMove = false;
 	Pieces* tmp1 = theBoard[row][col];
 	for(std::vector <Pieces*>::iterator it = attackBoard[new_row][new_col].begin(); it != attackBoard[new_row][new_col].end(); it ++) {
-		if(*it == tmp1) isMove = true;
-	}
-	if(tmp1->getName() == 'p' || 'P') {
-		if(col_diff == 1) {
-			if(theBoard[new_row][new_col] != NULL || (static_cast< Pawn* >(theBoard[row][col]) == enpassant && enpassant != NULL)) isMove = true;
-			else isMove = false;
+		std::cout << "the row in rulecheck is: " << new_row << std::endl;
+		std::cout << "the col in rulecheck is: " << new_col << std::endl;
+		std::cout << "the name of the piece can get here is: " << (*it)->getName() << std::endl;
+		std::cout << "the name of the piece that is checking is " << tmp1->getName() << std::endl;	
+		if((*it) == tmp1) {
+			isMove = true;
 		}
 	}
+	if(tmp1->getName() == 'p' || tmp1->getName() == 'P') {
+		if(col_diff == 1) {
+			if(theBoard[new_row][new_col] != NULL || (static_cast< Pawn* >(theBoard[row][col]) == enpassant && enpassant != NULL)) isMove = true;
+			else {
+				std::cout << "setting move to false again" << std::endl;
+				isMove = false;
+			}
+		}
+	}
+	std::cout << "isMove is " << isMove << std::endl;
 	if(theBoard[new_row][new_col] != NULL && abs(tmp1->getName() - theBoard[new_row][new_col]->getName()) < 25) {
 			std::cout << "you cannot eat allies " << std::endl;
 			return false;
