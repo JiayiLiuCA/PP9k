@@ -263,15 +263,6 @@ bool Board::preCheck(int row, int col, int new_row, int new_col) {
 			return true;
 		}
 	}
-	else if (n == 'p' && diff_col == 1) {
-		if (theBoard[new_row][new_col] != NULL || (static_cast<Pawn *>(theBoard[row][new_col]) == enpassant) && enpassant != NULL) {
-			std::cout << "enpassant is true" << std::endl;
-			return true;
-		}
-		else {
-			return false;
-		}
-	}
 	else if (n == 'P' && diff_col == 0) {
 		if (theBoard[row-1][col] != NULL) {
 			return false;
@@ -283,26 +274,27 @@ bool Board::preCheck(int row, int col, int new_row, int new_col) {
 			return true;
 		}
 	}
-	else if (n == 'P' && diff_col == 1) {
-		if (theBoard[new_row][new_col] != NULL || ((static_cast<Pawn *>(theBoard[row][new_col]) == enpassant) && enpassant != NULL)) {
-			return true;
-		}
-		else {
-			return false;
-		}
-	}
+	else if(n == 'p' || n == 'P') return true;
 }
 
 
 
 bool Board::ruleCheck(int row, int col, int new_row, int new_col) {
 	std::cout << "in rule" << std::endl;
+	int col_diff, row_diff;
+	col_diff = abs(new_row - row);
+	row_diff = abs(new_col - col);
 	bool isMove = false;
 	Pieces* tmp1 = theBoard[row][col];
 	for(std::vector <Pieces*>::iterator it = attackBoard[new_row][new_col].begin(); it != attackBoard[new_row][new_col].end(); it ++) {
 		if(*it == tmp1) isMove = true;
 	}
-
+	if(tmp1->getName() == 'p' || 'P') {
+		if(col_diff == 1) {
+			if(theBoard[new_row][new_col] != NULL || (static_cast< Pawn* >(theBoard[row][col]) == enpassant && enpassant != NULL)) isMove = true;
+			else isMove = false;
+		}
+	}
 	if(theBoard[new_row][new_col] != NULL && abs(tmp1->getName() - theBoard[new_row][new_col]->getName()) < 25) {
 			std::cout << "you cannot eat allies " << std::endl;
 			return false;
@@ -323,7 +315,6 @@ bool Board::ruleCheck(int row, int col, int new_row, int new_col) {
 		updateGrid(row, col);
 		updateGrid(new_row, new_col);
 		updatePiece(new_row, new_col);
-		std::cout << "233" << std::endl;
 		if((turn == 0 && check('K')) || (turn == 1 && check('k'))) {
 			std::cout << "this move will put your king in check" << std::endl;
 			removeRange(new_row, new_col);
