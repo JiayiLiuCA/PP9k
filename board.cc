@@ -111,10 +111,10 @@ void Board::removeRange(int r, int c) {
 		std::cout << newr << " " << newc << std::endl;
 		std::vector <Pieces*> attack = attackBoard[newr][newc];
 		if(attack.size() != 0) {
-			for( std::vector < Pieces* >::iterator ait = attack.begin(); ait < attack.end(); ait ++) {
-				std::cout << "second loop" << std::endl;
-				if(*ait == current) attack.erase(ait);
-				std::cout << attack.size() << std::endl;
+			for( std::vector < Pieces* >::iterator ait = attackBoard[newr][newc].begin(); ait < attackBoard[newr][newc].end(); ait ++) {
+		//		std::cout << "second loop" << std::endl;
+		//		std::cout << "before : " << attack.size() << std::endl;
+				if(*ait == current) attackBoard[newr][newc].erase(ait);
 			}
 		}
 	}
@@ -134,15 +134,16 @@ void Board::updatePiece(int r, int c) {
 }
 
 void Board::updateGrid(int r, int c) {
-	std::cout << "in the grid" << std::endl;
+	std::cout << "in the grid the size is ";
 	std::vector < Pieces *> attack = attackBoard[r][c];
+	std::cout << attack.size() << std::endl;
 	if(attack.size() == 0) {
 		std::cout << "this is an empty grid" << std::endl;
 		return ;
 	}
 	else {
 		for(int i = 0; i < attack.size(); i ++) {
-			Pieces* tmp = attack[i];
+			Pieces* tmp = attackBoard[r][c][i];
 			updatePiece(tmp->getr(), tmp->getc());
 		}
 	}
@@ -309,6 +310,7 @@ bool Board::ruleCheck(int row, int col, int new_row, int new_col) {
 		removeRange(row, col);
 		theBoard[new_row][new_col] = theBoard[row][col];
 		theBoard[row][col] = NULL;
+		theBoard[new_row][new_col]->setRange();
 		updateGrid(row, col);
 		updateGrid(new_row, new_col);
 		updatePiece(new_row, new_col);
@@ -317,6 +319,7 @@ bool Board::ruleCheck(int row, int col, int new_row, int new_col) {
 			removeRange(new_row, new_col);
 			theBoard[row][col] = theBoard[new_row][new_col];
 			theBoard[new_row][new_col] = tmp;
+			theBoard[row][col]->setRange();
 			updateGrid(row, col);
 			updateGrid(new_row, new_col);
 			updatePiece(new_row, new_col);
@@ -327,6 +330,7 @@ bool Board::ruleCheck(int row, int col, int new_row, int new_col) {
 			removeRange(new_row, new_col);
 			theBoard[row][col] = theBoard[new_row][new_col];
 			theBoard[new_row][new_col] = tmp;
+			theBoard[row][col]->setRange();
 			updateGrid(row, col);
 			updateGrid(new_row, new_col);
 			updatePiece(new_row, new_col);
