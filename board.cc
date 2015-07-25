@@ -602,6 +602,7 @@ void Board::move(int oldr, int oldc, int newr, int newc) {
 		updateEnpassant = false;
 	}
 	theBoard[oldr][oldc]->setMove(true);
+	std::cout << "setting " << theBoard[oldr][oldc]->getName() << "'s Move to true" << std::endl;
 	theBoard[newr][newc] = theBoard[oldr][oldc];
 	theBoard[oldr][oldc] = NULL;
 	theBoard[newr][newc]->setr(newr);
