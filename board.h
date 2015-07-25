@@ -32,6 +32,7 @@ class Board {
 		~Board();
 		static void cleanup();
 	public:
+		void clearGame(); //clear all the pieces on the board and reset a new game  
 		void play(); //this command begins the whole game 
 		static Board* getInstance();
 		void updatePiece(int r, int c);//update the attackBoard	

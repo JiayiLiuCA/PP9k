@@ -54,6 +54,23 @@ void Board::cleanup() {
    delete singleton;
 }
 
+void Board::clearGame() {
+	for(int i = 0; i < 8; i ++) {
+		for(int j = 0; j < 8; j ++) {
+			if(theBoard[i][j] != NULL) {
+				delete theBoard[i][j];
+				theBoard[i][j] = NULL;
+			}
+			while(attackBoard[i][j].size() != 0) attackBoard[i][j].pop_back();
+		}
+	}
+	turn = 0;
+	playing = false;
+	enpassant = NULL;
+	updateEnpassant = false;
+	delete td;
+	td = NULL;
+}
 
 void Board::remove(int r, int c) {
 	if(0 <= r && r < 8 && 0 <= c && c < 8 && theBoard[r][c]) {
@@ -546,9 +563,9 @@ bool Board::checkMate(char king) {
 			int row_dir, col_dir;
 			int row_diff = abs(checkr - r);
 			int col_diff = abs(checkc - c);
-			if(row_diff = 0) row_dir = 0;
+			if(row_diff == 0) row_dir = 0;
 			else row_dir = row_diff / (checkr - r);
-			if(col_diff = 0) col_dir = 0;	
+			if(col_diff == 0) col_dir = 0;	
 			else col_diff = col_diff / (checkc - c);
 			for(int i = 1; i < std::max(row_diff, col_diff); i ++) {
 				checkr = r + row_dir * i;
@@ -694,7 +711,6 @@ void Board::play() {
 						if(checkMate('k')) {
 							std::cout << "Checkmate! White wins!" << std::endl;
 							playing = false;
-							turn = 0;
 							p1Score ++;
 							break;
 						}
@@ -709,19 +725,18 @@ void Board::play() {
 						if(checkMate('K')) {
 							std::cout << "Checkmate! Black wins!" << std::endl;
 							playing = false;
-							turn = 0;
 							p2Score ++;
 							break;
 						}
 					}
-
 				}
-				turn = !turn;
-				if(!playing) {
-					std::cout << "White: " << p1Score << std::endl;
-					std::cout << "Black: " << p2Score << std::endl;
-					break;
-				}
+			}
+			turn = !turn;
+			if(!playing) {
+				std::cout << "White: " << p1Score << std::endl;
+				std::cout << "Black: " << p2Score << std::endl;
+				clearGame();
+				break;
 			}
 		}
 	}
