@@ -165,8 +165,6 @@ void Board::updateGrid(int r, int c) {
 		int size = attackBoard[r][c].size();
 		std::vector < std::pair <int, int> > total;
 		for(int i = 0; i < size; i ++) {
-			std::cout << attackBoard[r][c][i]->getr() << std::endl;
-			std::cout << attackBoard[r][c][i]->getc() << std::endl;
 			std::pair <int, int> tmp;
 			tmp.first = attackBoard[r][c][i]->getr();
 			tmp.second = attackBoard[r][c][i]->getc();
@@ -470,8 +468,6 @@ void Board::notify(std::string move, char team) {
 		std::cout << "initial over" << std::endl;
 		if(theBoard[oldr][oldc] == NULL ||!ruleCheck(oldr, oldc, newr, newc)) {
 			std::cout << "invalid move please enter again" << std::endl;
-			std::cin.ignore(INT_MAX, '\n');
-			std::cin.clear();
 			if(turn == 0) p1->makeMove();
 			else p2->makeMove();
 			return;
