@@ -288,49 +288,27 @@ bool Board::preCheck(int row, int col, int new_row, int new_col) {
 bool Board::castling(int r, int c, int nr, int nc, char k) {
 	int col_diff = abs(nc - c);
 	int dir = col_diff / (nc - c);
-	std::vector < Pieces* > tmp;
-	if(theBoard[r][c]->getStatus()) {
-		std::cout << "king has been moved" << std::endl;
-		return false;
-	}
+	std::vector < Piece* > tmp;
 	if(check(k)) {
 		std::cout << "king is in check" << std::endl;
 		return false;
 	}
 	else if (dir > 0) {
-		std::cout << "dir > 0" << std::endl;
-		if(theBoard[r][c + 3] == NULL) return false;
-		if(theBoard[r][c + 3] != NULL && theBoard[r][c + 3]->getStatus()) return false;
 		for(int i = 1; i < 3; i ++) {
 			if(theBoard[r][c + i * dir] != NULL) return false;
 			tmp = attackBoard[r][c + i * dir];
-			for(std::vector < Pieces* >::iterator it = tmp.begin(); it != tmp.end(); it ++) {
-				if(std::abs((*it)->getName() - k) > 22) return false;
+			for(std::vector < Piece* >::iterator = it = tmp.begin(); it != tmp.end(); it ++) {
+				if(std::abs(it->getName() - k) > 22) return false;
 			}
 		}
 	}
 	else if (dir < 0) {
-		std::cout << "dir < 0" << std::endl;
-		if(theBoard[r][c - 4] == NULL) {
-			std::cout << "no rook" << std::endl;
-			return false;
-		}
-		if(theBoard[r][c - 4] != NULL && theBoard[r][c - 4]->getStatus()) {
-			std::cout << "rook has been moved" << std::endl;
-			return false;
-		}
 		for(int i = 1; i < 4; i ++) {
-			if(theBoard[r][c + i * dir] != NULL) {
-				std::cout << "there is a piece on the road" << std::endl;
-				return false;
-			}
+			if(theBoard[r][c + i * dir] != NULL) return false;
 			tmp = attackBoard[r][c + i * dir];
 			if(i < 3) {
-				for(std::vector < Pieces* >::iterator it = tmp.begin(); it != tmp.end(); it ++) {
-					if(std::abs((*it)->getName() - k) > 22) {
-						std::cout << "maybe check on the road" << std::endl;
-						return false;
-					}
+				for(std::vector < Piece* >::iterator = it = tmp.begin(); it != tmp.end(); it ++) {
+					if(std::abs(it->getName() - k) > 22) return false;
 				}
 			}
 		}
@@ -358,12 +336,8 @@ bool Board::ruleCheck(int row, int col, int new_row, int new_col) {
 		}
 	}
 	if((tmp1->getName() == 'K' || tmp1->getName() == 'k') && (col_diff == 2)) {
-		std::cout << "running castling" << std::endl;
-		if(castling(row, col, new_row, new_col, tmp1->getName())) return true;
-		else {
-			std::cout << "castling fail" << std::endl;
-			return false;
-		}
+		if(caslting(row, col, new_row, new_col, tmp1->getName())) return true;
+		else return false;
 	}
 	std::cout << "isMove is " << isMove << std::endl;
 	if(theBoard[new_row][new_col] != NULL && abs(tmp1->getName() - theBoard[new_row][new_col]->getName()) < 25) {
@@ -461,20 +435,16 @@ void Board::notify(std::string move, char team) {
 				return;
 			}
 			else {
-				int col_diff = abs(oldc - newc);
+				int col_diff = abs
 				char name = theBoard[oldr][oldc]->getName();
 				if((name == 'k' || name == 'K') && col_diff == 2) {
-					int dir = col_diff / (newc - oldc);
-					this->move(oldr, oldc, newr, newc);
-					if(dir > 0) this->move(oldr, oldc + 3, oldr, oldc + 1);
-					else this->move(oldr, oldc - 4, oldr, oldc - 1);
-				}
+
 				this->move(oldr, oldc, newr, newc);
 			}
+
 		}
 	}
 }
-				
 
 
 
@@ -482,14 +452,14 @@ void Board::notify(std::string move, char team) {
 bool Board::check(char king) {
 	int row, col;
 	char piece;
-	for(int i = 0; i < 8; i ++) 
-		for(int j = 0; j < 8; j ++) 
-			if(theBoard[i][j] != NULL) 
+	for(int i = 0; i < 8; i ++) {
+		for(int j = 0; j < 8; j ++) {
+			if(theBoard[i][j] != NULL) {
 				if(theBoard[i][j]->getName() == king) {
 					row = i;
 					col = j;
 					std::cout << "the king locatets at " << row << " " << col << std::endl;
-				}
+				}}}}
 	std::vector< Pieces* > tmp = attackBoard[row][col];
 	for(std::vector< Pieces* >::iterator it = tmp.begin(); it != tmp.end(); it ++) {
 		if(abs((*it)->getName() - king) > 22) {
