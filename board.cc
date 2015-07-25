@@ -90,32 +90,32 @@ void Board::add(int r, int c, char p) {
 			remove(r, c);
 		}
 		if(p == 'r' || p == 'R') {
-			theBoard[r][c] = new Rook(r, c, p);
+			theBoard[r][c] = new Rook(r, c, p, false);
 			updatePiece(r, c);
 			updateGrid(r, c);
 		}
 		if(p == 'n' || p == 'N') {
-			theBoard[r][c] = new Knight(r, c, p);	
+			theBoard[r][c] = new Knight(r, c, p, false);	
 			updatePiece(r, c);
 			updateGrid(r, c);
 		}
 		if(p == 'b' || p == 'B') {
-			theBoard[r][c] = new Bishop(r, c, p);
+			theBoard[r][c] = new Bishop(r, c, p, false);
 			updatePiece(r, c);
 			updateGrid(r, c);
 		}
 		if(p == 'q' || p == 'Q') {
-			theBoard[r][c] = new Queen(r, c, p);
+			theBoard[r][c] = new Queen(r, c, p, false);
 			updatePiece(r, c);
 			updateGrid(r, c);
 		}
 		if(p == 'k' || p == 'K') {
-			theBoard[r][c] = new King(r, c, p);
+			theBoard[r][c] = new King(r, c, p, false);
 			updatePiece(r, c);
 			updateGrid(r, c);
 		}
 		if(p == 'p' || p == 'P') {
-			theBoard[r][c] = new Pawn(r, c, p);
+			theBoard[r][c] = new Pawn(r, c, p, false);
 			updatePiece(r, c);
 			updateGrid(r, c);
 		}
@@ -144,8 +144,6 @@ void Board::removeRange(int r, int c) {
 
 
 void Board::updatePiece(int r, int c) {
-	std::cout << "updating piece ";
-	std::cout << theBoard[r][c]->getName() << std::endl;
 	removeRange(r, c);
 	std::vector < std::pair <int ,int> > range = theBoard[r][c]->getRange();
 	for(std::vector < std::pair <int, int> >::iterator it = range.begin(); it != range.end(); it ++) {
@@ -160,7 +158,6 @@ void Board::updatePiece(int r, int c) {
 void Board::updateGrid(int r, int c) {
 	std::vector < Pieces *> attack = attackBoard[r][c];
 	if(attack.size() == 0) {
-		std::cout << "This is an empty grid" << std::endl;
 		return ;
 	}
 	else {
