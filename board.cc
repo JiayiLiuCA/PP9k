@@ -429,7 +429,8 @@ bool Board::ruleCheck(int row, int col, int new_row, int new_col) {
 			updateGrid(new_row, new_col);
 			if(tmp) updatePiece(new_row, new_col);
 			updatePiece(row, col);
-			if(isMove) return true;	
+			if(isMove) return true;
+			else return false;	
 		}
 	}
 }
