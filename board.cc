@@ -364,6 +364,7 @@ bool Board::ruleCheck(int row, int col, int new_row, int new_col) {
 	col_diff = abs(new_col - col);
 	bool isMove = false;
 	Pieces* tmp1 = theBoard[row][col];
+	std::cout << "Checking does grid " << new_row << " " << new_col << " has " << tmp1->getName() << std::endl;
 	for(std::vector <Pieces*>::iterator it = attackBoard[new_row][new_col].begin(); it != attackBoard[new_row][new_col].end(); it ++) {
 		if((*it) == tmp1) {
 			isMove = true;
@@ -373,7 +374,7 @@ bool Board::ruleCheck(int row, int col, int new_row, int new_col) {
 		std::cout << col_diff << std::endl;
 		if(theBoard[new_row][new_col] != NULL || (static_cast< Pawn* >(theBoard[row][new_col]) == enpassant && enpassant != NULL)) isMove = true;
 		else {
-			isMove = false;
+			return false;
 		}
 	}
 	if((tmp1->getName() == 'K' || tmp1->getName() == 'k') && (col_diff == 2)) {
@@ -384,7 +385,6 @@ bool Board::ruleCheck(int row, int col, int new_row, int new_col) {
 			return false;
 		}
 	}
-	std::cout << "isMove is " << isMove << std::endl;
 	if(theBoard[new_row][new_col] != NULL && abs(tmp1->getName() - theBoard[new_row][new_col]->getName()) < 25) {
 		std::cout << "you cannot eat allies " << std::endl;
 		return false;
@@ -466,6 +466,7 @@ void Board::notify(std::string move, char team) {
 			return;
 		}
 		std::cout << "initial over" << std::endl;
+		std::cout << "checking from " << oldr << " " << oldc << " to " << newr << " " << newc << std::endl;
 		if(theBoard[oldr][oldc] == NULL ||!ruleCheck(oldr, oldc, newr, newc)) {
 			std::cout << "invalid move please enter again" << std::endl;
 			if(turn == 0) p1->makeMove();
@@ -699,12 +700,10 @@ void Board::play() {
 			std::cout << "the battle begins!" << std::endl;
 			while(true) {
 				if(!updateEnpassant) {
-					std::cout << "erasing enpassant" << std::endl;
 					enpassant = NULL;
 				}
 				if(turn == 0 && playing) {
 					std::cout << "white's turn to move" << std::endl;
-					if(enpassant != NULL) std::cout << "you can enpassant now !!!" << std::endl;
 					p1->makeMove();
 					if(check('k')) {
 						std::cout << "Black is in check!" << std::endl;
@@ -718,7 +717,6 @@ void Board::play() {
 				}
 				else if(turn == 1 && playing) {
 					std::cout << "black's turn to move" << std::endl;
-					if(enpassant != NULL) std::cout << "you can enpassant now !!!" << std::endl;
 					p2->makeMove();
 					if(check('K')) {
 						std::cout << "White is in check!" << std::endl;
