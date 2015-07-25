@@ -308,6 +308,7 @@ bool Board::castling(int r, int c, int nr, int nc, char k) {
 				if(std::abs((*it)->getName() - k) > 22) return false;
 			}
 		}
+		return true;
 	}
 	else if (dir < 0) {
 		std::cout << "dir < 0" << std::endl;
@@ -326,6 +327,7 @@ bool Board::castling(int r, int c, int nr, int nc, char k) {
 			}
 			tmp = attackBoard[r][c + i * dir];
 			if(i < 3) {
+				std::cout << "this is in the loop" << std::endl;
 				for(std::vector < Pieces* >::iterator it = tmp.begin(); it != tmp.end(); it ++) {
 					if(std::abs((*it)->getName() - k) > 22) {
 						std::cout << "maybe check on the road" << std::endl;
@@ -333,6 +335,7 @@ bool Board::castling(int r, int c, int nr, int nc, char k) {
 					}
 				}
 			}
+			return true;
 		}
 	}
 }
@@ -466,8 +469,10 @@ void Board::notify(std::string move, char team) {
 				if((name == 'k' || name == 'K') && col_diff == 2) {
 					int dir = col_diff / (newc - oldc);
 					this->move(oldr, oldc, newr, newc);
+					std::cout << "first move down" << std::endl;
 					if(dir > 0) this->move(oldr, oldc + 3, oldr, oldc + 1);
 					else this->move(oldr, oldc - 4, oldr, oldc - 1);
+					return ;
 				}
 				this->move(oldr, oldc, newr, newc);
 			}
