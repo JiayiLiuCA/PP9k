@@ -321,6 +321,7 @@ bool Board::castling(int r, int c, int nr, int nc, char k) {
 			return false;
 		}
 		for(int i = 1; i < 4; i ++) {
+			std::cout << "testing " << r << " " << c + i * dir << std::endl;
 			if(theBoard[r][c + i * dir] != NULL) {
 				std::cout << "there is a piece on the road" << std::endl;
 				return false;
@@ -335,8 +336,8 @@ bool Board::castling(int r, int c, int nr, int nc, char k) {
 					}
 				}
 			}
-			return true;
 		}
+		return true;
 	}
 }
 
