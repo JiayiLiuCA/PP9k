@@ -310,6 +310,7 @@ bool Board::castling(int r, int c, int nr, int nc, char k) {
 	int dir = col_diff / (nc - c);
 	std::vector < Pieces* > tmp;
 	if(theBoard[r][c]->getStatus()) {
+		std::cout << r << " " << c << " has been moved" << std::endl;
 		std::cout << "king has been moved" << std::endl;
 		return false;
 	}
@@ -341,7 +342,6 @@ bool Board::castling(int r, int c, int nr, int nc, char k) {
 			return false;
 		}
 		for(int i = 1; i < 4; i ++) {
-			std::cout << "testing " << r << " " << c + i * dir << std::endl;
 			if(theBoard[r][c + i * dir] != NULL) {
 				std::cout << "there is a piece on the road" << std::endl;
 				return false;
@@ -639,8 +639,11 @@ void Board::play() {
 					char piece;
 					std::string pos;
 					std::cin >> pos >> piece;
-					add(convert(pos)[0], convert(pos)[1], piece);
-					td->print();
+					if(piece == 'r' || piece == 'R' ||piece == 'B' ||piece == 'b' ||piece == 'N' ||piece == 'n' ||piece == 'Q' ||piece == 'q' ||piece == 'K' ||piece == 'k' ||piece == 'P' ||piece == 'p') {
+						add(convert(pos)[0], convert(pos)[1], piece);
+						td->print();
+					}
+					else std::cout << "not valid piece" << std::endl;
 				}
 				else if(opt == "=") {
 					std::string color;
@@ -731,13 +734,13 @@ void Board::play() {
 						}
 					}
 				}
-			}
-			turn = !turn;
-			if(!playing) {
-				std::cout << "White: " << p1Score << std::endl;
-				std::cout << "Black: " << p2Score << std::endl;
-				clearGame();
-				break;
+				turn = !turn;
+				if(!playing) {
+					std::cout << "White: " << p1Score << std::endl;
+					std::cout << "Black: " << p2Score << std::endl;
+					clearGame();
+					break;
+				}
 			}
 		}
 	}
