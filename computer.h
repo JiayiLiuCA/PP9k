@@ -3,8 +3,9 @@
 #include <string>
 #include "controller.h"
 
-class Computer: public: controller {
+class Computer: public Controller {
 	public:
-		string makeMove();
+		void makeMove();
+		Computer(Board* game, char team);
 };
 #endif

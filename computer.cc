@@ -5,27 +5,31 @@
 #include <stdlib.h>
 #include <time.h>
 #include <sstream>
+#include "pieces.h"
+#include "controller.h"
+
+Computer::Computer(Board *game, char team): Controller(game,team) {}
 
 std::string string_convert(int a, int b) {
-	std::string str = "";
+	std::string str;
 	int a1 = 8-a;
-	std::istringstream ss(a1);
-	char c1;
-	ss >> c1;
-	char c2 = 'a' + b;
-	str = str + c2 + c1;
+	std::ostringstream ss;
+	ss << a1;
+	str = ss.str();
+	char c1 = 'a' + b;
+	str = str + c1;
 	return str;
 }
 	
 	
 
-std::string Computer::makeMove() {
+void Computer::makeMove() {
 	std::vector <std::string> tmp;
 	for (int i = 0; i < 7; i++) {
 		for (int j = 0; j < 7; j++) {
-			char name = game->theBoard[i][j]->getName();
-			std::vector< std::pair <int, int> > range = game->theBoard[i][j]->getRange();
-			if (name >= 'A' && name <= 'Z' && team == 'A') {
+			char name = game->getPiece(i,j)->getName();
+			std::vector< std::pair <int, int> > range = game->getPiece(i,j)->getRange();
+			if (name >= 'A' && name <= 'Z' && this->getTeam() == 'A') {
 				for (int x = 0; x < range.size(); x++) {
 					std::pair <int, int> tmp_pair = range[x];
 					if (game->ruleCheck(i,j,tmp_pair.first,tmp_pair.second)) {
@@ -35,7 +39,7 @@ std::string Computer::makeMove() {
 					}
 				}
 			}
-			else if (name >= 'a' && name <= 'z' && team == 'z') {
+			else if (name >= 'a' && name <= 'z' && this->getTeam() == 'z') {
 				for (int x = 0; x < range.size(); x++) {
 					std::pair <int, int> tmp_pair = range[x];
 					if (game->ruleCheck(i,j,tmp_pair.first,tmp_pair.second)) {
@@ -49,19 +53,14 @@ std::string Computer::makeMove() {
 	}
 	srand(time(NULL));
 	int random = rand()%(tmp.size()-1);
-	std::string str_rtn =  tmp[random];
-	return str_rtn;
+	std::string opt;
+	while (std::cin >> opt) {
+		if (opt == "move") {
+			game->notify(tmp[random], this->getTeam());
+			break;
+		}
+		else {
+			std::cout << "invalid command please enter again" << std::endl;
+		}
+	}
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
