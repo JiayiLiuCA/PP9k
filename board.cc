@@ -2,6 +2,7 @@
 #include "textdisplay.h"
 #include "concrete_pieces.h"
 #include "human.h"
+#include "computer.h"
 #include <vector>
 #include <string>
 #include <sstream>
@@ -469,6 +470,8 @@ void Board::notify(std::string move, char team) {
 		std::cout << "initial over" << std::endl;
 		if(theBoard[oldr][oldc] == NULL ||!ruleCheck(oldr, oldc, newr, newc)) {
 			std::cout << "invalid move please enter again" << std::endl;
+			std::cin.ignore(INT_MAX, '\n');
+			std::cin.clear();
 			if(turn == 0) p1->makeMove();
 			else p2->makeMove();
 			return;
@@ -693,9 +696,9 @@ void Board::play() {
 			std::string player1, player2;
 			std::cin >> player1 >> player2;
 			if(player1 == "human") p1 = new Human(this, 'A');
-			else std::cout << "not support for AI now" << std::endl;
+			else p1 = new Computer(this, 'A');
 			if(player2 == "human") p2 = new Human(this, 'z');
-			else std::cout << "not support for AI now" << std::endl;
+			else p2 = new Computer(this, 'z');
 			td->print();
 			std::cout << "the battle begins!" << std::endl;
 			while(true) {
