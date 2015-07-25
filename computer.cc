@@ -44,7 +44,8 @@ void Computer::makeMove() {
 								//std::cout << "range is " << range.size() << std::endl;
 								if (game->ruleCheck(i,j,tmp_pair.first,tmp_pair.second)) { 
 									std::cout << "first ruleCheck: " << i << j << tmp_pair.first << tmp_pair.second << " is true" << std::endl;
-									std::cout << "second ruleCheck: " << game->ruleCheck(i,j,tmp_pair.first, tmp_pair.second) << std::endl;
+									std::cout << "傻逼陈梓涵" << game->ruleCheck(i,j,tmp_pair.first, tmp_pair.second) << std::endl;
+									std::cout << "陈梓涵傻逼" << game->ruleCheck(i,j,tmp_pair.first, tmp_pair.second) << std::endl;
 									std::string s = string_convert(i,j) + " " +
 										string_convert(tmp_pair.first,tmp_pair.second);
 									std::cout << "input :" << s << std::endl;
