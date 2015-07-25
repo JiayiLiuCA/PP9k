@@ -131,10 +131,8 @@ void Board::updatePiece(int r, int c) {
 	for(std::vector < std::pair <int, int> >::iterator it = range.begin(); it != range.end(); it ++) {
 		int newr = (*it).first;
 		int newc = (*it).second;
-		std::cout << "try to add: " << newr << " " << newc << std::endl;
 		if(preCheck(r, c, newr, newc)) {
 			attackBoard[newr][newc].push_back(theBoard[r][c]);
-			std::cout << "success added: "<< newr << " " << newc << std::endl;
 		}
 	}
 }
@@ -287,6 +285,11 @@ bool Board::preCheck(int row, int col, int new_row, int new_col) {
 }
 
 
+bool Board::castling(int r, int c, int nr, int nc, char k) {
+	int col_diff = abs(nc - c);
+	int dir = col_diff / (nc - c);
+	return true;
+}
 
 bool Board::ruleCheck(int row, int col, int new_row, int new_col) {
 	std::cout << "in rule" << std::endl;
@@ -308,6 +311,10 @@ bool Board::ruleCheck(int row, int col, int new_row, int new_col) {
 			isMove = false;
 		}
 	}
+	//if((tmp1->getName() == 'K' || tmp1->getName() == 'k') && (col_diff == 2)) {
+	//	if(caslting(row, col, new_row, new_col, tmp1->getName())) return true;
+	//	else return false;
+	//}
 	std::cout << "isMove is " << isMove << std::endl;
 	if(theBoard[new_row][new_col] != NULL && abs(tmp1->getName() - theBoard[new_row][new_col]->getName()) < 25) {
 		std::cout << "you cannot eat allies " << std::endl;
@@ -478,9 +485,8 @@ void Board::move(int oldr, int oldc, int newr, int newc) {
 
 
 void Board::play() {
-	while(true) {
-		std::string command;
-		std::cin >> command;
+	std::string command;
+	while(std::cin >> command) {
 		if(command == "setup") {
 			delete td;
 			td = new TextDisplay();

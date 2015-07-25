@@ -51,6 +51,7 @@ class Board {
 		bool preCheck(int row, int col, int new_row, int new_col);	
 		bool checkMate(); //determine whether it is a checkmate
 		void removeRange(int r, int c);
+		bool castling(int r, int c, int nr, int nc, char k);
 
 };
 #endif
