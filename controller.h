@@ -15,4 +15,6 @@ class Controller {
 
 std::string string_convert(int a, int b);
 
+int value(char p);
+
 #endif

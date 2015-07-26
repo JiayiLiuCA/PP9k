@@ -22,3 +22,21 @@ std::string string_convert (int a, int b) {
 	return str;
 }
 
+int value(char p) {
+	if (p == 'q' || p == 'Q') {
+		return 7;
+	}
+	else if (p == 'r' || p == 'R') {
+		return 5;
+	}
+	else if (p == 'b' || p == 'B') {
+		return 4;
+	}
+	else if (p == 'n' || p == 'N') {
+		return 3;
+	}
+	else {
+		return 1;
+	}
+}
+
