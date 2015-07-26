@@ -7,6 +7,7 @@
 #include <sstream>
 #include "pieces.h"
 #include "controller.h"
+#include <cmath>
 
 Computer1::Computer1(Board *game, char team): Controller(game,team) {}
 
@@ -22,23 +23,20 @@ void Computer1::makeMove() {
 					if (tmp_p != NULL) {
 						char name = tmp_p->getName();
 						std::vector< std::pair <int, int> > range = tmp_p->getRange();
-						if (name >= 'A' && name <= 'Z' && this->getTeam() == 'A') {
+						if (std::abs(name - this->getTeam()) < 25) {
+							std::cout << "name :" << name << " team: " << this->getTeam() << std::endl;
 							for (int x = 0; x < range.size(); x++) {
 								std::pair <int, int> tmp_pair = range[x];
-								if (game->ruleCheck(i,j,tmp_pair.first,tmp_pair.second)) { 
-									std::string s = string_convert(i,j) + " " +
-										string_convert(tmp_pair.first,tmp_pair.second);
-									std::cout << "input :" << s << std::endl;
-									tmp.push_back(s);
-								}
-							}
-						}
-						else if (name >= 'a' && name <= 'z' && this->getTeam() == 'z') {
-							for (int x = 0; x < range.size(); x++) {
-								std::pair <int, int> tmp_pair = range[x];
+								std::cout << "陈梓涵傻逼" << i << j << tmp_pair.first << tmp_pair.second << std::endl;
 								if (game->ruleCheck(i,j,tmp_pair.first,tmp_pair.second)) {
 									std::string s = string_convert(i,j) + " " +
-										string_convert(tmp_pair.first, tmp_pair.second);
+										string_convert(tmp_pair.first,tmp_pair.second);
+									if (name == 'P' && tmp_pair.first == 0) {
+										s = s + " " + 'Q';
+									}
+									if (name == 'p' && tmp_pair.first == 7) {
+										s = s + " " + 'q';
+									}
 									std::cout << "input :" << s << std::endl;
 									tmp.push_back(s);
 								}
