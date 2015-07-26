@@ -1,6 +1,7 @@
 #ifndef __COMPUTER_H__
 #define __COMPUTER_H__
 #include <string>
+#include <sstream>
 #include "controller.h"
 
 std::string string_convert(int a, int b) {
