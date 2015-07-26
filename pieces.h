@@ -21,6 +21,6 @@ class Pieces {
 		void setc(int col);
 		virtual void setRange() = 0;
 		std::vector< std::pair <int, int> > getRange();
-		~Pieces();	
+		virtual ~Pieces() = 0;	
 };
 #endif

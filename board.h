@@ -28,6 +28,7 @@ class Board {
 		bool updateEnpassant; //whether the enpassant is update or not
 		View* gd; // the graphical display
 		View* td; // the text display
+		std::vector <std::pair < std::vector <int>, std::string> > stack; //use to store the history moves;
 		Board();  //Constructor constructs an empty board
 		~Board();
 		static void cleanup();
@@ -42,7 +43,7 @@ class Board {
 //the methods below are designed to use in setup mode
 //---------------------------------------------------------------
 		void remove(int r, int c); //remove the pieces at (r, c)
-		void add(int r, int c, char p); //add a piece at (r, c)
+		void add(int r, int c, char p, bool move); //add a piece at (r, c)
 		bool checkBoard(); //check whether the current board is "valid" in setup mode thus determing whether to end setup mode or not
 //---------------------------------------------------------------		
 		void notify(std::string move, char team); //the boards take moving commands from controller
@@ -54,6 +55,8 @@ class Board {
 		bool checkMate(char king); //determine whether it is a checkmate for king
 		void removeRange(int r, int c);
 		bool castling(int r, int c, int nr, int nc, char k);
+		void preundo();
+		void undo();//undo a previous move
 
 };
 #endif
