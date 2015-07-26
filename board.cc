@@ -409,10 +409,11 @@ bool Board::ruleCheck(int row, int col, int new_row, int new_col) {
 	if((turn == 0 && check('K')) || (turn == 1 && check('k'))) {
 		std::cout << "this move will put you king in check" << std::endl;
 		preundo();
-		turn = !turn;
+		return false;
 	}
-	else {
-		preundo();
+	else{
+		std::cout << "recover" << std::endl;
+	   	preundo();
 	}
 	if(isMove) return true;
 	else return false;
@@ -475,14 +476,14 @@ void Board::notify(std::string move, char team) {
 					return ;
 				}
 				this->move(oldr, oldc, newr, newc);
-				if(((newr == 0) && (theBoard[newr][newc]->getName() == 'P')) || ((newr == 7) && (theBoard[newr][newc]->getName() == 'p'))) {
+/*				if(((newr == 0) && (theBoard[newr][newc]->getName() == 'P')) || ((newr == 7) && (theBoard[newr][newc]->getName() == 'p'))) {
 					std::cout << "in promotion" << std::endl;
 					char promote;
 					ss >> promote;
 					remove(newr, newc);
 					add(newr, newc, promote, true);
 					td->print();
-				}
+				}*/
 			}
 		}
 	}
@@ -546,7 +547,9 @@ bool Board::checkMate(char king) {
 		attack = attackBoard[checkr][checkc];
 		for(std::vector <Pieces *>::iterator it = attack.begin(); it != attack.end(); it ++) {
 			name = (*it)->getName();
-			if(abs(name - king) < 22 && abs(name - king) != 0) {
+			int olr = (*it)->getr();
+			int olc = (*it)->getc();
+			if((abs(name - king) < 22 && abs(name - king) != 0) && ruleCheck(olr, olc, checkr, checkc)) {
 				return false;
 			}
 		}
@@ -565,14 +568,15 @@ bool Board::checkMate(char king) {
 				attack = attackBoard[checkr][checkc];
 				for(std::vector <Pieces *>::iterator it = attack.begin(); it != attack.end(); it ++) {
 					name = (*it)->getName();
-					if(abs(name - king) < 22) {
+					int olr = (*it)->getName();
+					int olc = (*it)->getName();
+					if((abs(name - king) < 22) && ruleCheck(olr, olc, checkr, checkc)) {
 						return false;
 					}
 				}
 			}
 			return true;
 		}
-		return true;
 	}
 }
 
@@ -755,11 +759,11 @@ void Board::play() {
 			std::string player1, player2;
 			std::cin >> player1 >> player2;
 			if(player1 == "human") p1 = new Human(this, 'A');
-//			else if(player1 == "computer1") new Computer1(this, 'A');
-//			else if(player1 == "computer2") new Computer2(this, 'A');
+			else if(player1 == "computer1") new Computer1(this, 'A');
+			else if(player1 == "computer2") new Computer2(this, 'A');
 			if(player2 == "human") p2 = new Human(this, 'z');
-//			else if(player2 == "computer1") new Computer1(this, 'z');
-//			else if(player2 == "computer2") new Computer2(this, 'z');
+			else if(player2 == "computer1") new Computer1(this, 'z');
+			else if(player2 == "computer2") new Computer2(this, 'z');
 			td->print();
 			std::cout << "the battle begins!" << std::endl;
 			while(true) {
