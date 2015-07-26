@@ -8,22 +8,9 @@
 #include "pieces.h"
 #include "controller.h"
 
-Computer::Computer(Board *game, char team): Controller(game,team) {}
+Computer1::Computer1(Board *game, char team): Controller(game,team) {}
 
-std::string string_convert(int a, int b) {
-	std::string str;
-	int a1 = 8-a;
-	std::ostringstream ss;
-	ss << a1;
-	str = ss.str();
-	char c1 = 'a' + b;
-	str = c1 + str;
-	return str;
-}
-	
-	
-
-void Computer::makeMove() {
+void Computer1::makeMove() {
 	std::cout << "in makeMove" << std::endl;
 	std::string opt;
 	while (std::cin >> opt) {
