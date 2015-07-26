@@ -497,6 +497,7 @@ bool Board::check(char king) {
 	std::vector< Pieces* > tmp = attackBoard[row][col];
 	for(std::vector< Pieces* >::iterator it = tmp.begin(); it != tmp.end(); it ++) {
 		if(abs((*it)->getName() - king) > 22) {
+			if(((*it)->getName() == 'P' || 'p') && ((*it)->getc() - col == 0)) return false;
 			return true;
 		}
 	}
