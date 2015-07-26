@@ -16,11 +16,11 @@ void Computer2::makeMove() {
 	while (std::cin >> opt) {
 		if (opt == "move") {
 			std::vector <std::string> tmp;
+			int max_profit = 0;
 			for (int i = 0; i < 8; i++) {
 				for (int j = 0; j < 8; j++) {
 					Pieces *tmp_p = game->getPiece(i,j);
 					if (tmp_p != NULL) {
-						int max_profit = 0;
 						char name = tmp_p->getName();
 						std::vector <std::pair <int, int> > range = tmp_p->getRange();
 						if (std::abs(name - this->getTeam()) < 25) {
@@ -50,12 +50,13 @@ void Computer2::makeMove() {
 									}
 									if (profit == max_profit) {
 										std::cout << "input :" << s << std::endl;
+										std::cout << "profit :" << profit << std::endl;
 										tmp.push_back(s);
 									}
 									if (profit > max_profit) {
 										max_profit = profit;
 										tmp.clear();
-										std::cout << "clear" << s << std::endl;
+										std::cout << "max_profit change to" << max_profit << std::endl;
 										std::cout << "input :" << s << std::endl;
 										tmp.push_back(s);
 									}
@@ -65,7 +66,8 @@ void Computer2::makeMove() {
 					}
 				}
 			}
-			std::cout << "final size: " << tmp.size() << std::endl;
+			//std::cout << "final size: " << tmp.size() << std::endl;
+			std::cout << "final profit: " << max_profit << std::endl;
 			srand(time(NULL));
 			int random = rand()%(tmp.size());
 			std::cout << "chosen move is ********************** "<< tmp[random] << std::endl;
