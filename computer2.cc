@@ -69,7 +69,7 @@ void Computer2::makeMove() {
 			}
 			std::cout << "final size: " << tmp.size() << std::endl;
 			srand(time(NULL));
-			int random = rand()%(tmp.size()-1);
+			int random = rand()%(tmp.size());
 			std::cout << "chosen move is ********************** "<< tmp[random] << std::endl;
 			game->notify(tmp[random], this->getTeam());
 			break;
