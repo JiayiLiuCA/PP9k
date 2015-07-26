@@ -468,14 +468,14 @@ void Board::notify(std::string move, char team) {
 					return ;
 				}
 				this->move(oldr, oldc, newr, newc);
-				/*				if(((newr == 0) && (theBoard[newr][newc]->getName() == 'P')) || ((newr == 7) && (theBoard[newr][newc]->getName() == 'p'))) {
-								std::cout << "in promotion" << std::endl;
-								char promote;
-								ss >> promote;
-								remove(newr, newc);
-								add(newr, newc, promote, true);
-								td->print();
-								}*/
+				if(((newr == 0) && (theBoard[newr][newc]->getName() == 'P')) || ((newr == 7) && (theBoard[newr][newc]->getName() == 'p'))) {
+					std::cout << "in promotion" << std::endl;
+					char promote;
+					ss >> promote;
+					remove(newr, newc);
+					add(newr, newc, promote, true);
+					td->print();
+				}
 			}
 		}
 	}
