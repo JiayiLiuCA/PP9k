@@ -39,8 +39,6 @@ void Computer2::makeMove() {
 									if (game->check('k') || game->check('K')) {
 										profit += 999;
 									}
-									//std::cout << "max_profit :" << max_profit << std::endl;
-									//std::cout << "current profit :" << profit << std::endl;
 									game->preundo();
 									std::string s = string_convert(i,j) + " " +
 										string_convert(tmp_pair.first,tmp_pair.second);
