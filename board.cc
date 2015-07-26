@@ -289,6 +289,7 @@ bool Board::preCheck(int row, int col, int new_row, int new_col) {
 
 bool Board::castling(int r, int c, int nr, int nc, char k) {
 	int col_diff = abs(nc - c);
+	if((nc - c) == 0) return false;
 	int dir = col_diff / (nc - c);
 	std::vector < Pieces* > tmp;
 	if(theBoard[r][c]->getStatus()) {
@@ -340,6 +341,7 @@ bool Board::castling(int r, int c, int nr, int nc, char k) {
 }
 
 bool Board::ruleCheck(int row, int col, int new_row, int new_col) {
+	std::cout << "in ruleCheck" << std::endl;
 	char name = '-';
 	bool status1 = false;
 	bool status2 = theBoard[row][col]->getStatus();
@@ -353,24 +355,37 @@ bool Board::ruleCheck(int row, int col, int new_row, int new_col) {
 			isMove = true;
 		}
 	}
-	if((tmp->getName() == 'p' || tmp->getName() == 'P') && col_diff == 1) {
-		std::cout << col_diff << std::endl;
-		if(theBoard[new_row][new_col] != NULL || (static_cast< Pawn* >(theBoard[row][new_col]) == enpassant && enpassant != NULL)) {
-			if(static_cast< Pawn* >(theBoard[row][new_col]) == enpassant && enpassant != NULL) name = 'p';
-			isMove = true;
+	if(tmp->getName() == 'p' || tmp->getName() == 'P') {
+		if(col_diff == 1) {
+			if(theBoard[new_row][new_col] != NULL || (static_cast< Pawn* >(theBoard[row][new_col]) == enpassant && enpassant != NULL)) {
+				if(static_cast< Pawn* >(theBoard[row][new_col]) == enpassant && enpassant != NULL) name = 'p';
+				isMove = true;
+			}
+			else {
+				std::cout << "out ruleCheck 1" << std::endl;
+				return false;
+			}
 		}
-		else return false;
+		else if((tmp->getName() == 'p' && theBoard[row + 1][col] != NULL) || (tmp->getName() == 'P' && theBoard[row - 1][col] != NULL)) {
+			std::cout << "out ruleCheck 2" << std::endl;
+			return false;
+		}
+		else if(row_diff == 2 && ((tmp->getName() == 'p' && theBoard[row + 2][col] != NULL) || (tmp->getName() == 'P' && theBoard[row - 2][col] != NULL)))  return false;
+		else isMove = true;
 	}
-	if(isMove == false) return false;
+	if(isMove == false) {
+		std::cout << "out ruleCheck 3" << std::endl;
+		return false;
+	}
 	if((tmp->getName() == 'K' || tmp->getName() == 'k') && (col_diff == 2)) {
 		if(castling(row, col, new_row, new_col, tmp->getName())) return true;
 		else {
-			std::cout << "castling fail" << std::endl;
+			std::cout << "castling fail out ruleCheck 4" << std::endl;
 			return false;
 		}
 	}
 	if(theBoard[new_row][new_col] != NULL && abs(tmp->getName() - theBoard[new_row][new_col]->getName()) < 25) {
-		std::cout << "you cannot eat allies " << std::endl;
+		std::cout << "you cannot eat allies  out ruleCheck 5" << std::endl;
 		return false;
 	}
 	if(theBoard[new_row][new_col] != NULL) {
@@ -379,15 +394,21 @@ bool Board::ruleCheck(int row, int col, int new_row, int new_col) {
 	}
 	move(row, col, new_row, new_col);
 	if((turn == 0 && check('K')) || (turn == 1 && check('k'))) {
-		std::cout << "this move will put you king in check" << std::endl;
+		std::cout << "this move will put you king in check out ruleCheck 6" << std::endl;
 		preundo();
 		return false;
 	}
 	else{
-	   	preundo();
+		preundo();
 	}
-	if(isMove) return true;
-	else return false;
+	if(isMove) {
+		std::cout << "out ruleCheck 7" << std::endl;
+		return true;
+	}
+	else {
+		std::cout << "out ruleCheck 8" << std::endl;
+		return false;
+	}
 
 }
 
@@ -447,14 +468,14 @@ void Board::notify(std::string move, char team) {
 					return ;
 				}
 				this->move(oldr, oldc, newr, newc);
-/*				if(((newr == 0) && (theBoard[newr][newc]->getName() == 'P')) || ((newr == 7) && (theBoard[newr][newc]->getName() == 'p'))) {
-					std::cout << "in promotion" << std::endl;
-					char promote;
-					ss >> promote;
-					remove(newr, newc);
-					add(newr, newc, promote, true);
-					td->print();
-				}*/
+				/*				if(((newr == 0) && (theBoard[newr][newc]->getName() == 'P')) || ((newr == 7) && (theBoard[newr][newc]->getName() == 'p'))) {
+								std::cout << "in promotion" << std::endl;
+								char promote;
+								ss >> promote;
+								remove(newr, newc);
+								add(newr, newc, promote, true);
+								td->print();
+								}*/
 			}
 		}
 	}
@@ -556,8 +577,8 @@ void Board::undo() {
 }
 
 void Board::preundo() {
+	std::cout << "in preundo" << std::endl;
 	std::vector <std::pair <std::vector<int>, std::string> >::iterator it = stack.end() - 1;
-	std::cout << "stack" << std::endl;
 	std::pair <std::vector <int>, std::string> move = *it;
 	int r, c, newr, newc;
 	newr = move.first[2];
@@ -590,6 +611,7 @@ void Board::preundo() {
 	updateGrid(newr, newc);
 	theBoard[r][c]->setMove(status1);
 	td->notify(r, c, theBoard[r][c]->getName());
+	std::cout << "outpreundo" << std::endl;
 }
 
 
@@ -744,7 +766,7 @@ void Board::play() {
 						if(checkMate('K')) {
 							std::cout << "Checkmate! Black wins!" << std::endl;
 							playing = false;
-							p1Score ++;
+							p2Score ++;
 							break;
 						}
 					}
@@ -758,7 +780,7 @@ void Board::play() {
 						if(checkMate('k')) {
 							std::cout << "Checkmate! White wins!" << std::endl;
 							playing = false;
-							p2Score ++;
+							p1Score ++;
 							break;
 						}
 					}
@@ -767,12 +789,10 @@ void Board::play() {
 					td->print();
 				}
 				turn = !turn;
-				if(!playing) {
-					std::cout << "White: " << p1Score << std::endl;
-					std::cout << "Black: " << p2Score << std::endl;
-					break;
-				}
+				if(!playing) break;
 			}
+			std::cout << "White: " << p1Score << std::endl;
+			std::cout << "Black: " << p2Score << std::endl;
 		}
 	}
 }
