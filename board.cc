@@ -253,24 +253,12 @@ bool Board::preCheck(int row, int col, int new_row, int new_col) {
 	int diff_col = std::abs(col - new_col);
 	int dir_row;
 	int dir_col;
-	if (diff_row != 0) {
-		dir_row = diff_row / (new_row - row);
-	}
-	else {
-		dir_row = 0;
-	}
-	if (diff_col != 0) {
-		dir_col = diff_col / (new_col - col);
-	}
-	else {
-		dir_col = 0;
-	}
-	if (tmp->moveCheck(row,col,new_row,new_col) == false) {
-		return false;
-	}
-	else if (n == 'N' || n == 'n' || n == 'K' || n == 'k') {
-		return true;
-	}
+	if (diff_row != 0) dir_row = diff_row / (new_row - row);
+	else dir_row = 0;
+	if (diff_col != 0) dir_col = diff_col / (new_col - col);
+	else dir_col = 0;
+	if (tmp->moveCheck(row,col,new_row,new_col) == false) return false;
+	else if (n == 'N' || n == 'n' || n == 'K' || n == 'k') return true;
 	else if (n == 'R' || n == 'r' || n == 'Q' || n == 'q' || n == 'B' || n == 'b') {
 		for (int i = 1; i < std::max(diff_row, diff_col); i++) {
 			if (theBoard[row + dir_row * i][col + dir_col * i] != NULL) {
@@ -280,10 +268,7 @@ bool Board::preCheck(int row, int col, int new_row, int new_col) {
 		return true;
 	}
 	else if (n == 'p' && diff_col == 0) {
-		if (theBoard[row+1][col] != NULL) {
-			return false;
-		}
-		if (diff_row == 2 && theBoard[row+2][col] != NULL) {
+		if (diff_row == 2 && theBoard[row+1][col] != NULL) {
 			return false;
 		}
 		else {
@@ -291,10 +276,7 @@ bool Board::preCheck(int row, int col, int new_row, int new_col) {
 		}
 	}
 	else if (n == 'P' && diff_col == 0) {
-		if (theBoard[row-1][col] != NULL) {
-			return false;
-		}
-		if (diff_row == 2 && theBoard[row-2][col] != NULL) {
+		if (diff_row == 2 && theBoard[row-1][col] != NULL) {
 			return false;
 		}
 		else {
@@ -310,7 +292,6 @@ bool Board::castling(int r, int c, int nr, int nc, char k) {
 	int dir = col_diff / (nc - c);
 	std::vector < Pieces* > tmp;
 	if(theBoard[r][c]->getStatus()) {
-		std::cout << r << " " << c << " has been moved" << std::endl;
 		std::cout << "king has been moved" << std::endl;
 		return false;
 	}
@@ -319,7 +300,6 @@ bool Board::castling(int r, int c, int nr, int nc, char k) {
 		return false;
 	}
 	else if (dir > 0) {
-		std::cout << "dir > 0" << std::endl;
 		if(theBoard[r][c + 3] == NULL) return false;
 		if(theBoard[r][c + 3] != NULL && theBoard[r][c + 3]->getStatus()) return false;
 		for(int i = 1; i < 3; i ++) {
@@ -332,7 +312,6 @@ bool Board::castling(int r, int c, int nr, int nc, char k) {
 		return true;
 	}
 	else if (dir < 0) {
-		std::cout << "dir < 0" << std::endl;
 		if(theBoard[r][c - 4] == NULL) {
 			std::cout << "no rook" << std::endl;
 			return false;
@@ -348,7 +327,6 @@ bool Board::castling(int r, int c, int nr, int nc, char k) {
 			}
 			tmp = attackBoard[r][c + i * dir];
 			if(i < 3) {
-				std::cout << "this is in the loop" << std::endl;
 				for(std::vector < Pieces* >::iterator it = tmp.begin(); it != tmp.end(); it ++) {
 					if(std::abs((*it)->getName() - k) > 22) {
 						std::cout << "maybe check on the road" << std::endl;
@@ -370,19 +348,14 @@ bool Board::ruleCheck(int row, int col, int new_row, int new_col) {
 	col_diff = abs(new_col - col);
 	bool isMove = false;
 	Pieces* tmp = theBoard[row][col];
-	std::cout << "Checking does grid " << new_row << " " << new_col << " has " << tmp->getName() << std::endl;
-	if(attackBoard[new_row][new_col].size() == 0) std::cout << "it has nothing !!!!! " << std::endl;
 	for(std::vector <Pieces*>::iterator it = attackBoard[new_row][new_col].begin(); it != attackBoard[new_row][new_col].end(); it ++) {
-		std::cout << "the grid " << new_row << " " << new_col << " has " << (*it)->getName() << std::endl;
 		if((*it) == tmp) {
 			isMove = true;
 		}
 	}
 	if((tmp->getName() == 'p' || tmp->getName() == 'P') && col_diff == 1) {
-		std::cout << "in col diff 1" << std::endl;
 		std::cout << col_diff << std::endl;
 		if(theBoard[new_row][new_col] != NULL || (static_cast< Pawn* >(theBoard[row][new_col]) == enpassant && enpassant != NULL)) {
-			std::cout << "enpassant or pawn eat" << std::endl;
 			if(static_cast< Pawn* >(theBoard[row][new_col]) == enpassant && enpassant != NULL) name = 'p';
 			isMove = true;
 		}
@@ -390,7 +363,6 @@ bool Board::ruleCheck(int row, int col, int new_row, int new_col) {
 	}
 	if(isMove == false) return false;
 	if((tmp->getName() == 'K' || tmp->getName() == 'k') && (col_diff == 2)) {
-		std::cout << "running castling" << std::endl;
 		if(castling(row, col, new_row, new_col, tmp->getName())) return true;
 		else {
 			std::cout << "castling fail" << std::endl;
@@ -412,7 +384,6 @@ bool Board::ruleCheck(int row, int col, int new_row, int new_col) {
 		return false;
 	}
 	else{
-		std::cout << "recover" << std::endl;
 	   	preundo();
 	}
 	if(isMove) return true;
@@ -501,13 +472,10 @@ bool Board::check(char king) {
 				if(theBoard[i][j]->getName() == king) {
 					row = i;
 					col = j;
-					std::cout << "king locates at " << row << " " << col << std::endl;
 				}
 	std::vector< Pieces* > tmp = attackBoard[row][col];
 	for(std::vector< Pieces* >::iterator it = tmp.begin(); it != tmp.end(); it ++) {
-		std::cout << "checking whether " <<(*it)->getName() << " can reach " << row << " " << col << std::endl;
 		if(abs((*it)->getName() - king) > 22) {
-			std::cout << "in check" << std::endl;
 			return true;
 		}
 	}
@@ -588,8 +556,8 @@ void Board::undo() {
 }
 
 void Board::preundo() {
-	std::cout << "in preundo" << std::endl;
 	std::vector <std::pair <std::vector<int>, std::string> >::iterator it = stack.end() - 1;
+	std::cout << "stack" << std::endl;
 	std::pair <std::vector <int>, std::string> move = *it;
 	int r, c, newr, newc;
 	newr = move.first[2];
@@ -598,6 +566,7 @@ void Board::preundo() {
 	c = move.first[1];
 	char name = move.second[0];
 	char enpass_name = move.second[3];
+	std::cout << "checkpoint" << std::endl;
 	bool status1 = (move.second[1] == 0) ? false : true;
 	bool status2 = (move.second[2] == 0) ? false : true;
 	removeRange(newr, newc);
@@ -628,10 +597,9 @@ void Board::preundo() {
 void Board::move(int oldr, int oldc, int newr, int newc) {
 	std::string capture_name = "-";//this is the default name for captured piece, if no piece is captured the capture_name is "-"
 	std::string enpass_name = "-";//this is a mark for enpassant, if off then it is "-" else it is "e"
-	std::cout << "into the move moving " << oldr << " " << oldc << " " << newr << " " << newc << std::endl;
 	bool status1 = theBoard[oldr][oldc]->getStatus(); //this records the status of the moving pieces
 	bool status2; //this records the status of the captured pieces if any
-
+	std::cout << "moving " << std::endl;
 	if(theBoard[newr][newc] != NULL) {
 		status2 = theBoard[newr][newc]->getStatus();
 		capture_name = theBoard[newr][newc]->getName();
@@ -643,7 +611,7 @@ void Board::move(int oldr, int oldc, int newr, int newc) {
 		updateEnpassant = true;
 	}
 	if((name == 'p'|| name == 'P') && (theBoard[newr][newc] == NULL) && (abs(newc - oldc) == 1)) {
-		capture_name = theBoard[newr][oldc]->getName(); // this is the unique name for the pawn captured by enpassant
+		capture_name = theBoard[oldr][newc]->getName(); // this is the unique name for the pawn captured by enpassant
 		enpass_name = "e";
 		status2 = theBoard[oldr][newc]->getStatus();
 		remove(oldr, newc);
@@ -674,7 +642,7 @@ void Board::move(int oldr, int oldc, int newr, int newc) {
 	if((name != 'p' && name != 'P') || abs(newr - oldr) != 2) updateEnpassant = false;
 	td->notify(oldr, oldc);
 	td->notify(newr, newc, name);
-	std::cout << "hahahahahah" << std::endl;
+	std::cout << "end of moving" << std::endl;
 }
 
 
@@ -759,11 +727,11 @@ void Board::play() {
 			std::string player1, player2;
 			std::cin >> player1 >> player2;
 			if(player1 == "human") p1 = new Human(this, 'A');
-			else if(player1 == "computer1") new Computer1(this, 'A');
-			else if(player1 == "computer2") new Computer2(this, 'A');
+			else if(player1 == "computer1") p1 = new Computer1(this, 'A');
+			else if(player1 == "computer2") p1 = new Computer2(this, 'A');
 			if(player2 == "human") p2 = new Human(this, 'z');
-			else if(player2 == "computer1") new Computer1(this, 'z');
-			else if(player2 == "computer2") new Computer2(this, 'z');
+			else if(player2 == "computer1") p2 = new Computer1(this, 'z');
+			else if(player2 == "computer2") p2 = new Computer2(this, 'z');
 			td->print();
 			std::cout << "the battle begins!" << std::endl;
 			while(true) {
