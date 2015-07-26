@@ -34,12 +34,12 @@ class Computer3: public Controller {
 	public:
 		void makeMove();
 		Computer3(Board* game, char team);
-}
+};
 
 class Computer4: public Controller {
 	public:
 		void makeMove();
 		Computer4(Board* game, char team);
-}
+};
 
 #endif
