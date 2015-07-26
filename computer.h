@@ -2,6 +2,8 @@
 #define __COMPUTER_H__
 #include <string>
 #include "controller.h"
+#include <sstream>
+#include <iostream>
 
 std::string string_convert(int a, int b) {
 	std::string str;
