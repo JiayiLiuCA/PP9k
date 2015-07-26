@@ -12,4 +12,7 @@ class Controller {
 		virtual ~Controller() = 0;
 		char getTeam();
 };
+
+std::string string_convert(int a, int b);
+
 #endif
