@@ -38,19 +38,18 @@ void Computer::makeMove() {
 						//std::cout << "current team: " << this->getTeam() << std::endl;
 						std::vector< std::pair <int, int> > range = tmp_p->getRange();
 						if (name >= 'A' && name <= 'Z' && this->getTeam() == 'A') {
-							std::cout << "team is " << name << std::endl;
 							for (int x = 0; x < range.size(); x++) {
 								std::pair <int, int> tmp_pair = range[x];
 								//std::cout << "range is " << range.size() << std::endl;
-								if (game->ruleCheck(i,j,tmp_pair.first,tmp_pair.second)) { 
-									std::cout << "first ruleCheck: " << i << j << tmp_pair.first << tmp_pair.second << " is true" << std::endl;
-									std::cout << "傻逼陈梓涵" << game->ruleCheck(i,j,tmp_pair.first, tmp_pair.second) << std::endl;
-									std::cout << "陈梓涵傻逼" << game->ruleCheck(i,j,tmp_pair.first, tmp_pair.second) << std::endl;
+								std::cout << "checking " << i << " " << j << " to " << tmp_pair.first << " " << tmp_pair.second << std::endl;
+								if (game->ruleCheck(i,j,tmp_pair.first,tmp_pair.second)) {
+									std::cout << "checking success!! " << std::endl;	
 									std::string s = string_convert(i,j) + " " +
 										string_convert(tmp_pair.first,tmp_pair.second);
 									std::cout << "input :" << s << std::endl;
 									tmp.push_back(s);
 								}
+								else std::cout << "checking fail " << std::endl;
 							}
 						}
 						else if (name >= 'a' && name <= 'z' && this->getTeam() == 'z') {
@@ -58,12 +57,14 @@ void Computer::makeMove() {
 							for (int x = 0; x < range.size(); x++) {
 								std::pair <int, int> tmp_pair = range[x];
 								//std::cout << "range is " << range.size() << std::endl;
+								std::cout << "checking " << i << " " << j << " to " << tmp_pair.first << " " << tmp_pair.second << std::endl;
 								if (game->ruleCheck(i,j,tmp_pair.first,tmp_pair.second)) {
 									std::string s = string_convert(i,j) + " " +
 										string_convert(tmp_pair.first, tmp_pair.second);
 									std::cout << "input :" << s << std::endl;
 									tmp.push_back(s);
 								}
+								else std::cout << "checking fail " << std::endl;
 							}
 						}
 					}

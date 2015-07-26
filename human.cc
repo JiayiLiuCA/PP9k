@@ -7,15 +7,14 @@ Human::Human(Board *game, char team): Controller(game, team) {}
 
 void Human::makeMove() {
 	std::string opt;
-	std::string pos1;
-	std::string pos2;
 	std::cin >> opt;
+	std::string s;
 	if(opt == "move") {
-		std::cin >> pos1 >> pos2;
-		std::cout << "move is " << pos1 << " " << pos2 << std::endl;
-		game->notify(pos1 + " " + pos2, this->getTeam());
+		std::getline(std::cin, s);
+		game->notify(s, this->getTeam());
 	}
 	else if(opt == "resign") game->notify(opt, this->getTeam());
+	else if(opt == "undo") game->undo();
 	else {
 		std::cout << "invalid command please enter again" << std::endl;
 		this->makeMove();

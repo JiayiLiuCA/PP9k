@@ -56,6 +56,7 @@ void Board::cleanup() {
 }
 
 void Board::clearGame() {
+	std::cout << "clearing the board" << std::endl;
 	for(int i = 0; i < 8; i ++) {
 		for(int j = 0; j < 8; j ++) {
 			if(theBoard[i][j] != NULL) {
@@ -74,49 +75,51 @@ void Board::clearGame() {
 }
 
 void Board::remove(int r, int c) {
+	if(theBoard[r][c] == NULL) return;
 	if(0 <= r && r < 8 && 0 <= c && c < 8 && theBoard[r][c]) {
 		if(theBoard[r][c] != NULL) {
 			removeRange(r, c);
 			delete theBoard[r][c];
 		}
 		theBoard[r][c] = NULL;
+		updateGrid(r, c);
 		td->notify(r, c);
 	}
 	else std::cout << "invalid remove" << std::endl;
 }
 
-void Board::add(int r, int c, char p) {
+void Board::add(int r, int c, char p, bool move) {
 	if(0 <= r && r < 8 && 0 <= c && c < 8) {
 		if(theBoard[r][c]) {
 			remove(r, c);
 		}
 		if(p == 'r' || p == 'R') {
-			theBoard[r][c] = new Rook(r, c, p, false);
+			theBoard[r][c] = new Rook(r, c, p, move);
 			updatePiece(r, c);
 			updateGrid(r, c);
 		}
 		if(p == 'n' || p == 'N') {
-			theBoard[r][c] = new Knight(r, c, p, false);	
+			theBoard[r][c] = new Knight(r, c, p, move);	
 			updatePiece(r, c);
 			updateGrid(r, c);
 		}
 		if(p == 'b' || p == 'B') {
-			theBoard[r][c] = new Bishop(r, c, p, false);
+			theBoard[r][c] = new Bishop(r, c, p, move);
 			updatePiece(r, c);
 			updateGrid(r, c);
 		}
 		if(p == 'q' || p == 'Q') {
-			theBoard[r][c] = new Queen(r, c, p, false);
+			theBoard[r][c] = new Queen(r, c, p, move);
 			updatePiece(r, c);
 			updateGrid(r, c);
 		}
 		if(p == 'k' || p == 'K') {
-			theBoard[r][c] = new King(r, c, p, false);
+			theBoard[r][c] = new King(r, c, p, move);
 			updatePiece(r, c);
 			updateGrid(r, c);
 		}
 		if(p == 'p' || p == 'P') {
-			theBoard[r][c] = new Pawn(r, c, p, false);
+			theBoard[r][c] = new Pawn(r, c, p, move);
 			updatePiece(r, c);
 			updateGrid(r, c);
 		}
@@ -129,6 +132,7 @@ Pieces* Board::getPiece(int r, int c) { return theBoard[r][c]; }
 
 
 void Board::removeRange(int r, int c) {
+	if(theBoard[r][c] == NULL) return;
 	Pieces* current = theBoard[r][c];
 	std::vector < std::pair <int ,int> > range = theBoard[r][c]->getRange();
 	for(std::vector < std::pair <int, int> >::iterator it = range.begin(); it != range.end(); it ++) {
@@ -145,6 +149,7 @@ void Board::removeRange(int r, int c) {
 
 
 void Board::updatePiece(int r, int c) {
+	if(theBoard[r][c] == NULL) return;
 	removeRange(r, c);
 	std::vector < std::pair <int ,int> > range = theBoard[r][c]->getRange();
 	for(std::vector < std::pair <int, int> >::iterator it = range.begin(); it != range.end(); it ++) {
@@ -243,7 +248,6 @@ bool Board::checkBoard() {
 
 bool Board::preCheck(int row, int col, int new_row, int new_col) {
 	Pieces *tmp = theBoard[row][col];
-	Pieces *newtmp = theBoard[new_row][new_col];
 	char n = tmp->getName();
 	int diff_row = std::abs(row - new_row);
 	int diff_col = std::abs(col - new_col);
@@ -358,81 +362,61 @@ bool Board::castling(int r, int c, int nr, int nc, char k) {
 }
 
 bool Board::ruleCheck(int row, int col, int new_row, int new_col) {
-	std::cout << "in rule" << std::endl;
+	char name = '-';
+	bool status1 = false;
+	bool status2 = theBoard[row][col]->getStatus();
 	int col_diff, row_diff;
 	row_diff = abs(new_row - row);
 	col_diff = abs(new_col - col);
 	bool isMove = false;
-	Pieces* tmp1 = theBoard[row][col];
-	std::cout << "Checking does grid " << new_row << " " << new_col << " has " << tmp1->getName() << std::endl;
+	Pieces* tmp = theBoard[row][col];
+	std::cout << "Checking does grid " << new_row << " " << new_col << " has " << tmp->getName() << std::endl;
+	if(attackBoard[new_row][new_col].size() == 0) std::cout << "it has nothing !!!!! " << std::endl;
 	for(std::vector <Pieces*>::iterator it = attackBoard[new_row][new_col].begin(); it != attackBoard[new_row][new_col].end(); it ++) {
-		if((*it) == tmp1) {
+		std::cout << "the grid " << new_row << " " << new_col << " has " << (*it)->getName() << std::endl;
+		if((*it) == tmp) {
 			isMove = true;
 		}
 	}
-	if((tmp1->getName() == 'p' || tmp1->getName() == 'P') && col_diff == 1) {
+	if((tmp->getName() == 'p' || tmp->getName() == 'P') && col_diff == 1) {
+		std::cout << "in col diff 1" << std::endl;
 		std::cout << col_diff << std::endl;
-		if(theBoard[new_row][new_col] != NULL || (static_cast< Pawn* >(theBoard[row][new_col]) == enpassant && enpassant != NULL)) isMove = true;
-		else {
-			return false;
+		if(theBoard[new_row][new_col] != NULL || (static_cast< Pawn* >(theBoard[row][new_col]) == enpassant && enpassant != NULL)) {
+			std::cout << "enpassant or pawn eat" << std::endl;
+			if(static_cast< Pawn* >(theBoard[row][new_col]) == enpassant && enpassant != NULL) name = 'p';
+			isMove = true;
 		}
+		else return false;
 	}
-	if((tmp1->getName() == 'K' || tmp1->getName() == 'k') && (col_diff == 2)) {
+	if(isMove == false) return false;
+	if((tmp->getName() == 'K' || tmp->getName() == 'k') && (col_diff == 2)) {
 		std::cout << "running castling" << std::endl;
-		if(castling(row, col, new_row, new_col, tmp1->getName())) return true;
+		if(castling(row, col, new_row, new_col, tmp->getName())) return true;
 		else {
 			std::cout << "castling fail" << std::endl;
 			return false;
 		}
 	}
-	if(theBoard[new_row][new_col] != NULL && abs(tmp1->getName() - theBoard[new_row][new_col]->getName()) < 25) {
+	if(theBoard[new_row][new_col] != NULL && abs(tmp->getName() - theBoard[new_row][new_col]->getName()) < 25) {
 		std::cout << "you cannot eat allies " << std::endl;
 		return false;
 	}
-	else {
-		Pieces* tmp = NULL;
-		if(theBoard[new_row][new_col] != NULL) {
-			tmp = theBoard[new_row][new_col];
-			removeRange(new_row, new_col);
-		}
-		removeRange(row, col);
-		theBoard[new_row][new_col] = theBoard[row][col];
-		theBoard[row][col] = NULL;
-		theBoard[new_row][new_col]->setr(new_row);
-		theBoard[new_row][new_col]->setc(new_col);
-		theBoard[new_row][new_col]->setRange();
-		updateGrid(row, col);
-		updateGrid(new_row, new_col);
-		updatePiece(new_row, new_col);
-		if((turn == 0 && check('K')) || (turn == 1 && check('k'))) {
-			std::cout << "this move will put your king in check" << std::endl;
-			removeRange(new_row, new_col);
-			theBoard[row][col] = theBoard[new_row][new_col];
-			theBoard[new_row][new_col] = tmp;
-			theBoard[row][col]->setr(row);
-			theBoard[row][col]->setc(col);
-			theBoard[row][col]->setRange();
-			updateGrid(row, col);
-			updateGrid(new_row, new_col);
-			if(tmp) updatePiece(new_row, new_col);
-			updatePiece(row, col);
-			return false;
-		}
-		else {
-			removeRange(new_row, new_col);
-			theBoard[row][col] = theBoard[new_row][new_col];
-			theBoard[new_row][new_col] = tmp;
-			theBoard[row][col]->setr(row);
-			theBoard[row][col]->setc(col);
-			theBoard[row][col]->setRange();
-			updateGrid(row, col);
-			updateGrid(new_row, new_col);
-			if(tmp) updatePiece(new_row, new_col);
-			updatePiece(row, col);
-			if(isMove) return true;
-			else return false;	
-		}
+	if(theBoard[new_row][new_col] != NULL) {
+		status1 = theBoard[new_row][new_col]->getStatus();
+		name = theBoard[new_row][new_col]->getName();
 	}
+	move(row, col, new_row, new_col);
+	if((turn == 0 && check('K')) || (turn == 1 && check('k'))) {
+		std::cout << "this move will put you king in check" << std::endl;
+		preundo();
+		turn = !turn;
+	}
+	else {
+		preundo();
+	}
+	if(isMove) return true;
+	else return false;
+
 }
 
 
@@ -466,8 +450,6 @@ void Board::notify(std::string move, char team) {
 			else p2->makeMove();
 			return;
 		}
-		std::cout << "initial over" << std::endl;
-		std::cout << "checking from " << oldr << " " << oldc << " to " << newr << " " << newc << std::endl;
 		if(theBoard[oldr][oldc] == NULL ||!ruleCheck(oldr, oldc, newr, newc)) {
 			std::cout << "invalid move please enter again" << std::endl;
 			if(turn == 0) p1->makeMove();
@@ -493,28 +475,36 @@ void Board::notify(std::string move, char team) {
 					return ;
 				}
 				this->move(oldr, oldc, newr, newc);
+				if(((newr == 0) && (theBoard[newr][newc]->getName() == 'P')) || ((newr == 7) && (theBoard[newr][newc]->getName() == 'p'))) {
+					std::cout << "in promotion" << std::endl;
+					char promote;
+					ss >> promote;
+					remove(newr, newc);
+					add(newr, newc, promote, true);
+					td->print();
+				}
 			}
 		}
 	}
 }
-				
+
 
 
 
 
 bool Board::check(char king) {
 	int row, col;
-	char piece;
 	for(int i = 0; i < 8; i ++) 
 		for(int j = 0; j < 8; j ++) 
 			if(theBoard[i][j] != NULL) 
 				if(theBoard[i][j]->getName() == king) {
 					row = i;
 					col = j;
-					std::cout << "the king locatets at " << row << " " << col << std::endl;
+					std::cout << "king locates at " << row << " " << col << std::endl;
 				}
 	std::vector< Pieces* > tmp = attackBoard[row][col];
 	for(std::vector< Pieces* >::iterator it = tmp.begin(); it != tmp.end(); it ++) {
+		std::cout << "checking whether " <<(*it)->getName() << " can reach " << row << " " << col << std::endl;
 		if(abs((*it)->getName() - king) > 22) {
 			std::cout << "in check" << std::endl;
 			return true;
@@ -537,7 +527,9 @@ bool Board::checkMate(char king) {
 	for(std::vector < std::pair <int, int> >::iterator it = range.begin(); it != range.end(); it ++) {
 		int nr = it->first;
 		int nc = it->second;
-		if(ruleCheck(r, c, nr, nc)) return false;
+		if(ruleCheck(r, c, nr, nc)) {
+			return false;
+		}
 	}
 	int count = 0;
 	std::vector <Pieces *> attack = attackBoard[r][c];
@@ -554,7 +546,9 @@ bool Board::checkMate(char king) {
 		attack = attackBoard[checkr][checkc];
 		for(std::vector <Pieces *>::iterator it = attack.begin(); it != attack.end(); it ++) {
 			name = (*it)->getName();
-			if(abs(name - king) < 22) return false;
+			if(abs(name - king) < 22 && abs(name - king) != 0) {
+				return false;
+			}
 		}
 		if(name == 'n' || 'N') return true;
 		else {
@@ -571,48 +565,112 @@ bool Board::checkMate(char king) {
 				attack = attackBoard[checkr][checkc];
 				for(std::vector <Pieces *>::iterator it = attack.begin(); it != attack.end(); it ++) {
 					name = (*it)->getName();
-					if(abs(name - king) < 22) return false;
+					if(abs(name - king) < 22) {
+						return false;
+					}
 				}
 			}
 			return true;
 		}
+		return true;
 	}
 }
 
+void Board::undo() {
+	preundo();
+	td->print();
+	if(turn -= 0) p1->makeMove();
+	else p2->makeMove();
+}
+
+void Board::preundo() {
+	std::cout << "in preundo" << std::endl;
+	std::vector <std::pair <std::vector<int>, std::string> >::iterator it = stack.end() - 1;
+	std::pair <std::vector <int>, std::string> move = *it;
+	int r, c, newr, newc;
+	newr = move.first[2];
+	newc = move.first[3];
+	r = move.first[0];
+	c = move.first[1];
+	char name = move.second[0];
+	char enpass_name = move.second[3];
+	bool status1 = (move.second[1] == 0) ? false : true;
+	bool status2 = (move.second[2] == 0) ? false : true;
+	removeRange(newr, newc);
+	theBoard[r][c] = theBoard[newr][newc];
+	theBoard[newr][newc] = NULL;
+	td->notify(newr, newc);
+	theBoard[r][c]->setr(r);
+	theBoard[r][c]->setc(c);
+	theBoard[r][c]->setRange();
+	if(enpass_name == 'e') {
+		add(r, newc, name, status2);
+		td->notify(r, newc, name);
+	}
+	else if(name != '-') {
+		add(newr, newc, name, status2);
+		td->notify(newr, newc, name);
+	}
+	updatePiece(newr, newc);
+	updatePiece(r, c);
+	updateGrid(r, c);
+	updateGrid(newr, newc);
+	theBoard[r][c]->setMove(status1);
+	td->notify(r, c, theBoard[r][c]->getName());
+}
+
+
+
 void Board::move(int oldr, int oldc, int newr, int newc) {
-	std::cout << "into the move " << std::endl;
-	removeRange(oldr, oldc);
-	char name = theBoard[oldr][oldc]->getName();
-	if(name == 'p' || name == 'P') {
-		if(abs(newr - oldr) == 2) {
-			enpassant = static_cast<Pawn *>(theBoard[oldr][oldc]);
-			updateEnpassant = true;
-		}
-		else if(theBoard[newr][newc] == NULL && abs(newc - oldc) == 1) {
-			remove(oldr, newc);
-			updateEnpassant = false;
-		}
-		else updateEnpassant = false;
-	}
+	std::string capture_name = "-";//this is the default name for captured piece, if no piece is captured the capture_name is "-"
+	std::string enpass_name = "-";//this is a mark for enpassant, if off then it is "-" else it is "e"
+	std::cout << "into the move moving " << oldr << " " << oldc << " " << newr << " " << newc << std::endl;
+	bool status1 = theBoard[oldr][oldc]->getStatus(); //this records the status of the moving pieces
+	bool status2; //this records the status of the captured pieces if any
+
 	if(theBoard[newr][newc] != NULL) {
-		if(static_cast<Pawn *>(theBoard[newr][newc]) == enpassant) enpassant = NULL;
-		remove(newr, newc);
-		updateEnpassant = false;
+		status2 = theBoard[newr][newc]->getStatus();
+		capture_name = theBoard[newr][newc]->getName();
 	}
-	theBoard[oldr][oldc]->setMove(true);
-	std::cout << "setting " << theBoard[oldr][oldc]->getName() << "'s Move to true" << std::endl;
+	else status2 = false;
+	char name = theBoard[oldr][oldc]->getName();
+	if((name == 'p' || name == 'P') && abs(newr - oldr) == 2) {
+		enpassant = static_cast<Pawn* >(theBoard[oldr][oldc]);
+		updateEnpassant = true;
+	}
+	if((name == 'p'|| name == 'P') && (theBoard[newr][newc] == NULL) && (abs(newc - oldc) == 1)) {
+		capture_name = theBoard[newr][oldc]->getName(); // this is the unique name for the pawn captured by enpassant
+		enpass_name = "e";
+		status2 = theBoard[oldr][newc]->getStatus();
+		remove(oldr, newc);
+	}
+	std::string s1, s2;
+	s1 = (status1) ? "1" : "0";
+	s2 = (status2) ? "1" : "0";
+	std::vector <int> moves;
+	moves.push_back(oldr);
+	moves.push_back(oldc);	
+	moves.push_back(newr);
+	moves.push_back(newc);
+	std::pair <std::vector <int>, std::string> a_move;
+	a_move.first = moves;
+	a_move.second = capture_name + s1 + s2 + enpass_name;
+	stack.push_back(a_move);	
+	removeRange(oldr, oldc);
+	remove(newr, newc);
 	theBoard[newr][newc] = theBoard[oldr][oldc];
 	theBoard[oldr][oldc] = NULL;
 	theBoard[newr][newc]->setr(newr);
 	theBoard[newr][newc]->setc(newc);
 	theBoard[newr][newc]->setRange();
+	updatePiece(newr, newc);
 	updateGrid(oldr, oldc);
 	updateGrid(newr, newc);
-	updatePiece(newr, newc);
-	if(name != 'p' && name != 'P') updateEnpassant = false;
+	theBoard[newr][newc]->setMove(true);
+	if((name != 'p' && name != 'P') || abs(newr - oldr) != 2) updateEnpassant = false;
 	td->notify(oldr, oldc);
 	td->notify(newr, newc, name);
-	td->print();
+	std::cout << "hahahahahah" << std::endl;
 }
 
 
@@ -621,6 +679,7 @@ void Board::play() {
 	std::string command;
 	while(std::cin >> command) {
 		if(command == "setup") {
+			clearGame();
 			delete td;
 			td = new TextDisplay();
 			td->print();
@@ -638,7 +697,7 @@ void Board::play() {
 					std::string pos;
 					std::cin >> pos >> piece;
 					if(piece == 'r' || piece == 'R' ||piece == 'B' ||piece == 'b' ||piece == 'N' ||piece == 'n' ||piece == 'Q' ||piece == 'q' ||piece == 'K' ||piece == 'k' ||piece == 'P' ||piece == 'p') {
-						add(convert(pos)[0], convert(pos)[1], piece);
+						add(convert(pos)[0], convert(pos)[1], piece, false);
 						td->print();
 					}
 					else std::cout << "not valid piece" << std::endl;
@@ -652,25 +711,25 @@ void Board::play() {
 				}
 				else if(opt == "stdinit") {              //this command provide a standard initial state of a chess
 					for(int i = 0; i < 8; i ++) {
-						add(1, i, 'p');
-						add(6, i, 'P');
+						add(1, i, 'p', false);
+						add(6, i, 'P', false);
 					}
-					add(0, 0, 'r');
-					add(0, 7, 'r');
-					add(0, 1, 'n');
-					add(0, 6, 'n');
-					add(0, 2, 'b');
-					add(0, 5, 'b');
-					add(0, 3, 'q');
-					add(0, 4, 'k');
-					add(7, 0, 'R');
-					add(7, 7, 'R');
-					add(7, 1, 'N');
-					add(7, 6, 'N');
-					add(7, 2, 'B');
-					add(7, 5, 'B');
-					add(7, 3, 'Q');
-					add(7, 4, 'K');
+					add(0, 0, 'r', false);
+					add(0, 7, 'r', false);
+					add(0, 1, 'n', false);
+					add(0, 6, 'n', false);
+					add(0, 2, 'b', false);
+					add(0, 5, 'b', false);
+					add(0, 3, 'q', false);
+					add(0, 4, 'k', false);
+					add(7, 0, 'R', false);
+					add(7, 7, 'R', false);
+					add(7, 1, 'N', false);
+					add(7, 6, 'N', false);
+					add(7, 2, 'B', false);
+					add(7, 5, 'B', false);
+					add(7, 3, 'Q', false);
+					add(7, 4, 'K', false);
 					td->print();
 				}
 				else if(opt == "grid") {
@@ -681,6 +740,8 @@ void Board::play() {
 					for(int i = 0; i < size; i++) {
 						std::cout << attackBoard[r][c][i]->getName() << std::endl;
 					}
+					if(theBoard[r][c] == NULL) std::cout << "nothing is on this grid" << std::endl;
+					else std::cout << theBoard[r][c]->getName() << " is on this grid" << std::endl;
 				}
 
 				else if(opt == "done") {
@@ -694,9 +755,11 @@ void Board::play() {
 			std::string player1, player2;
 			std::cin >> player1 >> player2;
 			if(player1 == "human") p1 = new Human(this, 'A');
-			else p1 = new Computer(this, 'A');
+//			else if(player1 == "computer1") new Computer1(this, 'A');
+//			else if(player1 == "computer2") new Computer2(this, 'A');
 			if(player2 == "human") p2 = new Human(this, 'z');
-			else p2 = new Computer(this, 'z');
+//			else if(player2 == "computer1") new Computer1(this, 'z');
+//			else if(player2 == "computer2") new Computer2(this, 'z');
 			td->print();
 			std::cout << "the battle begins!" << std::endl;
 			while(true) {
@@ -704,36 +767,37 @@ void Board::play() {
 					enpassant = NULL;
 				}
 				if(turn == 0 && playing) {
-					std::cout << "white's turn to move" << std::endl;
-					p1->makeMove();
-					if(check('k')) {
-						std::cout << "Black is in check!" << std::endl;
-						if(checkMate('k')) {
-							std::cout << "Checkmate! White wins!" << std::endl;
-							playing = false;
-							p1Score ++;
-							break;
-						}
-					}
-				}
-				else if(turn == 1 && playing) {
-					std::cout << "black's turn to move" << std::endl;
-					p2->makeMove();
 					if(check('K')) {
 						std::cout << "White is in check!" << std::endl;
 						if(checkMate('K')) {
 							std::cout << "Checkmate! Black wins!" << std::endl;
 							playing = false;
+							p1Score ++;
+							break;
+						}
+					}
+					std::cout << "white's turn to move" << std::endl;
+					p1->makeMove();
+					td->print();
+				}
+				else if(turn == 1 && playing) {
+					if(check('k')) {
+						std::cout << "Black is in check!" << std::endl;
+						if(checkMate('k')) {
+							std::cout << "Checkmate! White wins!" << std::endl;
+							playing = false;
 							p2Score ++;
 							break;
 						}
 					}
+					std::cout << "black's turn to move" << std::endl;
+					p2->makeMove();
+					td->print();
 				}
 				turn = !turn;
 				if(!playing) {
 					std::cout << "White: " << p1Score << std::endl;
 					std::cout << "Black: " << p2Score << std::endl;
-					clearGame();
 					break;
 				}
 			}
