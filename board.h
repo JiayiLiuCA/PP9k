@@ -39,6 +39,7 @@ class Board {
 		void updatePiece(int r, int c);//update the attackBoard	
 		void updateGrid(int r, int c);
 		Pieces* getPiece(int r, int c);
+		std::vector <Pieces *> getAttack(int r, int c);
 		std::vector<int> convert(std::string pos); //this translates the string coordinates and return the number coords in a vector of int
 //the methods below are designed to use in setup mode
 //---------------------------------------------------------------

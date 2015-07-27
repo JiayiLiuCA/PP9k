@@ -130,6 +130,8 @@ void Board::add(int r, int c, char p, bool move) {
 
 Pieces* Board::getPiece(int r, int c) { return theBoard[r][c]; }
 
+std::vector <Pieces *> Board::getAttack(int r, int c) { return attackBoard[r][c]; }
+
 
 void Board::removeRange(int r, int c) {
 	if(theBoard[r][c] == NULL) return;
@@ -472,9 +474,12 @@ void Board::notify(std::string move, char team) {
 					std::cout << "in promotion" << std::endl;
 					char promote;
 					ss >> promote;
+					if((team == 'A' && promote != 'N' && promote != 'B' && promote != 'R' && promote != 'Q') || (team == 'z' && promote != 'n' && promote != 'b' && promote != 'r' && promote != 'q')) {
+						std::cout << "invalid promotion please enter again" << std::endl;
+						std::cin >> promote;
+					}	
 					remove(newr, newc);
 					add(newr, newc, promote, true);
-					td->print();
 				}
 			}
 		}
