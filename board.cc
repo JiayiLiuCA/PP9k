@@ -527,8 +527,6 @@ bool Board::checkMate(char king) {
 			return false;
 		}
 	}
-	std::cout << "king cannot move" << std::endl;
-	std::cout << "king locates at " << r << " " << c << std::endl;
 	int count = 0;
 	std::vector <Pieces *> attack = attackBoard[r][c];
 	for(std::vector <Pieces *>::iterator it = attack.begin(); it != attack.end(); it ++) {
@@ -542,7 +540,6 @@ bool Board::checkMate(char king) {
 	if(count > 1) return true;
 	else {
 		attack = attackBoard[checkr][checkc];
-		std::cout << "the piece that check king is " << theBoard[checkr][checkc]->getName() << std::endl;
 		for(std::vector <Pieces *>::iterator it = attack.begin(); it != attack.end(); it ++) {
 			name = (*it)->getName();
 			int olr = (*it)->getr();
@@ -551,7 +548,6 @@ bool Board::checkMate(char king) {
 				return false;
 			}
 		}
-		std::cout << "nothing can capture the checking piece " << theBoard[checkr][checkc]->getName() << std::endl;
 		if(theBoard[checkr][checkc]->getName() == 'n' || theBoard[checkr][checkc]->getName() == 'N') return true;	
 		else {
 			int row_dir, col_dir;
@@ -561,10 +557,6 @@ bool Board::checkMate(char king) {
 			else row_dir = row_diff / (checkr - r);
 			if(col_diff == 0) col_dir = 0;	
 			else col_dir = col_diff / (checkc - c);
-			std::cout << "row_diff is: " << row_diff << std::endl;
-			std::cout << "col_diff is: " << col_diff << std::endl;
-			std::cout << "row_dir is: " << row_dir << std::endl;
-			std::cout << "col_dir is: " << col_dir << std::endl;
 			for(int i = 1; i < std::max(row_diff, col_diff); i ++) {
 				checkr = r + row_dir * i;
 				checkc = c + col_dir * i;
@@ -573,7 +565,6 @@ bool Board::checkMate(char king) {
 					name = (*it)->getName();
 					int olr = (*it)->getr();
 					int olc = (*it)->getc();
-					std::cout << "checking whether " << name << " can save the king" << std::endl;
 					if((abs(name - king) < 22) && ruleCheck(olr, olc, checkr, checkc)) {
 						return false;
 					}
