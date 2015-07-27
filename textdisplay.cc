@@ -39,8 +39,9 @@ TextDisplay::TextDisplay(): View() {
 	}
 }
 
-void TextDisplay::notify(int r, int c, char pieces) {
-	display[r][c+2] = pieces;
+void TextDisplay::notify(int r, int c, char piece) {
+	if((piece == '-') && ((r + c) % 2 == 0)) piece = ' ';
+	display[r][c + 2] = piece;
 }
 
 void TextDisplay::print() {
