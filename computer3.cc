@@ -47,7 +47,7 @@ void Computer3::makeMove() {
 									}
 									profit -= lose;
 									if (game->check('k') || game->check('K')) {
-										if (lose = 0) {
+										if (lose == 0) {
 											profit += 999;
 										}
 									}
