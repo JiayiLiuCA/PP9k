@@ -12,7 +12,7 @@
 
 Board* Board::singleton = NULL;
 
-
+//we
 Board::Board() {
 	std::vector <Pieces*> tmp;
 	tmp.assign(8, NULL);
