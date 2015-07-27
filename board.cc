@@ -326,6 +326,8 @@ bool Board::castling(int r, int c, int nr, int nc, char k) {
 		for(int i = 1; i < 4; i ++) {
 			if(theBoard[r][c + i * dir] != NULL) {
 				std::cout << "there is a piece on the road" << std::endl;
+				std::cout << "and the piece is " << theBoard[r][c + i * dir]->getName() << std::endl;
+				std::cout << "locating at " << r << " " << c + i * dir << std::endl;
 				return false;
 			}
 			tmp = attackBoard[r][c + i * dir];
@@ -468,13 +470,13 @@ void Board::notify(std::string move, char team) {
 					std::pair < std::vector <int>, std::string > tmp;
 					if(dir > 0) {
 						this->move(oldr, oldc + 3, oldr, oldc + 1);
-						if(name == 'k') tmp.second = "ck-";// "c" represents the castling "k"("K") represents the king(white or black) and "+" represent castling with the right rook, "-" represents castling with the left rook
-						else tmp.second = "cK-";
+						if(name == 'k') tmp.second = "ck+";// "c" represents the castling "k"("K") represents the king(white or black) and "+" represent castling with the right rook, "-" represents castling with the left rook
+						else tmp.second = "cK+";
 					}
 					else {
 						this->move(oldr, oldc - 4, oldr, oldc - 1);
-						if(name == 'k') tmp.second = "ck+";
-						else tmp.second = "cK+";
+						if(name == 'k') tmp.second = "ck-";
+						else tmp.second = "cK-";
 					}
 					stack.pop_back();
 					stack.pop_back();
@@ -606,34 +608,36 @@ void Board::undo() {
 }
 
 void Board::preundo() {
-	std::cout << "in preundo" << std::endl;
 	std::vector <std::pair <std::vector<int>, std::string> >::iterator it = stack.end() - 1;
 	std::pair <std::vector <int>, std::string> move = *it;
 	if(move.second[0] == 'c') {
+		std::cout << move.second << std::endl;
 		char king_name = move.second[1];
 		char dir = move.second[2];
+		std::cout << "in preundo" << std::endl;
 		if(dir == '-' && king_name == 'k') {
-			theBoard[0][4] = theBoard[0][2]; theBoard[0][0] = theBoard[0][3]; theBoard[0][4]->setr(0); theBoard[0][4]->setc(4); theBoard[0][4]->setRange();
-			theBoard[0][4]->setMove(false); theBoard[0][0]->setr(0); theBoard[0][0]->setc(0); theBoard[0][0]->setRange(); theBoard[0][4]->setMove(false); updatePiece(0,4);
-			updatePiece(0,0); updateGrid(0,0); updateGrid(0,4);
+			theBoard[0][4] = theBoard[0][2]; theBoard[0][2] = NULL; theBoard[0][0] = theBoard[0][3]; theBoard[0][3] = NULL; theBoard[0][4]->setr(0); theBoard[0][4]->setc(4); theBoard[0][4]->setRange();
+			theBoard[0][4]->setMove(false); theBoard[0][0]->setr(0); theBoard[0][0]->setc(0); theBoard[0][0]->setRange(); theBoard[0][0]->setMove(false); updatePiece(0,4);
+			updatePiece(0,0); updateGrid(0,0); updateGrid(0,4); td->notify(0,2); td->notify(0, 3); td->notify(0, 4, 'k'); td->notify(0, 0, 'r');
 		}
 		if(dir == '+' && king_name == 'k') {
-			theBoard[0][4] = theBoard[0][6]; theBoard[0][7] = theBoard[0][5]; theBoard[0][4]->setr(0); theBoard[0][4]->setc(4); theBoard[0][4]->setRange();
-			theBoard[0][4]->setMove(false); theBoard[0][7]->setr(0); theBoard[0][7]->setc(7); theBoard[0][7]->setRange(); theBoard[0][4]->setMove(false); updatePiece(0,4);
-			updatePiece(0,7); updateGrid(0,7); updateGrid(0,4);
+			theBoard[0][4] = theBoard[0][6]; theBoard[0][6] = NULL; theBoard[0][7] = theBoard[0][5]; theBoard[0][5] = NULL;  theBoard[0][4]->setr(0); theBoard[0][4]->setc(4); theBoard[0][4]->setRange();
+			theBoard[0][4]->setMove(false); theBoard[0][7]->setr(0); theBoard[0][7]->setc(7); theBoard[0][7]->setRange(); theBoard[0][7]->setMove(false); updatePiece(0,4);
+			updatePiece(0,7); updateGrid(0,7); updateGrid(0,4); td->notify(0,6); td->notify(0, 5); td->notify(0, 4, 'k'); td->notify(0, 7, 'r');
 		}
 		if(dir == '-' && king_name == 'K') {
-			theBoard[7][4] = theBoard[7][2]; theBoard[7][0] = theBoard[7][3]; theBoard[7][4]->setr(7); theBoard[7][4]->setc(4); theBoard[7][4]->setRange();
-			theBoard[7][4]->setMove(false); theBoard[7][0]->setr(7); theBoard[7][0]->setc(7); theBoard[7][0]->setRange(); theBoard[7][4]->setMove(false); updatePiece(7,4);
-			updatePiece(7,0); updateGrid(7,0); updateGrid(7,4);
+			theBoard[7][4] = theBoard[7][2]; theBoard[7][2] = NULL;  theBoard[7][0] = theBoard[7][3]; theBoard[7][3] = NULL;  theBoard[7][4]->setr(7); theBoard[7][4]->setc(4); theBoard[7][4]->setRange();
+			theBoard[7][4]->setMove(false); theBoard[7][0]->setr(7); theBoard[7][0]->setc(0); theBoard[7][0]->setRange(); theBoard[7][0]->setMove(false); updatePiece(7,4);
+			updatePiece(7,0); updateGrid(7,0); updateGrid(7,4); td->notify(7 ,2); td->notify(7, 3); td->notify(7, 4, 'K'); td->notify(7, 0, 'R');
 		}
 		if(dir == '+' && king_name == 'K') {
-			theBoard[7][4] = theBoard[7][6]; theBoard[7][7] = theBoard[7][5]; theBoard[7][4]->setr(7); theBoard[7][4]->setc(4); theBoard[7][4]->setRange();
-			theBoard[7][4]->setMove(false); theBoard[7][7]->setr(7); theBoard[7][7]->setc(7); theBoard[7][7]->setRange(); theBoard[7][4]->setMove(false); updatePiece(7,4);
-			updatePiece(7,7); updateGrid(7,7); updateGrid(7,4);
+			theBoard[7][4] = theBoard[7][6]; theBoard[7][6] = NULL;  theBoard[7][7] = theBoard[7][5]; theBoard[7][5] = NULL;  theBoard[7][4]->setr(7); theBoard[7][4]->setc(4); theBoard[7][4]->setRange();
+			theBoard[7][4]->setMove(false); theBoard[7][7]->setr(7); theBoard[7][7]->setc(7); theBoard[7][7]->setRange(); theBoard[7][7]->setMove(false); updatePiece(7,4);
+			updatePiece(7,7); updateGrid(7,7); updateGrid(7,4); td->notify(7, 6); td->notify(7, 5); td->notify(7, 4, 'K'); td->notify(7, 7, 'R');
 		}
 	}
 	else {
+		std::cout << "in else " << std::endl;
 		int r, c, newr, newc;
 		newr = move.first[2];
 		newc = move.first[3];
