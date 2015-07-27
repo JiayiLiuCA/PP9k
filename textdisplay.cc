@@ -28,6 +28,9 @@ TextDisplay::TextDisplay(): View() {
 				else if (y == 1) {
 					display[i][y] = ' ';
 				}
+				else if ((i + y)%2 == 0) {
+					display[i][y] = ' ';
+				}
 				else {
 					display[i][y] = '-';
 				}
