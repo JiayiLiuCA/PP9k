@@ -343,7 +343,6 @@ bool Board::castling(int r, int c, int nr, int nc, char k) {
 }
 
 bool Board::ruleCheck(int row, int col, int new_row, int new_col) {
-	std::cout << "in ruleCheck" << std::endl;
 	char name = '-';
 	bool status1 = false;
 	bool status2 = theBoard[row][col]->getStatus();
@@ -373,10 +372,9 @@ bool Board::ruleCheck(int row, int col, int new_row, int new_col) {
 			return false;
 		}
 		else if(row_diff == 2 && ((tmp->getName() == 'p' && theBoard[row + 2][col] != NULL) || (tmp->getName() == 'P' && theBoard[row - 2][col] != NULL)))  return false;
-		else isMove = true;
 	}
 	if(isMove == false) {
-		std::cout << "out ruleCheck 3" << std::endl;
+		std::cout << "out ruleCheck 3 no it does not" << std::endl;
 		return false;
 	}
 	if((tmp->getName() == 'K' || tmp->getName() == 'k') && (col_diff == 2)) {
@@ -474,8 +472,8 @@ void Board::notify(std::string move, char team) {
 					std::cout << "in promotion" << std::endl;
 					char promote;
 					ss >> promote;
-					if((team == 'A' && promote != 'N' && promote != 'B' && promote != 'R' && promote != 'Q') || (team == 'z' && promote != 'n' && promote != 'b' && promote != 'r' && promote != 'q')) {
-						std::cout << "invalid promotion please enter again" << std::endl;
+					while((team == 'A' && promote != 'N' && promote != 'B' && promote != 'R' && promote != 'Q') || (team == 'z' && promote != 'n' && promote != 'b' && promote != 'r' && promote != 'q')) {
+						std::cout << "invalid promotion please enter again(just the promotion char)" << std::endl;
 						std::cin >> promote;
 					}	
 					remove(newr, newc);
@@ -605,6 +603,8 @@ void Board::preundo() {
 	theBoard[r][c]->setRange();
 	if(enpass_name == 'e') {
 		add(r, newc, name, status2);
+		enpassant = static_cast<Pawn*>(theBoard[r][newc]);
+		updateEnpassant = true;
 		td->notify(r, newc, name);
 	}
 	else if(name != '-') {
@@ -757,9 +757,13 @@ void Board::play() {
 			if(player1 == "human") p1 = new Human(this, 'A');
 			else if(player1 == "computer1") p1 = new Computer1(this, 'A');
 			else if(player1 == "computer2") p1 = new Computer2(this, 'A');
+			else if(player1 == "computer3") p1 = new Computer3(this, 'A');
+			else if(player1 == "computer4") p1 = new Computer4(this, 'A');
 			if(player2 == "human") p2 = new Human(this, 'z');
 			else if(player2 == "computer1") p2 = new Computer1(this, 'z');
 			else if(player2 == "computer2") p2 = new Computer2(this, 'z');
+			else if(player1 == "computer3") p2 = new Computer3(this, 'z');
+			else if(player1 == "computer4") p2 = new Computer4(this, 'z');
 			td->print();
 			std::cout << "the battle begins!" << std::endl;
 			while(true) {
