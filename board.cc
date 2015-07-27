@@ -574,10 +574,21 @@ bool Board::checkMate(char king) {
 }
 
 void Board::undo() {
+	if(stack.size() == 0) {
+		std::cout << "you cannot undo anymore" << std::endl;
+		return;
+	}
 	preundo();
+	turn = !turn;
 	td->print();
-	if(turn -= 0) p1->makeMove();
-	else p2->makeMove();
+	if(turn == 0) {
+		std::cout << "white's turn to move" << std::endl;
+		p1->makeMove();
+	}
+	else {
+		std::cout << "black's turn to move" << std::endl;
+		p2->makeMove();
+	}
 }
 
 void Board::preundo() {
@@ -591,16 +602,25 @@ void Board::preundo() {
 	c = move.first[1];
 	char name = move.second[0];
 	char enpass_name = move.second[3];
-	std::cout << "checkpoint" << std::endl;
+	char promote = move.second[4];
+	char prename = move.second[5];
 	bool status1 = (move.second[1] == 0) ? false : true;
 	bool status2 = (move.second[2] == 0) ? false : true;
+	std::cout << "checkpoint" << std::endl;
+	if(promote == 'o') {
+		remove(newr, newc);
+		add(newr, newc, prename, true);
+	}	
 	removeRange(newr, newc);
 	theBoard[r][c] = theBoard[newr][newc];
 	theBoard[newr][newc] = NULL;
 	td->notify(newr, newc);
+	std::cout << "checkpoint 2" << std::endl;
+	std::cout << r << " " << c << std::endl;
 	theBoard[r][c]->setr(r);
 	theBoard[r][c]->setc(c);
 	theBoard[r][c]->setRange();
+	std::cout << "checkpoint 3" << std::endl;
 	if(enpass_name == 'e') {
 		add(r, newc, name, status2);
 		enpassant = static_cast<Pawn*>(theBoard[r][newc]);
@@ -618,6 +638,7 @@ void Board::preundo() {
 	theBoard[r][c]->setMove(status1);
 	td->notify(r, c, theBoard[r][c]->getName());
 	std::cout << "outpreundo" << std::endl;
+	stack.pop_back();
 }
 
 
@@ -625,6 +646,7 @@ void Board::preundo() {
 void Board::move(int oldr, int oldc, int newr, int newc) {
 	std::string capture_name = "-";//this is the default name for captured piece, if no piece is captured the capture_name is "-"
 	std::string enpass_name = "-";//this is a mark for enpassant, if off then it is "-" else it is "e"
+	std::string promote = "-"; //this is a mark for promotion if promotion has been made
 	bool status1 = theBoard[oldr][oldc]->getStatus(); //this records the status of the moving pieces
 	bool status2; //this records the status of the captured pieces if any
 	std::cout << "moving " << std::endl;
@@ -644,6 +666,7 @@ void Board::move(int oldr, int oldc, int newr, int newc) {
 		status2 = theBoard[oldr][newc]->getStatus();
 		remove(oldr, newc);
 	}
+	if((name == 'p' && newr == 7) || (name == 'P' || newr == 0)) promote = "o";
 	std::string s1, s2;
 	s1 = (status1) ? "1" : "0";
 	s2 = (status2) ? "1" : "0";
@@ -654,7 +677,7 @@ void Board::move(int oldr, int oldc, int newr, int newc) {
 	moves.push_back(newc);
 	std::pair <std::vector <int>, std::string> a_move;
 	a_move.first = moves;
-	a_move.second = capture_name + s1 + s2 + enpass_name;
+	a_move.second = capture_name + s1 + s2 + enpass_name + promote + theBoard[oldr][oldc]->getName();
 	stack.push_back(a_move);	
 	removeRange(oldr, oldc);
 	remove(newr, newc);
