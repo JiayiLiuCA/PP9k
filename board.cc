@@ -465,8 +465,20 @@ void Board::notify(std::string move, char team) {
 				if((name == 'k' || name == 'K') && col_diff == 2) {
 					int dir = col_diff / (newc - oldc);
 					this->move(oldr, oldc, newr, newc);
-					if(dir > 0) this->move(oldr, oldc + 3, oldr, oldc + 1);
-					else this->move(oldr, oldc - 4, oldr, oldc - 1);
+					std::pair < std::vector <int>, std::string > tmp;
+					if(dir > 0) {
+						this->move(oldr, oldc + 3, oldr, oldc + 1);
+						if(name == 'k') tmp.second = "ck-";// "c" represents the castling "k"("K") represents the king(white or black) and "+" represent castling with the right rook, "-" represents castling with the left rook
+						else tmp.second = "cK-";
+					}
+					else {
+						this->move(oldr, oldc - 4, oldr, oldc - 1);
+						if(name == 'k') tmp.second = "ck+";
+						else tmp.second = "cK+";
+					}
+					stack.pop_back();
+					stack.pop_back();
+					stack.push_back(tmp);
 					return ;
 				}
 				this->move(oldr, oldc, newr, newc);
@@ -597,49 +609,75 @@ void Board::preundo() {
 	std::cout << "in preundo" << std::endl;
 	std::vector <std::pair <std::vector<int>, std::string> >::iterator it = stack.end() - 1;
 	std::pair <std::vector <int>, std::string> move = *it;
-	int r, c, newr, newc;
-	newr = move.first[2];
-	newc = move.first[3];
-	r = move.first[0];
-	c = move.first[1];
-	char name = move.second[0];
-	char enpass_name = move.second[3];
-	char promote = move.second[4];
-	char prename = move.second[5];
-	bool status1 = (move.second[1] == 0) ? false : true;
-	bool status2 = (move.second[2] == 0) ? false : true;
-	std::cout << "checkpoint" << std::endl;
-	if(promote == 'o') {
-		remove(newr, newc);
-		add(newr, newc, prename, true);
-	}	
-	removeRange(newr, newc);
-	theBoard[r][c] = theBoard[newr][newc];
-	theBoard[newr][newc] = NULL;
-	td->notify(newr, newc);
-	std::cout << "checkpoint 2" << std::endl;
-	std::cout << r << " " << c << std::endl;
-	theBoard[r][c]->setr(r);
-	theBoard[r][c]->setc(c);
-	theBoard[r][c]->setRange();
-	std::cout << "checkpoint 3" << std::endl;
-	if(enpass_name == 'e') {
-		add(r, newc, name, status2);
-		enpassant = static_cast<Pawn*>(theBoard[r][newc]);
-		updateEnpassant = true;
-		td->notify(r, newc, name);
+	if(move.second[0] == 'c') {
+		char king_name = move.second[1];
+		char dir = move.second[2];
+		if(dir == '-' && king_name == 'k') {
+			theBoard[0][4] = theBoard[0][2]; theBoard[0][0] = theBoard[0][3]; theBoard[0][4]->setr(0); theBoard[0][4]->setc(4); theBoard[0][4]->setRange();
+			theBoard[0][4]->setMove(false); theBoard[0][0]->setr(0); theBoard[0][0]->setc(0); theBoard[0][0]->setRange(); theBoard[0][4]->setMove(false); updatePiece(0,4);
+			updatePiece(0,0); updateGrid(0,0); updateGrid(0,4);
+		}
+		if(dir == '+' && king_name == 'k') {
+			theBoard[0][4] = theBoard[0][6]; theBoard[0][7] = theBoard[0][5]; theBoard[0][4]->setr(0); theBoard[0][4]->setc(4); theBoard[0][4]->setRange();
+			theBoard[0][4]->setMove(false); theBoard[0][7]->setr(0); theBoard[0][7]->setc(7); theBoard[0][7]->setRange(); theBoard[0][4]->setMove(false); updatePiece(0,4);
+			updatePiece(0,7); updateGrid(0,7); updateGrid(0,4);
+		}
+		if(dir == '-' && king_name == 'K') {
+			theBoard[7][4] = theBoard[7][2]; theBoard[7][0] = theBoard[7][3]; theBoard[7][4]->setr(7); theBoard[7][4]->setc(4); theBoard[7][4]->setRange();
+			theBoard[7][4]->setMove(false); theBoard[7][0]->setr(7); theBoard[7][0]->setc(7); theBoard[7][0]->setRange(); theBoard[7][4]->setMove(false); updatePiece(7,4);
+			updatePiece(7,0); updateGrid(7,0); updateGrid(7,4);
+		}
+		if(dir == '+' && king_name == 'K') {
+			theBoard[7][4] = theBoard[7][6]; theBoard[7][7] = theBoard[7][5]; theBoard[7][4]->setr(7); theBoard[7][4]->setc(4); theBoard[7][4]->setRange();
+			theBoard[7][4]->setMove(false); theBoard[7][7]->setr(7); theBoard[7][7]->setc(7); theBoard[7][7]->setRange(); theBoard[7][4]->setMove(false); updatePiece(7,4);
+			updatePiece(7,7); updateGrid(7,7); updateGrid(7,4);
+		}
 	}
-	else if(name != '-') {
-		add(newr, newc, name, status2);
-		td->notify(newr, newc, name);
+	else {
+		int r, c, newr, newc;
+		newr = move.first[2];
+		newc = move.first[3];
+		r = move.first[0];
+		c = move.first[1];
+		char name = move.second[0];
+		char enpass_name = move.second[3];
+		char promote = move.second[4];
+		char prename = move.second[5];
+		bool status1 = (move.second[1] == 0) ? false : true;
+		bool status2 = (move.second[2] == 0) ? false : true;
+		std::cout << "checkpoint" << std::endl;
+		if(promote == 'o') {
+			remove(newr, newc);
+			add(newr, newc, prename, true);
+		}	
+		removeRange(newr, newc);
+		theBoard[r][c] = theBoard[newr][newc];
+		theBoard[newr][newc] = NULL;
+		td->notify(newr, newc);
+		std::cout << "checkpoint 2" << std::endl;
+		std::cout << r << " " << c << std::endl;
+		theBoard[r][c]->setr(r);
+		theBoard[r][c]->setc(c);
+		theBoard[r][c]->setRange();
+		std::cout << "checkpoint 3" << std::endl;
+		if(enpass_name == 'e') {
+			add(r, newc, name, status2);
+			enpassant = static_cast<Pawn*>(theBoard[r][newc]);
+			updateEnpassant = true;
+			td->notify(r, newc, name);
+		}
+		else if(name != '-') {
+			add(newr, newc, name, status2);
+			td->notify(newr, newc, name);
+		}
+		updatePiece(newr, newc);
+		updatePiece(r, c);
+		updateGrid(r, c);
+		updateGrid(newr, newc);
+		theBoard[r][c]->setMove(status1);
+		td->notify(r, c, theBoard[r][c]->getName());
+		std::cout << "outpreundo" << std::endl;
 	}
-	updatePiece(newr, newc);
-	updatePiece(r, c);
-	updateGrid(r, c);
-	updateGrid(newr, newc);
-	theBoard[r][c]->setMove(status1);
-	td->notify(r, c, theBoard[r][c]->getName());
-	std::cout << "outpreundo" << std::endl;
 	stack.pop_back();
 }
 
@@ -787,8 +825,8 @@ void Board::play() {
 			if(player2 == "human") p2 = new Human(this, 'z');
 			else if(player2 == "computer1") p2 = new Computer1(this, 'z');
 			else if(player2 == "computer2") p2 = new Computer2(this, 'z');
-			else if(player1 == "computer3") p2 = new Computer3(this, 'z');
-			else if(player1 == "computer4") p2 = new Computer4(this, 'z');
+			else if(player2 == "computer3") p2 = new Computer3(this, 'z');
+			else if(player2 == "computer4") p2 = new Computer4(this, 'z');
 			td->print();
 			std::cout << "the battle begins!" << std::endl;
 			while(true) {
