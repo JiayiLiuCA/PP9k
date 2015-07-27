@@ -16,7 +16,7 @@ void Computer3::makeMove() {
 	while (std::cin >> opt) {
 		if (opt == "move") {
 			std::vector <std::string> tmp;
-			int max_profit = 0;
+			int max_profit = -10;
 			for (int i = 0; i < 8; i++) {
 				for (int j = 0; j < 8; j++) {
 					Pieces *tmp_p = game->getPiece(i,j);
@@ -35,6 +35,7 @@ void Computer3::makeMove() {
 										char target_name = target->getName();
 										profit += value(target_name);
 									}
+									//std::cout << "first profit: " << profit << std::endl;
 									int lose = 0;
 									std::vector <Pieces *> underAttack;
 									underAttack = game->getAttack(i,j);
@@ -44,7 +45,9 @@ void Computer3::makeMove() {
 											profit += value(name);
 										}
 									}
+									//std::cout << "after avoiding: " << profit << std::endl;
 									game->move(i,j,tmp_pair.first,tmp_pair.second);
+									underAttack.clear();
 									underAttack = game->getAttack(tmp_pair.first, tmp_pair.second);
 									for (int y = 0; y < underAttack.size(); y++) {
 										char attack_name = underAttack[y]->getName();
@@ -54,12 +57,13 @@ void Computer3::makeMove() {
 										}
 									}
 									profit -= lose;
+									//std::cout << "after avoiding prediction: " << profit << std::endl;
 									if (game->check('k') || game->check('K')) {
 										if (lose == 0) {
 											profit += 999;
 										}
 									}
-									std::cout << "before **************** undo" << std::endl;
+									//std::cout << "final profit: " << profit << std::endl;
 									game->preundo();
 									std::string s = string_convert(i,j) + " " +
 										string_convert(tmp_pair.first,tmp_pair.second);
