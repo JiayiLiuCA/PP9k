@@ -36,8 +36,16 @@ void Computer3::makeMove() {
 										profit += value(target_name);
 									}
 									int lose = 0;
+									std::vector <Pieces *> underAttack;
+									underAttack = game->getAttack(i,j);
+									for (int y = 0; y < underAttack.size(); y++) {
+										char attack_name = underAttack[y]->getName();
+										if (std::abs(name - attack_name) >= 22) {
+											profit += value(name);
+										}
+									}
 									game->move(i,j,tmp_pair.first,tmp_pair.second);
-									std::vector <Pieces *> underAttack = game->getAttack(tmp_pair.first, tmp_pair.second);
+									underAttack = game->getAttack(tmp_pair.first, tmp_pair.second);
 									for (int y = 0; y < underAttack.size(); y++) {
 										char attack_name = underAttack[y]->getName();
 										if (std::abs(name - attack_name) >= 22) {
@@ -51,6 +59,7 @@ void Computer3::makeMove() {
 											profit += 999;
 										}
 									}
+									std::cout << "before **************** undo" << std::endl;
 									game->preundo();
 									std::string s = string_convert(i,j) + " " +
 										string_convert(tmp_pair.first,tmp_pair.second);
@@ -78,7 +87,7 @@ void Computer3::makeMove() {
 					}
 				}
 			}
-			//std::cout << "final size: " << tmp.size() << std::endl;
+			std::cout << "final size: " << tmp.size() << std::endl;
 			std::cout << "final profit: " << max_profit << std::endl;
 			srand(time(NULL));
 			int random = rand()%(tmp.size());
