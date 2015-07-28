@@ -749,7 +749,7 @@ void Board::play(int graph, std::string file) {
 	td = new TextDisplay();
 	if(file != "") {
 		std::string line;
-		std::ifstream myfile(file);
+		std::ifstream myfile(file.c_str());
 		int row = 0;
 		while (std::getline(myfile, line)) {
 			std::stringstream ss(line);
