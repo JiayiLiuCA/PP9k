@@ -397,7 +397,6 @@ bool Board::ruleCheck(int row, int col, int new_row, int new_col) {
 		}
 		else if(row_diff == 2 && ((tmp->getName() == 'p' && theBoard[row + 2][col] != NULL) || (tmp->getName() == 'P' && theBoard[row - 2][col] != NULL)))  return false;
 	}
-	std::cout << "move is " << isMove << std::endl;
 	if(isMove == false) {
 		return false;
 	}
@@ -410,8 +409,8 @@ bool Board::ruleCheck(int row, int col, int new_row, int new_col) {
 			return false;
 		}
 	}
-	if(theBoard[new_row][new_col] != NULL && ((theBoard[row][col]->getName() >= 'a' && theBoard[new_row][new_col]->getName() >= 'a') || (theBoard[row][col]->getName() <= 'Z' && theBoard[new_row][new_col] <= 'Z'))) {
-		 std::cout << "you cannot eat allies " << std::endl;
+	if(theBoard[new_row][new_col] != NULL && !((theBoard[row][col]->getName() - 'A' < 26) ^ (theBoard[new_row][new_col]->getName() - 'A' < 26))){
+		if(!Istesting)std::cout << "you cannot eat allies " << std::endl;
 		return false;
 	}
 	if(theBoard[new_row][new_col] != NULL) {
@@ -420,7 +419,7 @@ bool Board::ruleCheck(int row, int col, int new_row, int new_col) {
 	}
 	move(row, col, new_row, new_col);
 	if((turn == 0 && check('K')) || (turn == 1 && check('k'))) {
-		std::cout << "this move will put you king in check" << std::endl;
+		if(!Istesting)std::cout << "this move will put you king in check" << std::endl;
 		preundo();
 		return false;
 	}
@@ -841,6 +840,7 @@ void Board::play(int graph, std::string file) {
 			clearGame();
 			delete td;
 			td = new TextDisplay();
+			Istesting = false;
 			if(graph == 1) {
 				graphmode = true;
 				std::cout << "graph mode " << std::endl;
@@ -938,10 +938,12 @@ void Board::play(int graph, std::string file) {
 				if(turn == 0 && playing) {
 					if(graph == 1)tgd = static_cast<GraphicDisplay*>(gd);
 					Istesting = true;
+					if(graph == 1)tgd->clear();
 					if(check('K')) {
 						std::cout << "White is in check!" << std::endl;
 						if(graph == 1)tgd->message("White is in check!");
 						if(checkMate('K')) {
+							if(graph == 1)tgd->clear();
 							std::cout << "Checkmate! Black wins!" << std::endl;
 							if(graph == 1)tgd->message("Checkmate! Black wins!");
 							playing = false;
@@ -963,10 +965,12 @@ void Board::play(int graph, std::string file) {
 				else if(turn == 1 && playing) {
 					Istesting = true;
 					if(graph == 1)tgd = static_cast<GraphicDisplay*>(gd);
+					if(graph == 1)tgd->clear();
 					if(check('k')) {
 						std::cout << "Black is in check!" << std::endl;
 						if(graph == 1)tgd->message("Black is in check!");
 						if(checkMate('k')) {
+							if(graph == 1)tgd->clear();
 							std::cout << "Checkmate! White wins!" << std::endl;
 							if(graph == 1)tgd->message("Checkmate! White wins!");
 							playing = false;
