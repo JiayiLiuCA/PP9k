@@ -32,6 +32,7 @@ void GraphicDisplay::notify(int r, int c, char ch) {
 void GraphicDisplay::print() {}
 
 void GraphicDisplay::message(std::string s) {
+	std::cout << "drawing" << std::endl;
 	display->drawBigString(480, 10, s, 0);
 }
 
