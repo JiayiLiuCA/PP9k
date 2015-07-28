@@ -4,7 +4,6 @@
 
 
 GraphicDisplay::GraphicDisplay() {
-	std::cout << "in constructor" << std::endl;
 	display = new Xwindow();
 	for(int i = 0; i < 8; i ++) {
 		for(int j = 0; j < 8; j ++) {
