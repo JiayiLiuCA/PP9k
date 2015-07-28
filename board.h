@@ -34,7 +34,7 @@ class Board {
 		static void cleanup();
 	public:
 		void clearGame(); //clear all the pieces on the board and reset a new game  
-		void play(); //this command begins the whole game 
+		void play(int graph, std::string = ""); //this command begins the whole game 
 		static Board* getInstance();
 		void updatePiece(int r, int c);//update the attackBoard	
 		void updateGrid(int r, int c);
@@ -50,7 +50,6 @@ class Board {
 		void notify(std::string move, char team); //the boards take moving commands from controller
 		void move(int oldr, int oldc, int newr, int newc); //move a piece fromoldrow oldcol to new row new col
 		bool ruleCheck(int oldr, int oldc, int newr, int newc);//this checks whether this move is legal or not
-		void setPlayer(Controller* player); // set the players
 		bool check(char king); //determine whether a king is in check or not('K' or 'k')
 		bool preCheck(int row, int col, int new_row, int new_col);	
 		bool checkMate(char king); //determine whether it is a checkmate for king

@@ -1,5 +1,6 @@
 #include "board.h"
 #include "textdisplay.h"
+#include "graphicdisplay.h"
 #include "concrete_pieces.h"
 #include "human.h"
 #include "computer.h"
@@ -71,7 +72,9 @@ void Board::clearGame() {
 	enpassant = NULL;
 	updateEnpassant = false;
 	delete td;
+	delete gd;
 	td = NULL;
+	gd = NULL;
 }
 
 void Board::remove(int r, int c) {
@@ -84,6 +87,7 @@ void Board::remove(int r, int c) {
 		theBoard[r][c] = NULL;
 		updateGrid(r, c);
 		td->notify(r, c);
+		gd->notify(r, c);
 	}
 	else std::cout << "invalid remove" << std::endl;
 }
@@ -124,6 +128,7 @@ void Board::add(int r, int c, char p, bool move) {
 			updateGrid(r, c);
 		}
 		td->notify(r, c, p);
+		gd->notify(r, c, p);
 	}
 	else std::cout << "not valid add" << std::endl;
 }
@@ -618,26 +623,25 @@ void Board::preundo() {
 		if(dir == '-' && king_name == 'k') {
 			theBoard[0][4] = theBoard[0][2]; theBoard[0][2] = NULL; theBoard[0][0] = theBoard[0][3]; theBoard[0][3] = NULL; theBoard[0][4]->setr(0); theBoard[0][4]->setc(4); theBoard[0][4]->setRange();
 			theBoard[0][4]->setMove(false); theBoard[0][0]->setr(0); theBoard[0][0]->setc(0); theBoard[0][0]->setRange(); theBoard[0][0]->setMove(false); updatePiece(0,4);
-			updatePiece(0,0); updateGrid(0,0); updateGrid(0,4); td->notify(0,2); td->notify(0, 3); td->notify(0, 4, 'k'); td->notify(0, 0, 'r');
+			updatePiece(0,0); updateGrid(0,0); updateGrid(0,4); td->notify(0,2); td->notify(0, 3); td->notify(0, 4, 'k'); gd->notify(0, 0, 'r');  gd->notify(0,2); gd->notify(0, 3); gd->notify(0, 4, 'k'); gd->notify(0, 0, 'r'); 
 		}
 		if(dir == '+' && king_name == 'k') {
 			theBoard[0][4] = theBoard[0][6]; theBoard[0][6] = NULL; theBoard[0][7] = theBoard[0][5]; theBoard[0][5] = NULL;  theBoard[0][4]->setr(0); theBoard[0][4]->setc(4); theBoard[0][4]->setRange();
 			theBoard[0][4]->setMove(false); theBoard[0][7]->setr(0); theBoard[0][7]->setc(7); theBoard[0][7]->setRange(); theBoard[0][7]->setMove(false); updatePiece(0,4);
-			updatePiece(0,7); updateGrid(0,7); updateGrid(0,4); td->notify(0,6); td->notify(0, 5); td->notify(0, 4, 'k'); td->notify(0, 7, 'r');
+			updatePiece(0,7); updateGrid(0,7); updateGrid(0,4); td->notify(0,6); td->notify(0, 5); td->notify(0, 4, 'k'); td->notify(0, 7, 'r'); gd->notify(0,6); gd->notify(0, 5); gd->notify(0, 4, 'k'); gd->notify(0, 7, 'r');
 		}
 		if(dir == '-' && king_name == 'K') {
 			theBoard[7][4] = theBoard[7][2]; theBoard[7][2] = NULL;  theBoard[7][0] = theBoard[7][3]; theBoard[7][3] = NULL;  theBoard[7][4]->setr(7); theBoard[7][4]->setc(4); theBoard[7][4]->setRange();
 			theBoard[7][4]->setMove(false); theBoard[7][0]->setr(7); theBoard[7][0]->setc(0); theBoard[7][0]->setRange(); theBoard[7][0]->setMove(false); updatePiece(7,4);
-			updatePiece(7,0); updateGrid(7,0); updateGrid(7,4); td->notify(7 ,2); td->notify(7, 3); td->notify(7, 4, 'K'); td->notify(7, 0, 'R');
+			updatePiece(7,0); updateGrid(7,0); updateGrid(7,4); td->notify(7 ,2); td->notify(7, 3); td->notify(7, 4, 'K'); td->notify(7, 0, 'R'); gd->notify(7 ,2); gd->notify(7, 3); gd->notify(7, 4, 'K'); gd->notify(7, 0, 'R');
 		}
 		if(dir == '+' && king_name == 'K') {
 			theBoard[7][4] = theBoard[7][6]; theBoard[7][6] = NULL;  theBoard[7][7] = theBoard[7][5]; theBoard[7][5] = NULL;  theBoard[7][4]->setr(7); theBoard[7][4]->setc(4); theBoard[7][4]->setRange();
 			theBoard[7][4]->setMove(false); theBoard[7][7]->setr(7); theBoard[7][7]->setc(7); theBoard[7][7]->setRange(); theBoard[7][7]->setMove(false); updatePiece(7,4);
-			updatePiece(7,7); updateGrid(7,7); updateGrid(7,4); td->notify(7, 6); td->notify(7, 5); td->notify(7, 4, 'K'); td->notify(7, 7, 'R');
+			updatePiece(7,7); updateGrid(7,7); updateGrid(7,4); td->notify(7, 6); td->notify(7, 5); td->notify(7, 4, 'K'); td->notify(7, 7, 'R'); gd->notify(7, 6); gd->notify(7, 5); gd->notify(7, 4, 'K'); gd->notify(7, 7, 'R');
 		}
 	}
 	else {
-		std::cout << "in else " << std::endl;
 		int r, c, newr, newc;
 		newr = move.first[2];
 		newc = move.first[3];
@@ -658,6 +662,7 @@ void Board::preundo() {
 		theBoard[r][c] = theBoard[newr][newc];
 		theBoard[newr][newc] = NULL;
 		td->notify(newr, newc);
+		gd->notify(newr, newc);
 		std::cout << "checkpoint 2" << std::endl;
 		std::cout << r << " " << c << std::endl;
 		theBoard[r][c]->setr(r);
@@ -669,10 +674,12 @@ void Board::preundo() {
 			enpassant = static_cast<Pawn*>(theBoard[r][newc]);
 			updateEnpassant = true;
 			td->notify(r, newc, name);
+			gd->notify(r, newc, name);
 		}
 		else if(name != '-') {
 			add(newr, newc, name, status2);
 			td->notify(newr, newc, name);
+			gd->notify(newr, newc, name);
 		}
 		updatePiece(newr, newc);
 		updatePiece(r, c);
@@ -680,6 +687,9 @@ void Board::preundo() {
 		updateGrid(newr, newc);
 		theBoard[r][c]->setMove(status1);
 		td->notify(r, c, theBoard[r][c]->getName());
+		gd->notify(r, c, theBoard[r][c]->getName());
+		td->notify(r, c, theBoard[r][c]->getName());
+		gd->notify(r, c, theBoard[r][c]->getName());
 		std::cout << "outpreundo" << std::endl;
 	}
 	stack.pop_back();
@@ -736,13 +746,15 @@ void Board::move(int oldr, int oldc, int newr, int newc) {
 	theBoard[newr][newc]->setMove(true);
 	if((name != 'p' && name != 'P') || abs(newr - oldr) != 2) updateEnpassant = false;
 	td->notify(oldr, oldc);
+	gd->notify(oldr, oldc);
 	td->notify(newr, newc, name);
+	gd->notify(newr, newc, name);
 	std::cout << "end of moving" << std::endl;
 }
 
 
 
-void Board::play() {
+void Board::play(int graph, std::string) {
 	std::string command;
 	while(std::cin >> command) {
 		if(command == "setup") {
@@ -750,6 +762,12 @@ void Board::play() {
 			delete td;
 			td = new TextDisplay();
 			td->print();
+			std::cout << "graph is " << graph << std::endl;
+			if(graph == 1) {
+				std::cout << "graph mode " << std::endl;
+				delete gd;
+				gd = new GraphicDisplay();
+			}
 			while(true) {
 				std::string opt;
 				std::cin >> opt;
