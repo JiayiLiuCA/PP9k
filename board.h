@@ -21,8 +21,8 @@ class Board {
 		std::vector <std::vector <Pieces* > > theBoard; //the board
 		Controller* p1;  //Player 1 (white-player)
 		Controller* p2;  //Player 2 (black-player)
-		int p1Score;
-		int p2Score;
+		double p1Score;
+		double p2Score;
 		bool playing; //determine whether a game is running or not
 		Pawn* enpassant; //whether there is a Pawn could be enpassant
 		bool updateEnpassant; //whether the enpassant is update or not
@@ -33,6 +33,7 @@ class Board {
 		~Board();
 		static void cleanup();
 	public:
+		bool graphmode; //whether the graph is on or not
 		void clearGame(); //clear all the pieces on the board and reset a new game  
 		void play(int graph, std::string); //this command begins the whole game 
 		static Board* getInstance();
@@ -57,6 +58,7 @@ class Board {
 		bool castling(int r, int c, int nr, int nc, char k);
 		void preundo();
 		void undo();//undo a previous move
+		bool stalemate(char team);
 
 };
 #endif

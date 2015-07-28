@@ -15,6 +15,5 @@ int main(int argc, char* argv[]) {
 		}
 	}
 	Board *b = Board::getInstance();
-	std::cout << file << std::endl;
 	b->play(graph, file);
 }

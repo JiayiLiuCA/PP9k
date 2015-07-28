@@ -1,6 +1,6 @@
 #include "board.h"
 #include "textdisplay.h"
-#include "graphicdisplay.h"
+//#include "graphicdisplay.h"
 #include "concrete_pieces.h"
 #include "human.h"
 #include "computer.h"
@@ -30,7 +30,8 @@ Board::Board() {
 	gd = NULL;
 	td = NULL;
 	playing = false;
-	enpassant = NULL;	
+	enpassant = NULL;
+	graphmode = false;
 }
 
 Board::~Board() {
@@ -87,7 +88,7 @@ void Board::remove(int r, int c) {
 		theBoard[r][c] = NULL;
 		updateGrid(r, c);
 		td->notify(r, c);
-		gd->notify(r, c);
+//		if(graphmode)gd->notify(r, c);
 	}
 	else std::cout << "invalid remove" << std::endl;
 }
@@ -128,7 +129,7 @@ void Board::add(int r, int c, char p, bool move) {
 			updateGrid(r, c);
 		}
 		td->notify(r, c, p);
-		gd->notify(r, c, p);
+//		if(graphmode) gd->notify(r, c, p);
 	}
 	else std::cout << "not valid add" << std::endl;
 }
@@ -293,6 +294,26 @@ bool Board::preCheck(int row, int col, int new_row, int new_col) {
 	else if(n == 'p' || n == 'P') return true;
 }
 
+bool Board::stalemate(char team) {
+	for(int i = 0; i < 8; i ++) {
+		for(int j = 0; j < 8; j ++) {
+			if(theBoard[i][j] != NULL && abs(theBoard[i][j]->getName() - team) < 25) {
+				std::vector < std::pair <int, int> > range = theBoard[i][j]->getRange();
+				for(std::vector < std::pair <int ,int> >::iterator it = range.begin(); it != range.end(); it ++) {
+					int r = it->first;
+					int c = it->second;
+					if(ruleCheck(i, j, r, c)) {
+						return false;
+					}
+				}
+			}
+		}
+	}
+	return true;
+}
+							
+					
+
 
 bool Board::castling(int r, int c, int nr, int nc, char k) {
 	int col_diff = abs(nc - c);
@@ -378,8 +399,12 @@ bool Board::ruleCheck(int row, int col, int new_row, int new_col) {
 	if(isMove == false) {
 		return false;
 	}
+	std::cout << "checkpoint " << std::endl;
 	if((tmp->getName() == 'K' || tmp->getName() == 'k') && (col_diff == 2)) {
-		if(castling(row, col, new_row, new_col, tmp->getName())) return true;
+		if(castling(row, col, new_row, new_col, tmp->getName())) {
+			std::cout << "returning true" << std::endl;
+			return true;
+		}
 		else {
 			std::cout << "castling fail" << std::endl;
 			return false;
@@ -403,6 +428,7 @@ bool Board::ruleCheck(int row, int col, int new_row, int new_col) {
 		preundo();
 	}
 	if(isMove) {
+		std::cout << "return real true" << std::endl;
 		return true;
 	}
 	else {
@@ -509,9 +535,10 @@ bool Board::check(char king) {
 				}
 	std::vector< Pieces* > tmp = attackBoard[row][col];
 	for(std::vector< Pieces* >::iterator it = tmp.begin(); it != tmp.end(); it ++) {
+		bool ischeck = true;
 		if(abs((*it)->getName() - king) > 22) {
-			if(((*it)->getName() == 'P' || 'p') && ((*it)->getc() - col == 0)) return false;
-			return true;
+			if(((*it)->getName() == 'P' || (*it)->getName() == 'p') && abs((*it)->getc() - col) == 0) ischeck = false;
+			if(ischeck) return true;
 		}
 	}
 	return false;
@@ -613,28 +640,53 @@ void Board::preundo() {
 			theBoard[0][3] = NULL; theBoard[0][4]->setr(0); theBoard[0][4]->setc(4); theBoard[0][4]->setRange();
 			theBoard[0][4]->setMove(false); theBoard[0][0]->setr(0); theBoard[0][0]->setc(0); theBoard[0][0]->setRange(); 
 			theBoard[0][0]->setMove(false); updatePiece(0,4); updatePiece(0,0); updateGrid(0,0); updateGrid(0,4); td->notify(0,2); 
-			td->notify(0, 3); td->notify(0, 4, 'k'); gd->notify(0, 0, 'r');  gd->notify(0,2); gd->notify(0, 3); gd->notify(0, 4, 'k'); gd->notify(0, 0, 'r'); 
+			td->notify(0, 3); td->notify(0, 4, 'k'); 
+		/*	if(graphmode) {
+			gd->notify(0, 0, 'r');  
+			gd->notify(0,2); 
+			gd->notify(0, 3); 
+			gd->notify(0, 4, 'k'); 
+			gd->notify(0, 0, 'r'); 
+			}*/
 		}
 		if(dir == '+' && king_name == 'k') {
 			theBoard[0][4] = theBoard[0][6]; theBoard[0][6] = NULL; theBoard[0][7] = theBoard[0][5]; 
 			theBoard[0][5] = NULL;  theBoard[0][4]->setr(0); theBoard[0][4]->setc(4); theBoard[0][4]->setRange();
 			theBoard[0][4]->setMove(false); theBoard[0][7]->setr(0); theBoard[0][7]->setc(7); theBoard[0][7]->setRange(); 
 			theBoard[0][7]->setMove(false); updatePiece(0,4);updatePiece(0,7); updateGrid(0,7); updateGrid(0,4); td->notify(0,6); 
-			td->notify(0, 5); td->notify(0, 4, 'k'); td->notify(0, 7, 'r'); gd->notify(0,6); gd->notify(0, 5); gd->notify(0, 4, 'k'); gd->notify(0, 7, 'r');
+			td->notify(0, 5); td->notify(0, 4, 'k'); td->notify(0, 7, 'r'); 
+			/*if(graphmode) {
+			  gd->notify(0,6); 
+			  gd->notify(0, 5); 
+			  gd->notify(0, 4, 'k'); 
+			  gd->notify(0, 7, 'r');
+			  }*/
 		}
 		if(dir == '-' && king_name == 'K') {
 			theBoard[7][4] = theBoard[7][2]; theBoard[7][2] = NULL;  theBoard[7][0] = theBoard[7][3]; 
 			theBoard[7][3] = NULL;  theBoard[7][4]->setr(7); theBoard[7][4]->setc(4); theBoard[7][4]->setRange();
 			theBoard[7][4]->setMove(false); theBoard[7][0]->setr(7); theBoard[7][0]->setc(0); theBoard[7][0]->setRange(); 
 			theBoard[7][0]->setMove(false); updatePiece(7,4); updatePiece(7,0); updateGrid(7,0); updateGrid(7,4); td->notify(7 ,2); 
-			td->notify(7, 3); td->notify(7, 4, 'K'); td->notify(7, 0, 'R'); gd->notify(7 ,2); gd->notify(7, 3); gd->notify(7, 4, 'K'); gd->notify(7, 0, 'R');
+			td->notify(7, 3); td->notify(7, 4, 'K'); td->notify(7, 0, 'R'); 
+			/*if(graphmode) {
+			 * gd->notify(7 ,2); 
+			 * gd->notify(7, 3); 
+			 * gd->notify(7, 4, 'K'); 
+			 * gd->notify(7, 0, 'R');
+			 * }*/
 		}
 		if(dir == '+' && king_name == 'K') {
 			theBoard[7][4] = theBoard[7][6]; theBoard[7][6] = NULL;  theBoard[7][7] = theBoard[7][5]; 
 			theBoard[7][5] = NULL;  theBoard[7][4]->setr(7); theBoard[7][4]->setc(4); theBoard[7][4]->setRange();
 			theBoard[7][4]->setMove(false); theBoard[7][7]->setr(7); theBoard[7][7]->setc(7); theBoard[7][7]->setRange(); 
 			theBoard[7][7]->setMove(false); updatePiece(7,4);updatePiece(7,7); updateGrid(7,7); updateGrid(7,4); td->notify(7, 6); td->notify(7, 5); 
-			td->notify(7, 4, 'K'); td->notify(7, 7, 'R'); gd->notify(7, 6); gd->notify(7, 5); gd->notify(7, 4, 'K'); gd->notify(7, 7, 'R');
+			td->notify(7, 4, 'K'); td->notify(7, 7, 'R'); 
+			/*if(graphmode) {
+			 * gd->notify(7, 6); 
+			 * gd->notify(7, 5); 
+			 * gd->notify(7, 4, 'K'); 
+			 * gd->notify(7, 7, 'R');
+			 * }*/
 		}
 	}
 	else {
@@ -657,7 +709,7 @@ void Board::preundo() {
 		theBoard[r][c] = theBoard[newr][newc];
 		theBoard[newr][newc] = NULL;
 		td->notify(newr, newc);
-		gd->notify(newr, newc);
+//		if(graphmode) gd->notify(newr, newc);
 		theBoard[r][c]->setr(r);
 		theBoard[r][c]->setc(c);
 		theBoard[r][c]->setRange();
@@ -666,12 +718,12 @@ void Board::preundo() {
 			enpassant = static_cast<Pawn*>(theBoard[r][newc]);
 			updateEnpassant = true;
 			td->notify(r, newc, name);
-			gd->notify(r, newc, name);
+//			if(graphmode)gd->notify(r, newc, name);
 		}
 		else if(name != '-') {
 			add(newr, newc, name, status2);
 			td->notify(newr, newc, name);
-			gd->notify(newr, newc, name);
+//			if(graphmode)gd->notify(newr, newc, name);
 		}
 		updatePiece(newr, newc);
 		updatePiece(r, c);
@@ -679,9 +731,9 @@ void Board::preundo() {
 		updateGrid(newr, newc);
 		theBoard[r][c]->setMove(status1);
 		td->notify(r, c, theBoard[r][c]->getName());
-		gd->notify(r, c, theBoard[r][c]->getName());
+//		if(graphmode)gd->notify(r, c, theBoard[r][c]->getName());
 		td->notify(r, c, theBoard[r][c]->getName());
-		gd->notify(r, c, theBoard[r][c]->getName());
+//		if(graphmode)gd->notify(r, c, theBoard[r][c]->getName());
 	}
 	stack.pop_back();
 }
@@ -736,9 +788,9 @@ void Board::move(int oldr, int oldc, int newr, int newc) {
 	theBoard[newr][newc]->setMove(true);
 	if((name != 'p' && name != 'P') || abs(newr - oldr) != 2) updateEnpassant = false;
 	td->notify(oldr, oldc);
-	gd->notify(oldr, oldc);
+//	if(graphmode) gd->notify(oldr, oldc);
 	td->notify(newr, newc, name);
-	gd->notify(newr, newc, name);
+//	if(graphmode) gd->notify(newr, newc, name);
 }
 
 
@@ -776,9 +828,10 @@ void Board::play(int graph, std::string file) {
 			td = new TextDisplay();
 			td->print();
 			if(graph == 1) {
-				std::cout << "graph mode " << std::endl;
-				delete gd;
-				gd = new GraphicDisplay();
+//				graphmode = true;
+//				std::cout << "graph mode " << std::endl;
+//				delete gd;
+//				gd = new GraphicDisplay();
 			}
 			while(true) {
 				std::string opt;
@@ -868,6 +921,11 @@ void Board::play(int graph, std::string file) {
 					enpassant = NULL;
 				}
 				if(turn == 0 && playing) {
+					if(stalemate('A')) {
+						p1Score += 0.5;
+						p2Score += 0.5;
+						break;
+					}
 					if(check('K')) {
 						std::cout << "White is in check!" << std::endl;
 						if(checkMate('K')) {
@@ -882,6 +940,11 @@ void Board::play(int graph, std::string file) {
 					td->print();
 				}
 				else if(turn == 1 && playing) {
+					if(stalemate('z')) {
+						p1Score += 0.5;
+						p2Score += 0.5;
+						break;
+					}
 					if(check('k')) {
 						std::cout << "Black is in check!" << std::endl;
 						if(checkMate('k')) {
