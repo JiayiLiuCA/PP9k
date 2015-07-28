@@ -7,6 +7,7 @@
 #include <sstream>
 #include "controller.h"
 #include "pieces.h"
+#include "view.h"
 
 Computer3::Computer3(Board *game, char team): Controller(game,team) {}
 
@@ -36,7 +37,6 @@ void Computer3::makeMove() {
 										profit += value(target_name);
 									}
 									//std::cout << "first profit: " << profit << std::endl;
-									int lose = 0;
 									std::vector <Pieces *> underAttack;
 									underAttack = game->getAttack(i,j);
 									for (int y = 0; y < underAttack.size(); y++) {
@@ -45,26 +45,11 @@ void Computer3::makeMove() {
 											profit += value(name);
 										}
 									}
-									//std::cout << "after avoiding: " << profit << std::endl;
-									game->move(i,j,tmp_pair.first,tmp_pair.second);
-									underAttack.clear();
-									underAttack = game->getAttack(tmp_pair.first, tmp_pair.second);
-									for (int y = 0; y < underAttack.size(); y++) {
-										char attack_name = underAttack[y]->getName();
-										if (std::abs(name - attack_name) >= 22) {
-											lose = value(name);
-											break;
-										}
-									}
-									profit -= lose;
 									//std::cout << "after avoiding prediction: " << profit << std::endl;
 									if (game->check('k') || game->check('K')) {
-										if (lose == 0) {
-											profit += 999;
-										}
+										profit += 999;
 									}
 									//std::cout << "final profit: " << profit << std::endl;
-									game->preundo();
 									std::string s = string_convert(i,j) + " " +
 										string_convert(tmp_pair.first,tmp_pair.second);
 									if (name == 'P' && tmp_pair.first == 0) {
@@ -96,6 +81,7 @@ void Computer3::makeMove() {
 			srand(time(NULL));
 			int random = rand()%(tmp.size());
 			std::cout << "chosen move is ********************** "<< tmp[random] << std::endl;
+			//game->td->print();
 			game->notify(tmp[random], this->getTeam());
 			break;
 		}
