@@ -31,6 +31,10 @@ void GraphicDisplay::notify(int r, int c, char ch) {
 
 void GraphicDisplay::print() {}
 
+void GraphicDisplay::message(std::string s) {
+	display->drawBigString(480, 10, s, 0);
+}
+
 
 std::string convert(std::string s, int i) {
 	s[0] = s[0] + ('b' - 'a') * i;

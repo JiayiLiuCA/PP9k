@@ -8,7 +8,10 @@ class GraphicDisplay:public View {
 		GraphicDisplay();
 		void notify(int r, int c, char pieces = '-');
 		void print();
+		void message(std::string);
 };
 
 
 std::string convert(std::string s, int i);
+
+
