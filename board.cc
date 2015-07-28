@@ -1,6 +1,6 @@
 #include "board.h"
 #include "textdisplay.h"
-//#include "graphicdisplay.h"
+#include "graphicdisplay.h"
 #include "concrete_pieces.h"
 #include "human.h"
 #include "computer.h"
@@ -749,7 +749,7 @@ void Board::play(int graph, std::string file) {
 	td = new TextDisplay();
 	if(file != "") {
 		std::string line;
-		std::fstream myfile(file);
+		std::ifstream myfile(file);
 		int row = 0;
 		while (std::getline(myfile, line)) {
 			std::stringstream ss(line);
