@@ -399,7 +399,6 @@ bool Board::ruleCheck(int row, int col, int new_row, int new_col) {
 	if(isMove == false) {
 		return false;
 	}
-	std::cout << "checkpoint " << std::endl;
 	if((tmp->getName() == 'K' || tmp->getName() == 'k') && (col_diff == 2)) {
 		if(castling(row, col, new_row, new_col, tmp->getName())) {
 			std::cout << "returning true" << std::endl;
@@ -428,7 +427,6 @@ bool Board::ruleCheck(int row, int col, int new_row, int new_col) {
 		preundo();
 	}
 	if(isMove) {
-		std::cout << "return real true" << std::endl;
 		return true;
 	}
 	else {
@@ -921,11 +919,6 @@ void Board::play(int graph, std::string file) {
 					enpassant = NULL;
 				}
 				if(turn == 0 && playing) {
-					if(stalemate('A')) {
-						p1Score += 0.5;
-						p2Score += 0.5;
-						break;
-					}
 					if(check('K')) {
 						std::cout << "White is in check!" << std::endl;
 						if(checkMate('K')) {
@@ -935,16 +928,17 @@ void Board::play(int graph, std::string file) {
 							break;
 						}
 					}
+					if(stalemate('A')) {
+						p1Score += 0.5;
+						p2Score += 0.5;
+						std::cout << "Stalemate!" << std::endl;
+						break;
+					}
 					std::cout << "white's turn to move" << std::endl;
 					p1->makeMove();
 					td->print();
 				}
 				else if(turn == 1 && playing) {
-					if(stalemate('z')) {
-						p1Score += 0.5;
-						p2Score += 0.5;
-						break;
-					}
 					if(check('k')) {
 						std::cout << "Black is in check!" << std::endl;
 						if(checkMate('k')) {
@@ -953,6 +947,12 @@ void Board::play(int graph, std::string file) {
 							p1Score ++;
 							break;
 						}
+					}
+					if(stalemate('z')) {
+						p1Score += 0.5;
+						p2Score += 0.5;
+						std::cout << "Stalemate!" << std::endl;
+						break;
 					}
 					std::cout << "black's turn to move" << std::endl;
 					p2->makeMove();
