@@ -791,6 +791,7 @@ void Board::move(int oldr, int oldc, int newr, int newc) {
 	if(graphmode) gd->notify(newr, newc, name);
 }
 
+void Board::setPlaying(bool play) { playing = play; }
 
 
 void Board::play(int graph, std::string file) {
@@ -831,9 +832,8 @@ void Board::play(int graph, std::string file) {
 				delete gd;
 				gd = new GraphicDisplay();
 			}
-			while(true) {
-				std::string opt;
-				std::cin >> opt;
+			std::string opt;
+			while(std::cin >> opt) {
 				if(opt == "-") {
 					std::string pos;
 					std::cin >> pos;

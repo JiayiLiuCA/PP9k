@@ -59,6 +59,6 @@ class Board {
 		void preundo();
 		void undo();//undo a previous move
 		bool stalemate(char team);
-
+		void setPlaying(bool play);
 };
 #endif

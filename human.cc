@@ -18,6 +18,7 @@ void Human::makeMove() {
 		else if(opt == "undo") game->undo();
 		else std::cout << "invalid command please enter again" << std::endl;
 	}
+	game->setPlaying(false);
 }
 
 
