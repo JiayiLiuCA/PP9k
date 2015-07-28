@@ -694,7 +694,6 @@ void Board::move(int oldr, int oldc, int newr, int newc) {
 	std::string promote = "-"; //this is a mark for promotion if promotion has been made
 	bool status1 = theBoard[oldr][oldc]->getStatus(); //this records the status of the moving pieces
 	bool status2; //this records the status of the captured pieces if any
-	std::cout << "moving " << std::endl;
 	if(theBoard[newr][newc] != NULL) {
 		status2 = theBoard[newr][newc]->getStatus();
 		capture_name = theBoard[newr][newc]->getName();
