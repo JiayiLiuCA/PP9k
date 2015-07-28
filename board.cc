@@ -930,11 +930,12 @@ void Board::play(int graph, std::string file) {
 			td->print();
 			std::cout << "the battle begins!" << std::endl;
 			while(true) {
+				GraphicDisplay * tgd = NULL;
 				if(!updateEnpassant) {
 					enpassant = NULL;
 				}
 				if(turn == 0 && playing) {
-					if(graph == 1)GraphicDisplay * tgd = static_cast<GraphicDisplay*>(gd);
+					if(graph == 1)tgd = static_cast<GraphicDisplay*>(gd);
 					Istesting = true;
 					if(check('K')) {
 						std::cout << "White is in check!" << std::endl;
@@ -960,7 +961,7 @@ void Board::play(int graph, std::string file) {
 				}
 				else if(turn == 1 && playing) {
 					Istesting = true;
-					if(graph == 1)GraphicDisplay * tgd = static_cast<GraphicDisplay*>(gd);
+					if(graph == 1)tgd = static_cast<GraphicDisplay*>(gd);
 					if(check('k')) {
 						std::cout << "Black is in check!" << std::endl;
 						tgd->message("Black is in check!");
