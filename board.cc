@@ -808,7 +808,7 @@ void Board::play(int graph, std::string file) {
 			while(ss >> c) {
 				if(c == 'W') turn = 0;
 				else if( c == 'B') turn = 1;
-				else if(c == '-') col ++;
+				else if(c == '_') col ++;
 				else if('A' <= c && c <= 'z') {
 					add(row, col, c, false);
 					col ++;

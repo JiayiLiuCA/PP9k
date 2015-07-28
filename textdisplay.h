@@ -8,7 +8,7 @@ class TextDisplay: public View {
 	std::vector <std::vector <char> > display; //the text visualization of the board
 	public:
 		TextDisplay();
-		void notify(int r, int c, char pieces = '-');
+		void notify(int r, int c, char pieces = '_');
 		void print();
 };
 #endif

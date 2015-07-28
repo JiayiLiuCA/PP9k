@@ -32,7 +32,7 @@ TextDisplay::TextDisplay(): View() {
 					display[i][y] = ' ';
 				}
 				else {
-					display[i][y] = '-';
+					display[i][y] = '_';
 				}
 			}
 		}
@@ -40,7 +40,7 @@ TextDisplay::TextDisplay(): View() {
 }
 
 void TextDisplay::notify(int r, int c, char piece) {
-	if((piece == '-') && ((r + c) % 2 == 0)) piece = ' ';
+	if((piece == '_') && ((r + c) % 2 == 0)) piece = ' ';
 	display[r][c + 2] = piece;
 }
 
