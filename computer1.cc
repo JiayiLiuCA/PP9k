@@ -12,7 +12,6 @@
 Computer1::Computer1(Board *game, char team): Controller(game,team) {}
 
 void Computer1::makeMove() {
-	std::cout << "in makeMove" << std::endl;
 	std::string opt;
 	while (std::cin >> opt) {
 		if (opt == "move") {
@@ -35,7 +34,6 @@ void Computer1::makeMove() {
 									if (name == 'p' && tmp_pair.first == 7) {
 										s = s + " " + 'q';
 									}
-									std::cout << "input :" << s << std::endl;
 									tmp.push_back(s);
 								}
 							}
@@ -45,7 +43,6 @@ void Computer1::makeMove() {
 			}
 			srand(time(NULL));
 			int random = rand()%(tmp.size());
-			std::cout << "chosen move is **************************************" << tmp[random] << std::endl;
 			game->notify(tmp[random], this->getTeam());
 			break;
 		}

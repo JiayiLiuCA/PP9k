@@ -1,4 +1,5 @@
 #include <iostream>
+
 #include "computer.h"
 #include <string>
 #include <vector>
@@ -12,7 +13,6 @@
 Computer4::Computer4(Board *game, char team): Controller(game,team) {}
 
 void Computer4::makeMove() {
-	std::cout << "in makeMove" << std::endl;
 	std::string opt;
 	while (std::cin >> opt) {
 		if (opt == "move") {
@@ -26,9 +26,7 @@ void Computer4::makeMove() {
 						std::vector <std::pair <int, int> > range = tmp_p->getRange();
 						if (std::abs(name - this->getTeam()) < 25) {
 							for (int x = 0; x < range.size(); x++) {
-								//std::cout << "size: " << range.size() << " current: " << x << std::endl;
 								std::pair <int, int> tmp_pair = range[x];
-								//std::cout << "pair: " << tmp_pair.first << " " << tmp_pair.second << std::endl;
 								if (game->ruleCheck(i,j,tmp_pair.first,tmp_pair.second)) {
 									Pieces *target = game->getPiece(tmp_pair.first,tmp_pair.second);
 									int profit = 0;
@@ -36,7 +34,6 @@ void Computer4::makeMove() {
 										char target_name = target->getName();
 										profit += value(target_name);
 									}
-									//std::cout << "first profit: " << profit << std::endl;
 									int lose = 0;
 									std::vector <Pieces *> underAttack;
 									underAttack = game->getAttack(i,j);
@@ -46,7 +43,6 @@ void Computer4::makeMove() {
 											profit += value(name);
 										}
 									}
-									//std::cout << "after avoiding: " << profit << std::endl;
 									game->move(i,j,tmp_pair.first,tmp_pair.second);
 									underAttack.clear();
 									underAttack = game->getAttack(tmp_pair.first, tmp_pair.second);
@@ -58,13 +54,11 @@ void Computer4::makeMove() {
 										}
 									}
 									profit -= lose;
-									//std::cout << "after avoiding prediction: " << profit << std::endl;
 									if (game->check('k') || game->check('K')) {
 										if (lose == 0) {
 											profit += 999;
 										}
 									}
-									//std::cout << "final profit: " << profit << std::endl;
 									game->preundo();
 									std::string s = string_convert(i,j) + " " +
 										string_convert(tmp_pair.first,tmp_pair.second);
@@ -75,15 +69,11 @@ void Computer4::makeMove() {
 										s = s + " " + 'q';
 									}
 									if (profit == max_profit) {
-										std::cout << "input :" << s << std::endl;
-										std::cout << "profit :" << profit << std::endl;
 										tmp.push_back(s);
 									}
 									if (profit > max_profit) {
 										max_profit = profit;
 										tmp.clear();
-										std::cout << "max_profit change to" << max_profit << std::endl;
-										std::cout << "input :" << s << std::endl;
 										tmp.push_back(s);
 									}
 								}
@@ -92,11 +82,8 @@ void Computer4::makeMove() {
 					}
 				}
 			}
-			std::cout << "final size: " << tmp.size() << std::endl;
-			std::cout << "final profit: " << max_profit << std::endl;
 			srand(time(NULL));
 			int random = rand()%(tmp.size());
-			std::cout << "chosen move is ********************** "<< tmp[random] << std::endl;
 			//game->td->print();
 			game->notify(tmp[random], this->getTeam());
 			break;

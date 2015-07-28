@@ -11,7 +11,6 @@
 Computer2::Computer2(Board *game, char team): Controller(game,team) {}
 
 void Computer2::makeMove() {
-	std::cout << "in makeMove" << std::endl;
 	std::string opt;
 	while (std::cin >> opt) {
 		if (opt == "move") {
@@ -25,9 +24,7 @@ void Computer2::makeMove() {
 						std::vector <std::pair <int, int> > range = tmp_p->getRange();
 						if (std::abs(name - this->getTeam()) < 25) {
 							for (int x = 0; x < range.size(); x++) {
-								//std::cout << "size: " << range.size() << " current: " << x << std::endl;
 								std::pair <int, int> tmp_pair = range[x];
-								//std::cout << "pair: " << tmp_pair.first << " " << tmp_pair.second << std::endl;
 								if (game->ruleCheck(i,j,tmp_pair.first,tmp_pair.second)) {
 									Pieces *target = game->getPiece(tmp_pair.first,tmp_pair.second);
 									int profit = 0;
@@ -49,15 +46,11 @@ void Computer2::makeMove() {
 										s = s + " " + 'q';
 									}
 									if (profit == max_profit) {
-										std::cout << "input :" << s << std::endl;
-										std::cout << "profit :" << profit << std::endl;
 										tmp.push_back(s);
 									}
 									if (profit > max_profit) {
 										max_profit = profit;
 										tmp.clear();
-										std::cout << "max_profit change to" << max_profit << std::endl;
-										std::cout << "input :" << s << std::endl;
 										tmp.push_back(s);
 									}
 								}
@@ -66,11 +59,8 @@ void Computer2::makeMove() {
 					}
 				}
 			}
-			//std::cout << "final size: " << tmp.size() << std::endl;
-			std::cout << "final profit: " << max_profit << std::endl;
 			srand(time(NULL));
 			int random = rand()%(tmp.size());
-			std::cout << "chosen move is ********************** "<< tmp[random] << std::endl;
 			game->notify(tmp[random], this->getTeam());
 			break;
 		}
