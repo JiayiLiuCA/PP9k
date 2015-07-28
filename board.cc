@@ -397,6 +397,7 @@ bool Board::ruleCheck(int row, int col, int new_row, int new_col) {
 		}
 		else if(row_diff == 2 && ((tmp->getName() == 'p' && theBoard[row + 2][col] != NULL) || (tmp->getName() == 'P' && theBoard[row - 2][col] != NULL)))  return false;
 	}
+	std::cout << "move is " << isMove << std::endl;
 	if(isMove == false) {
 		return false;
 	}
