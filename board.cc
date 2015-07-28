@@ -831,6 +831,12 @@ void Board::play(int graph, std::string file) {
 			clearGame();
 			delete td;
 			td = new TextDisplay();
+			if(graph == 1) {
+				graphmode = true;
+				std::cout << "graph mode " << std::endl;
+				delete gd;
+				gd = new GraphicDisplay();
+			}
 			td->print();
 			std::string opt;
 			while(std::cin >> opt) {
