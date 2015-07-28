@@ -964,7 +964,7 @@ void Board::play(int graph, std::string file) {
 					if(graph == 1)tgd = static_cast<GraphicDisplay*>(gd);
 					if(check('k')) {
 						std::cout << "Black is in check!" << std::endl;
-						tgd->message("Black is in check!");
+						if(graph == 1)tgd->message("Black is in check!");
 						if(checkMate('k')) {
 							std::cout << "Checkmate! White wins!" << std::endl;
 							if(graph == 1)tgd->message("Checkmate! White wins!");
