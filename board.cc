@@ -798,7 +798,7 @@ void Board::play(int graph, std::string file) {
 	delete td;
 	td = new TextDisplay();
 	delete gd;
-	gd = new GraphDisplay();
+	gd = new GraphicDisplay();
 	if(file != "") {
 		std::string line;
 		std::ifstream myfile(file.c_str());
