@@ -103,7 +103,6 @@ void Board::add(int r, int c, char p, bool move) {
 			theBoard[r][c] = new Rook(r, c, p, move);
 			updatePiece(r, c);
 			updateGrid(r, c);
-			std::cout << "status of rook is " << theBoard[r][c]->getStatus() << std::endl;
 		}
 		if(p == 'n' || p == 'N') {
 			theBoard[r][c] = new Knight(r, c, p, move);	
