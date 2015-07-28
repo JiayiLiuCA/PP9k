@@ -103,6 +103,7 @@ void Board::add(int r, int c, char p, bool move) {
 			theBoard[r][c] = new Rook(r, c, p, move);
 			updatePiece(r, c);
 			updateGrid(r, c);
+			std::cout << "status of rook is " << theBoard[r][c]->getStatus() << std::endl;
 		}
 		if(p == 'n' || p == 'N') {
 			theBoard[r][c] = new Knight(r, c, p, move);	
@@ -474,6 +475,7 @@ void Board::notify(std::string move, char team) {
 			else p2->makeMove();
 			return;
 		}
+		std::cout << "status of right rook is" << theBoard[7][0]->getStatus() << std::endl;
 		if(theBoard[oldr][oldc] == NULL ||!ruleCheck(oldr, oldc, newr, newc)) {
 			std::cout << "invalid move please enter again" << std::endl;
 			if(turn == 0) p1->makeMove();
@@ -492,6 +494,7 @@ void Board::notify(std::string move, char team) {
 				int col_diff = abs(oldc - newc);
 				char name = theBoard[oldr][oldc]->getName();
 				if((name == 'k' || name == 'K') && col_diff == 2) {
+					Istesting = false;
 					int dir = col_diff / (newc - oldc);
 					this->move(oldr, oldc, newr, newc);
 					std::pair < std::vector <int>, std::string > tmp;
@@ -639,7 +642,6 @@ void Board::preundo() {
 	std::vector <std::pair <std::vector<int>, std::string> >::iterator it = stack.end() - 1;
 	std::pair <std::vector <int>, std::string> move = *it;
 	if(move.second[0] == 'c') {
-		std::cout << move.second << std::endl;
 		char king_name = move.second[1];
 		char dir = move.second[2];
 		if(dir == '-' && king_name == 'k') {
@@ -705,8 +707,8 @@ void Board::preundo() {
 		char enpass_name = move.second[3];
 		char promote = move.second[4];
 		char prename = move.second[5];
-		bool status1 = (move.second[1] == 0) ? false : true;
-		bool status2 = (move.second[2] == 0) ? false : true;
+		bool status1 = (move.second[1] == '0') ? false : true;
+		bool status2 = (move.second[2] == '0') ? false : true;
 		if(promote == 'o') {
 			remove(newr, newc);
 			add(newr, newc, prename, true);
