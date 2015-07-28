@@ -795,15 +795,15 @@ void Board::setPlaying(bool play) { playing = play; }
 
 
 void Board::play(int graph, std::string file) {
-	if(graph == 1) {
-		graphmode = true;
-		std::cout << "graph mode " << std::endl;
-		delete gd;
-		gd = new GraphicDisplay();
-	}
 	delete td;
 	td = new TextDisplay();
 	if(file != "") {
+		if(graph == 1) {
+			graphmode = true;
+			std::cout << "graph mode " << std::endl;
+			delete gd;
+			gd = new GraphicDisplay();
+		}
 		std::string line;
 		std::ifstream myfile(file.c_str());
 		int row = 0;
@@ -925,11 +925,14 @@ void Board::play(int graph, std::string file) {
 					enpassant = NULL;
 				}
 				if(turn == 0 && playing) {
+					GraphicDisplay * tgd = static_cast<GraphicDisplay*>(gd);
 					Istesting = true;
 					if(check('K')) {
 						std::cout << "White is in check!" << std::endl;
+						tgd->message("White is in check!");
 						if(checkMate('K')) {
 							std::cout << "Checkmate! Black wins!" << std::endl;
+							tgd->message("Checkmate! Black wins!");
 							playing = false;
 							p2Score ++;
 							break;
@@ -939,6 +942,7 @@ void Board::play(int graph, std::string file) {
 						p1Score += 0.5;
 						p2Score += 0.5;
 						std::cout << "Stalemate!" << std::endl;
+						tgd->message("Stalemate!");
 						break;
 					}
 					std::cout << "white's turn to move" << std::endl;
@@ -947,10 +951,13 @@ void Board::play(int graph, std::string file) {
 				}
 				else if(turn == 1 && playing) {
 					Istesting = true;
+					GraphicDisplay * tgd = static_cast<GraphicDisplay*>(gd);
 					if(check('k')) {
 						std::cout << "Black is in check!" << std::endl;
+						tgd->message("Black is in check!");
 						if(checkMate('k')) {
 							std::cout << "Checkmate! White wins!" << std::endl;
+							tgd->message("Checkmate! White wins!");
 							playing = false;
 							p1Score ++;
 							break;
@@ -960,6 +967,7 @@ void Board::play(int graph, std::string file) {
 						p1Score += 0.5;
 						p2Score += 0.5;
 						std::cout << "Stalemate!" << std::endl;
+						tgd->message("Stalemate!");
 						break;
 					}
 					std::cout << "black's turn to move" << std::endl;
