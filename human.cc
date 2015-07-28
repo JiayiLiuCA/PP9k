@@ -7,7 +7,6 @@ Human::Human(Board *game, char team): Controller(game, team) {}
 
 void Human::makeMove() {
 	std::string opt;
-	std::cin >> opt;
 	std::string s;
 	while(std::cin >> opt) {
 		if(opt == "move") {
