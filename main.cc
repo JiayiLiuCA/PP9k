@@ -3,9 +3,18 @@
 #include "textdisplay.h"
 
 int main(int argc, char* argv[]) {
-	std::cout << argc << std::endl;
-	int graphic = 0;
+	std::string file = "";
+	std::string graphic = "-graphic";
+	int graph = 0;
+	for(int i = 1; i < argc; i ++) {
+		std::string tmp(argv[i]);
+		if(tmp == graphic) 	graph = 1;
+		else {
+			std::cout << "capturing a file" << std::endl;
+			file = argv[i];
+		}
+	}
 	Board *b = Board::getInstance();
-	if(argc == 2) graphic = 1;
-	b->play(graphic);
+	std::cout << file << std::endl;
+	b->play(graph, file);
 }

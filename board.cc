@@ -1,6 +1,6 @@
 #include "board.h"
 #include "textdisplay.h"
-#include "graphicdisplay.h"
+//#include "graphicdisplay.h"
 #include "concrete_pieces.h"
 #include "human.h"
 #include "computer.h"
@@ -10,6 +10,7 @@
 #include <iostream>
 #include <cmath>
 #include <algorithm>
+#include <fstream>
 
 Board* Board::singleton = NULL;
 
@@ -57,7 +58,6 @@ void Board::cleanup() {
 }
 
 void Board::clearGame() {
-	std::cout << "clearing the board" << std::endl;
 	for(int i = 0; i < 8; i ++) {
 		for(int j = 0; j < 8; j ++) {
 			if(theBoard[i][j] != NULL) {
@@ -330,16 +330,13 @@ bool Board::castling(int r, int c, int nr, int nc, char k) {
 		}
 		for(int i = 1; i < 4; i ++) {
 			if(theBoard[r][c + i * dir] != NULL) {
-				std::cout << "there is a piece on the road" << std::endl;
-				std::cout << "and the piece is " << theBoard[r][c + i * dir]->getName() << std::endl;
-				std::cout << "locating at " << r << " " << c + i * dir << std::endl;
 				return false;
 			}
 			tmp = attackBoard[r][c + i * dir];
 			if(i < 3) {
 				for(std::vector < Pieces* >::iterator it = tmp.begin(); it != tmp.end(); it ++) {
 					if(std::abs((*it)->getName() - k) > 22) {
-						std::cout << "maybe check on the road" << std::endl;
+						std::cout << "maybe check on the half way" << std::endl;
 						return false;
 					}
 				}
@@ -350,8 +347,6 @@ bool Board::castling(int r, int c, int nr, int nc, char k) {
 }
 
 bool Board::ruleCheck(int row, int col, int new_row, int new_col) {
-	std::cout << "in rule " << std::endl;
-	std::cout << "checking " << row << " " << col << " " << new_row << " " << new_col << std::endl;
 	char name = '-';
 	bool status1 = false;
 	bool status2 = theBoard[row][col]->getStatus();
@@ -372,29 +367,26 @@ bool Board::ruleCheck(int row, int col, int new_row, int new_col) {
 				isMove = true;
 			}
 			else {
-				std::cout << "out ruleCheck 1" << std::endl;
 				return false;
 			}
 		}
 		else if((tmp->getName() == 'p' && theBoard[row + 1][col] != NULL) || (tmp->getName() == 'P' && theBoard[row - 1][col] != NULL)) {
-			std::cout << "out ruleCheck 2" << std::endl;
 			return false;
 		}
 		else if(row_diff == 2 && ((tmp->getName() == 'p' && theBoard[row + 2][col] != NULL) || (tmp->getName() == 'P' && theBoard[row - 2][col] != NULL)))  return false;
 	}
 	if(isMove == false) {
-		std::cout << "out ruleCheck 3 no it does not" << std::endl;
 		return false;
 	}
 	if((tmp->getName() == 'K' || tmp->getName() == 'k') && (col_diff == 2)) {
 		if(castling(row, col, new_row, new_col, tmp->getName())) return true;
 		else {
-			std::cout << "castling fail out ruleCheck 4" << std::endl;
+			std::cout << "castling fail" << std::endl;
 			return false;
 		}
 	}
 	if(theBoard[new_row][new_col] != NULL && abs(tmp->getName() - theBoard[new_row][new_col]->getName()) < 25) {
-		std::cout << "you cannot eat allies  out ruleCheck 5" << std::endl;
+		std::cout << "you cannot eat allies " << std::endl;
 		return false;
 	}
 	if(theBoard[new_row][new_col] != NULL) {
@@ -403,7 +395,7 @@ bool Board::ruleCheck(int row, int col, int new_row, int new_col) {
 	}
 	move(row, col, new_row, new_col);
 	if((turn == 0 && check('K')) || (turn == 1 && check('k'))) {
-		std::cout << "this move will put you king in check out ruleCheck 6" << std::endl;
+		std::cout << "this move will put you king in check" << std::endl;
 		preundo();
 		return false;
 	}
@@ -411,11 +403,9 @@ bool Board::ruleCheck(int row, int col, int new_row, int new_col) {
 		preundo();
 	}
 	if(isMove) {
-		std::cout << "out ruleCheck 7" << std::endl;
 		return true;
 	}
 	else {
-		std::cout << "out ruleCheck 8" << std::endl;
 		return false;
 	}
 
@@ -490,7 +480,6 @@ void Board::notify(std::string move, char team) {
 				}
 				this->move(oldr, oldc, newr, newc);
 				if(((newr == 0) && (theBoard[newr][newc]->getName() == 'P')) || ((newr == 7) && (theBoard[newr][newc]->getName() == 'p'))) {
-					std::cout << "in promotion" << std::endl;
 					char promote;
 					ss >> promote;
 					while((team == 'A' && promote != 'N' && promote != 'B' && promote != 'R' && promote != 'Q') || (team == 'z' && promote != 'n' && promote != 'b' && promote != 'r' && promote != 'q')) {
@@ -619,26 +608,33 @@ void Board::preundo() {
 		std::cout << move.second << std::endl;
 		char king_name = move.second[1];
 		char dir = move.second[2];
-		std::cout << "in preundo" << std::endl;
 		if(dir == '-' && king_name == 'k') {
-			theBoard[0][4] = theBoard[0][2]; theBoard[0][2] = NULL; theBoard[0][0] = theBoard[0][3]; theBoard[0][3] = NULL; theBoard[0][4]->setr(0); theBoard[0][4]->setc(4); theBoard[0][4]->setRange();
-			theBoard[0][4]->setMove(false); theBoard[0][0]->setr(0); theBoard[0][0]->setc(0); theBoard[0][0]->setRange(); theBoard[0][0]->setMove(false); updatePiece(0,4);
-			updatePiece(0,0); updateGrid(0,0); updateGrid(0,4); td->notify(0,2); td->notify(0, 3); td->notify(0, 4, 'k'); gd->notify(0, 0, 'r');  gd->notify(0,2); gd->notify(0, 3); gd->notify(0, 4, 'k'); gd->notify(0, 0, 'r'); 
+			theBoard[0][4] = theBoard[0][2]; theBoard[0][2] = NULL; theBoard[0][0] = theBoard[0][3]; 
+			theBoard[0][3] = NULL; theBoard[0][4]->setr(0); theBoard[0][4]->setc(4); theBoard[0][4]->setRange();
+			theBoard[0][4]->setMove(false); theBoard[0][0]->setr(0); theBoard[0][0]->setc(0); theBoard[0][0]->setRange(); 
+			theBoard[0][0]->setMove(false); updatePiece(0,4); updatePiece(0,0); updateGrid(0,0); updateGrid(0,4); td->notify(0,2); 
+			td->notify(0, 3); td->notify(0, 4, 'k'); gd->notify(0, 0, 'r');  gd->notify(0,2); gd->notify(0, 3); gd->notify(0, 4, 'k'); gd->notify(0, 0, 'r'); 
 		}
 		if(dir == '+' && king_name == 'k') {
-			theBoard[0][4] = theBoard[0][6]; theBoard[0][6] = NULL; theBoard[0][7] = theBoard[0][5]; theBoard[0][5] = NULL;  theBoard[0][4]->setr(0); theBoard[0][4]->setc(4); theBoard[0][4]->setRange();
-			theBoard[0][4]->setMove(false); theBoard[0][7]->setr(0); theBoard[0][7]->setc(7); theBoard[0][7]->setRange(); theBoard[0][7]->setMove(false); updatePiece(0,4);
-			updatePiece(0,7); updateGrid(0,7); updateGrid(0,4); td->notify(0,6); td->notify(0, 5); td->notify(0, 4, 'k'); td->notify(0, 7, 'r'); gd->notify(0,6); gd->notify(0, 5); gd->notify(0, 4, 'k'); gd->notify(0, 7, 'r');
+			theBoard[0][4] = theBoard[0][6]; theBoard[0][6] = NULL; theBoard[0][7] = theBoard[0][5]; 
+			theBoard[0][5] = NULL;  theBoard[0][4]->setr(0); theBoard[0][4]->setc(4); theBoard[0][4]->setRange();
+			theBoard[0][4]->setMove(false); theBoard[0][7]->setr(0); theBoard[0][7]->setc(7); theBoard[0][7]->setRange(); 
+			theBoard[0][7]->setMove(false); updatePiece(0,4);updatePiece(0,7); updateGrid(0,7); updateGrid(0,4); td->notify(0,6); 
+			td->notify(0, 5); td->notify(0, 4, 'k'); td->notify(0, 7, 'r'); gd->notify(0,6); gd->notify(0, 5); gd->notify(0, 4, 'k'); gd->notify(0, 7, 'r');
 		}
 		if(dir == '-' && king_name == 'K') {
-			theBoard[7][4] = theBoard[7][2]; theBoard[7][2] = NULL;  theBoard[7][0] = theBoard[7][3]; theBoard[7][3] = NULL;  theBoard[7][4]->setr(7); theBoard[7][4]->setc(4); theBoard[7][4]->setRange();
-			theBoard[7][4]->setMove(false); theBoard[7][0]->setr(7); theBoard[7][0]->setc(0); theBoard[7][0]->setRange(); theBoard[7][0]->setMove(false); updatePiece(7,4);
-			updatePiece(7,0); updateGrid(7,0); updateGrid(7,4); td->notify(7 ,2); td->notify(7, 3); td->notify(7, 4, 'K'); td->notify(7, 0, 'R'); gd->notify(7 ,2); gd->notify(7, 3); gd->notify(7, 4, 'K'); gd->notify(7, 0, 'R');
+			theBoard[7][4] = theBoard[7][2]; theBoard[7][2] = NULL;  theBoard[7][0] = theBoard[7][3]; 
+			theBoard[7][3] = NULL;  theBoard[7][4]->setr(7); theBoard[7][4]->setc(4); theBoard[7][4]->setRange();
+			theBoard[7][4]->setMove(false); theBoard[7][0]->setr(7); theBoard[7][0]->setc(0); theBoard[7][0]->setRange(); 
+			theBoard[7][0]->setMove(false); updatePiece(7,4); updatePiece(7,0); updateGrid(7,0); updateGrid(7,4); td->notify(7 ,2); 
+			td->notify(7, 3); td->notify(7, 4, 'K'); td->notify(7, 0, 'R'); gd->notify(7 ,2); gd->notify(7, 3); gd->notify(7, 4, 'K'); gd->notify(7, 0, 'R');
 		}
 		if(dir == '+' && king_name == 'K') {
-			theBoard[7][4] = theBoard[7][6]; theBoard[7][6] = NULL;  theBoard[7][7] = theBoard[7][5]; theBoard[7][5] = NULL;  theBoard[7][4]->setr(7); theBoard[7][4]->setc(4); theBoard[7][4]->setRange();
-			theBoard[7][4]->setMove(false); theBoard[7][7]->setr(7); theBoard[7][7]->setc(7); theBoard[7][7]->setRange(); theBoard[7][7]->setMove(false); updatePiece(7,4);
-			updatePiece(7,7); updateGrid(7,7); updateGrid(7,4); td->notify(7, 6); td->notify(7, 5); td->notify(7, 4, 'K'); td->notify(7, 7, 'R'); gd->notify(7, 6); gd->notify(7, 5); gd->notify(7, 4, 'K'); gd->notify(7, 7, 'R');
+			theBoard[7][4] = theBoard[7][6]; theBoard[7][6] = NULL;  theBoard[7][7] = theBoard[7][5]; 
+			theBoard[7][5] = NULL;  theBoard[7][4]->setr(7); theBoard[7][4]->setc(4); theBoard[7][4]->setRange();
+			theBoard[7][4]->setMove(false); theBoard[7][7]->setr(7); theBoard[7][7]->setc(7); theBoard[7][7]->setRange(); 
+			theBoard[7][7]->setMove(false); updatePiece(7,4);updatePiece(7,7); updateGrid(7,7); updateGrid(7,4); td->notify(7, 6); td->notify(7, 5); 
+			td->notify(7, 4, 'K'); td->notify(7, 7, 'R'); gd->notify(7, 6); gd->notify(7, 5); gd->notify(7, 4, 'K'); gd->notify(7, 7, 'R');
 		}
 	}
 	else {
@@ -653,7 +649,6 @@ void Board::preundo() {
 		char prename = move.second[5];
 		bool status1 = (move.second[1] == 0) ? false : true;
 		bool status2 = (move.second[2] == 0) ? false : true;
-		std::cout << "checkpoint" << std::endl;
 		if(promote == 'o') {
 			remove(newr, newc);
 			add(newr, newc, prename, true);
@@ -663,12 +658,9 @@ void Board::preundo() {
 		theBoard[newr][newc] = NULL;
 		td->notify(newr, newc);
 		gd->notify(newr, newc);
-		std::cout << "checkpoint 2" << std::endl;
-		std::cout << r << " " << c << std::endl;
 		theBoard[r][c]->setr(r);
 		theBoard[r][c]->setc(c);
 		theBoard[r][c]->setRange();
-		std::cout << "checkpoint 3" << std::endl;
 		if(enpass_name == 'e') {
 			add(r, newc, name, status2);
 			enpassant = static_cast<Pawn*>(theBoard[r][newc]);
@@ -690,7 +682,6 @@ void Board::preundo() {
 		gd->notify(r, c, theBoard[r][c]->getName());
 		td->notify(r, c, theBoard[r][c]->getName());
 		gd->notify(r, c, theBoard[r][c]->getName());
-		std::cout << "outpreundo" << std::endl;
 	}
 	stack.pop_back();
 }
@@ -749,20 +740,42 @@ void Board::move(int oldr, int oldc, int newr, int newc) {
 	gd->notify(oldr, oldc);
 	td->notify(newr, newc, name);
 	gd->notify(newr, newc, name);
-	std::cout << "end of moving" << std::endl;
 }
 
 
 
-void Board::play(int graph, std::string) {
+void Board::play(int graph, std::string file) {
+	delete td;
+	td = new TextDisplay();
+	if(file != "") {
+		std::string line;
+		std::fstream myfile(file);
+		int row = 0;
+		while (std::getline(myfile, line)) {
+			std::stringstream ss(line);
+			char c;
+			int col = 0;
+			while(ss >> c) {
+				if(c == 'W') turn = 0;
+				else if( c == 'B') turn = 1;
+				else if(c == '-') col ++;
+				else if('A' <= c && c <= 'z') {
+					add(row, col, c, false);
+					col ++;
+				}
+			}
+			row ++;
+		}
+		file = "";
+		td->print();
+	}
 	std::string command;
 	while(std::cin >> command) {
-		if(command == "setup") {
+		if(command == "setup" && file == "") {
 			clearGame();
 			delete td;
 			td = new TextDisplay();
 			td->print();
-			std::cout << "graph is " << graph << std::endl;
 			if(graph == 1) {
 				std::cout << "graph mode " << std::endl;
 				delete gd;
@@ -890,6 +903,9 @@ void Board::play(int graph, std::string) {
 			std::cout << "Black: " << p2Score << std::endl;
 		}
 	}
+	std::cout << "Final Score: " << std::endl;
+	std::cout << "White: " << p1Score << std::endl;
+	std::cout << "Black: " << p2Score << std::endl;
 }
 
 
