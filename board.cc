@@ -89,7 +89,7 @@ void Board::remove(int r, int c) {
 		theBoard[r][c] = NULL;
 		updateGrid(r, c);
 		td->notify(r, c);
-		if(graphmode && !Istesting)gd->notify(r, c);
+		if(graphmode)gd->notify(r, c);
 	}
 	else std::cout << "invalid remove" << std::endl;
 }
@@ -130,7 +130,7 @@ void Board::add(int r, int c, char p, bool move) {
 			updateGrid(r, c);
 		}
 		td->notify(r, c, p);
-		if(graphmode && !Istesting) gd->notify(r, c, p);
+		if(graphmode) gd->notify(r, c, p);
 	}
 	else std::cout << "not valid add" << std::endl;
 }
