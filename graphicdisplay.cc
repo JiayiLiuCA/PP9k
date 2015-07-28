@@ -5,6 +5,7 @@
 
 GraphicDisplay::GraphicDisplay() {
 	display = new Xwindow();
+	display->fillRectangle(0, 0, 500, 500, 9);
 	for(int i = 0; i < 8; i ++) {
 		for(int j = 0; j < 8; j ++) {
 			if((i + j) % 2 == 0) display->fillRectangle(i*50, j*50, 50, 50, 0);
@@ -12,8 +13,8 @@ GraphicDisplay::GraphicDisplay() {
 		}
 	}
 	for(int i = 0; i < 8; i ++) {
-		display->drawString(25 + i * 50, 425, convert("a", i) , 1);
-		display->drawString(425, 25 + i * 50, convert("8", (0 - i)), 1);
+		display->drawBigString(25 + i * 50, 425, convert("a", i) , 5);
+		display->drawBigString(425, 25 + i * 50, convert("8", (0 - i)), 5);
 	}
 }
 
