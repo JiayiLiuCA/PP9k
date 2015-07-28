@@ -786,9 +786,9 @@ void Board::move(int oldr, int oldc, int newr, int newc) {
 	theBoard[newr][newc]->setMove(true);
 	if((name != 'p' && name != 'P') || abs(newr - oldr) != 2) updateEnpassant = false;
 	td->notify(oldr, oldc);
-	if(graphmode) gd->notify(oldr, oldc);
+	if(graphmode && !Istesting) gd->notify(oldr, oldc);
 	td->notify(newr, newc, name);
-	if(graphmode) gd->notify(newr, newc, name);
+	if(graphmode && !Istesting) gd->notify(newr, newc, name);
 }
 
 void Board::setPlaying(bool play) { playing = play; }
