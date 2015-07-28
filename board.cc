@@ -439,13 +439,21 @@ bool Board::ruleCheck(int row, int col, int new_row, int new_col) {
 void Board::notify(std::string move, char team) {
 	if(move == "resign") {
 		if(turn == 0) {
-			std::cout << "black wins!" << std::endl;
+			std::cout << "Black wins!" << std::endl;
+			if(graphmode) {
+				GraphicDisplay* pg = static_cast<GraphicDisplay *>(gd);
+				pg->message("Black wins!");
+			}
 			p2Score ++;
 			turn = 0;
 			playing = false;
 		}
 		else {
-			std::cout << "white wins!" << std::endl;
+			std::cout << "White wins!" << std::endl;
+			if(graphmode) {
+				GraphicDisplay* pg = static_cast<GraphicDisplay *>(gd);
+				pg->message("White wins!");
+			}
 			p1Score ++;
 			playing = false;
 			turn = 0;
@@ -926,14 +934,14 @@ void Board::play(int graph, std::string file) {
 					enpassant = NULL;
 				}
 				if(turn == 0 && playing) {
-					GraphicDisplay * tgd = static_cast<GraphicDisplay*>(gd);
+					if(graph == 1)GraphicDisplay * tgd = static_cast<GraphicDisplay*>(gd);
 					Istesting = true;
 					if(check('K')) {
 						std::cout << "White is in check!" << std::endl;
-						tgd->message("White is in check!");
+						if(graph == 1)tgd->message("White is in check!");
 						if(checkMate('K')) {
 							std::cout << "Checkmate! Black wins!" << std::endl;
-							tgd->message("Checkmate! Black wins!");
+							if(graph == 1)tgd->message("Checkmate! Black wins!");
 							playing = false;
 							p2Score ++;
 							break;
@@ -943,7 +951,7 @@ void Board::play(int graph, std::string file) {
 						p1Score += 0.5;
 						p2Score += 0.5;
 						std::cout << "Stalemate!" << std::endl;
-						tgd->message("Stalemate!");
+						if(graph == 1)tgd->message("Stalemate!");
 						break;
 					}
 					std::cout << "white's turn to move" << std::endl;
@@ -952,13 +960,13 @@ void Board::play(int graph, std::string file) {
 				}
 				else if(turn == 1 && playing) {
 					Istesting = true;
-					GraphicDisplay * tgd = static_cast<GraphicDisplay*>(gd);
+					if(graph == 1)GraphicDisplay * tgd = static_cast<GraphicDisplay*>(gd);
 					if(check('k')) {
 						std::cout << "Black is in check!" << std::endl;
 						tgd->message("Black is in check!");
 						if(checkMate('k')) {
 							std::cout << "Checkmate! White wins!" << std::endl;
-							tgd->message("Checkmate! White wins!");
+							if(graph == 1)tgd->message("Checkmate! White wins!");
 							playing = false;
 							p1Score ++;
 							break;
@@ -968,7 +976,7 @@ void Board::play(int graph, std::string file) {
 						p1Score += 0.5;
 						p2Score += 0.5;
 						std::cout << "Stalemate!" << std::endl;
-						tgd->message("Stalemate!");
+						if(graph == 1)tgd->message("Stalemate!");
 						break;
 					}
 					std::cout << "black's turn to move" << std::endl;
