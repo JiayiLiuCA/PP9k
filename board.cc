@@ -14,6 +14,7 @@
 
 Board* Board::singleton = NULL;
 
+bool Istesting = true;
 
 Board::Board() {
 	std::vector <Pieces*> tmp;
@@ -368,7 +369,7 @@ bool Board::castling(int r, int c, int nr, int nc, char k) {
 }
 
 bool Board::ruleCheck(int row, int col, int new_row, int new_col) {
-	char name = '-';
+	char name = '_';
 	bool status1 = false;
 	bool status2 = theBoard[row][col]->getStatus();
 	int col_diff, row_diff;
@@ -401,16 +402,15 @@ bool Board::ruleCheck(int row, int col, int new_row, int new_col) {
 	}
 	if((tmp->getName() == 'K' || tmp->getName() == 'k') && (col_diff == 2)) {
 		if(castling(row, col, new_row, new_col, tmp->getName())) {
-			std::cout << "returning true" << std::endl;
 			return true;
 		}
 		else {
-			std::cout << "castling fail" << std::endl;
+			if(!Istesting) std::cout << "castling fail" << std::endl;
 			return false;
 		}
 	}
 	if(theBoard[new_row][new_col] != NULL && abs(tmp->getName() - theBoard[new_row][new_col]->getName()) < 25) {
-		std::cout << "you cannot eat allies " << std::endl;
+		if(!Istesting) std::cout << "you cannot eat allies " << std::endl;
 		return false;
 	}
 	if(theBoard[new_row][new_col] != NULL) {
@@ -419,7 +419,7 @@ bool Board::ruleCheck(int row, int col, int new_row, int new_col) {
 	}
 	move(row, col, new_row, new_col);
 	if((turn == 0 && check('K')) || (turn == 1 && check('k'))) {
-		std::cout << "this move will put you king in check" << std::endl;
+		if(!Istesting)std::cout << "this move will put you king in check" << std::endl;
 		preundo();
 		return false;
 	}
@@ -502,6 +502,7 @@ void Board::notify(std::string move, char team) {
 					stack.push_back(tmp);
 					return ;
 				}
+				Istesting = false;
 				this->move(oldr, oldc, newr, newc);
 				if(((newr == 0) && (theBoard[newr][newc]->getName() == 'P')) || ((newr == 7) && (theBoard[newr][newc]->getName() == 'p'))) {
 					char promote;
@@ -654,11 +655,11 @@ void Board::preundo() {
 			theBoard[0][7]->setMove(false); updatePiece(0,4);updatePiece(0,7); updateGrid(0,7); updateGrid(0,4); td->notify(0,6); 
 			td->notify(0, 5); td->notify(0, 4, 'k'); td->notify(0, 7, 'r'); 
 			if(graphmode) {
-			  gd->notify(0,6); 
-			  gd->notify(0, 5); 
-			  gd->notify(0, 4, 'k'); 
-			  gd->notify(0, 7, 'r');
-			  }
+				gd->notify(0,6); 
+				gd->notify(0, 5); 
+				gd->notify(0, 4, 'k'); 
+				gd->notify(0, 7, 'r');
+			}
 		}
 		if(dir == '-' && king_name == 'K') {
 			theBoard[7][4] = theBoard[7][2]; theBoard[7][2] = NULL;  theBoard[7][0] = theBoard[7][3]; 
@@ -670,7 +671,7 @@ void Board::preundo() {
 				gd->notify(7 ,2); 
 				gd->notify(7, 3); 
 				gd->notify(7, 4, 'K'); 
-				 gd->notify(7, 0, 'R');
+				gd->notify(7, 0, 'R');
 			}
 		}
 		if(dir == '+' && king_name == 'K') {
@@ -679,12 +680,12 @@ void Board::preundo() {
 			theBoard[7][4]->setMove(false); theBoard[7][7]->setr(7); theBoard[7][7]->setc(7); theBoard[7][7]->setRange(); 
 			theBoard[7][7]->setMove(false); updatePiece(7,4);updatePiece(7,7); updateGrid(7,7); updateGrid(7,4); td->notify(7, 6); td->notify(7, 5); 
 			td->notify(7, 4, 'K'); td->notify(7, 7, 'R'); 
-			/*if(graphmode) {
-			 * gd->notify(7, 6); 
-			 * gd->notify(7, 5); 
-			 * gd->notify(7, 4, 'K'); 
-			 * gd->notify(7, 7, 'R');
-			 * }*/
+			if(graphmode) {
+				gd->notify(7, 6); 
+				gd->notify(7, 5); 
+				gd->notify(7, 4, 'K'); 
+				gd->notify(7, 7, 'R');
+			}
 		}
 	}
 	else {
@@ -718,7 +719,7 @@ void Board::preundo() {
 			td->notify(r, newc, name);
 			if(graphmode)gd->notify(r, newc, name);
 		}
-		else if(name != '-') {
+		else if(name != '_') {
 			add(newr, newc, name, status2);
 			td->notify(newr, newc, name);
 			if(graphmode)gd->notify(newr, newc, name);
@@ -739,9 +740,9 @@ void Board::preundo() {
 
 
 void Board::move(int oldr, int oldc, int newr, int newc) {
-	std::string capture_name = "-";//this is the default name for captured piece, if no piece is captured the capture_name is "-"
-	std::string enpass_name = "-";//this is a mark for enpassant, if off then it is "-" else it is "e"
-	std::string promote = "-"; //this is a mark for promotion if promotion has been made
+	std::string capture_name = "_";//this is the default name for captured piece, if no piece is captured the capture_name is "_"
+	std::string enpass_name = "_";//this is a mark for enpassant, if off then it is "_" else it is "e"
+	std::string promote = "_"; //this is a mark for promotion if promotion has been made
 	bool status1 = theBoard[oldr][oldc]->getStatus(); //this records the status of the moving pieces
 	bool status2; //this records the status of the captured pieces if any
 	if(theBoard[newr][newc] != NULL) {
