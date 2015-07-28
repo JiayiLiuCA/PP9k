@@ -411,7 +411,7 @@ bool Board::ruleCheck(int row, int col, int new_row, int new_col) {
 		}
 	}
 	if(theBoard[new_row][new_col] != NULL && abs(tmp->getName() - theBoard[new_row][new_col]->getName()) < 25) {
-		if(!Istesting) std::cout << "you cannot eat allies " << std::endl;
+		 std::cout << "you cannot eat allies " << std::endl;
 		return false;
 	}
 	if(theBoard[new_row][new_col] != NULL) {
@@ -420,7 +420,7 @@ bool Board::ruleCheck(int row, int col, int new_row, int new_col) {
 	}
 	move(row, col, new_row, new_col);
 	if((turn == 0 && check('K')) || (turn == 1 && check('k'))) {
-		if(!Istesting)std::cout << "this move will put you king in check" << std::endl;
+		std::cout << "this move will put you king in check" << std::endl;
 		preundo();
 		return false;
 	}
