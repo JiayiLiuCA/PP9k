@@ -13,8 +13,8 @@ GraphicDisplay::GraphicDisplay() {
 		}
 	}
 	for(int i = 0; i < 8; i ++) {
-		display->drawBigString(30 + i * 50, 425, convert("a", i) , 5);
-		display->drawBigString(430, 25 + i * 50, convert("8", (0 - i)), 5);
+		display->drawBigString(27 + i * 50, 430, convert("a", i) , 5);
+		display->drawBigString(427, 30 + i * 50, convert("8", (0 - i)), 5);
 	}
 }
 
