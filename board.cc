@@ -798,6 +798,8 @@ void Board::setPlaying(bool play) { playing = play; }
 void Board::play(int graph, std::string file) {
 	delete td;
 	td = new TextDisplay();
+	delete gd;
+	gd = new GraphDisplay();
 	if(file != "") {
 		std::string line;
 		std::ifstream myfile(file.c_str());
@@ -920,6 +922,7 @@ void Board::play(int graph, std::string file) {
 					enpassant = NULL;
 				}
 				if(turn == 0 && playing) {
+					Istesting = true;
 					if(check('K')) {
 						std::cout << "White is in check!" << std::endl;
 						if(checkMate('K')) {
@@ -940,6 +943,7 @@ void Board::play(int graph, std::string file) {
 					td->print();
 				}
 				else if(turn == 1 && playing) {
+					Istesting = true;
 					if(check('k')) {
 						std::cout << "Black is in check!" << std::endl;
 						if(checkMate('k')) {
