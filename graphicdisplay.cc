@@ -5,7 +5,7 @@
 
 GraphicDisplay::GraphicDisplay() {
 	display = new Xwindow();
-	display->fillRectangle(0, 0, 500, 500, 9);
+	display->fillRectangle(0, 0, 500, 500, 7);
 	for(int i = 0; i < 8; i ++) {
 		for(int j = 0; j < 8; j ++) {
 			if((i + j) % 2 == 0) display->fillRectangle(i*50, j*50, 50, 50, 0);
