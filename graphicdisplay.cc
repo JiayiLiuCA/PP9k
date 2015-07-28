@@ -23,9 +23,9 @@ void GraphicDisplay::notify(int r, int c, char ch) {
 	name += ch;
 	if(ch == '-' && ((r + c) % 2 == 0)) display->fillRectangle(c * 50, r * 50, 50, 50, 0);
 	else if (ch == '-' && ((r + c) % 2 == 1)) display->fillRectangle(c * 50, r * 50, 50, 50, 1);
-	else if((r + c) % 2 == 0) display->drawBigString(17 + c * 50, 33 + r * 50, name, 1);
+	else if((r + c) % 2 == 0) display->drawBigString(15 + c * 50, 35 + r * 50, name, 1);
 	else {
-		display->drawBigString(17 + c * 50, 33 + r * 50, name, 0);
+		display->drawBigString(15 + c * 50, 35 + r * 50, name, 0);
 	}
 }
 
