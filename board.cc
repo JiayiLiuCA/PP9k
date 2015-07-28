@@ -410,7 +410,7 @@ bool Board::ruleCheck(int row, int col, int new_row, int new_col) {
 			return false;
 		}
 	}
-	if(theBoard[new_row][new_col] != NULL && abs(tmp->getName() - theBoard[new_row][new_col]->getName()) < 22) {
+	if(theBoard[new_row][new_col] != NULL && ((theBoard[row][col]->getName() >= 'a' && theBoard[new_row][new_col]->getName() >= 'a') || (theBoard[row][col]->getName() <= 'Z' && theBoard[new_row][new_col] <= 'Z'))) {
 		 std::cout << "you cannot eat allies " << std::endl;
 		return false;
 	}
