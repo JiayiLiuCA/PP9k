@@ -795,10 +795,14 @@ void Board::setPlaying(bool play) { playing = play; }
 
 
 void Board::play(int graph, std::string file) {
+	if(graph == 1) {
+		graphmode = true;
+		std::cout << "graph mode " << std::endl;
+		delete gd;
+		gd = new GraphicDisplay();
+	}
 	delete td;
 	td = new TextDisplay();
-	delete gd;
-	gd = new GraphicDisplay();
 	if(file != "") {
 		std::string line;
 		std::ifstream myfile(file.c_str());
@@ -828,12 +832,6 @@ void Board::play(int graph, std::string file) {
 			delete td;
 			td = new TextDisplay();
 			td->print();
-			if(graph == 1) {
-				graphmode = true;
-				std::cout << "graph mode " << std::endl;
-				delete gd;
-				gd = new GraphicDisplay();
-			}
 			std::string opt;
 			while(std::cin >> opt) {
 				if(opt == "-") {
