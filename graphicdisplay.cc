@@ -25,7 +25,6 @@ void GraphicDisplay::notify(int r, int c, char ch) {
 	else if (ch == '-' && ((r + c) % 2 == 1)) display->fillRectangle(c * 50, r * 50, 50, 50, 1);
 	else if((r + c) % 2 == 0) display->drawBigString(20 + c * 50, 30 + r * 50, name, 1);
 	else {
-		std::cout << "drawing" << std::endl;
 		display->drawBigString(20 + c * 50, 30 + r * 50, name, 0);
 	}
 }

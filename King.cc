@@ -20,7 +20,6 @@ bool King::moveCheck(int row, int col, int new_row, int new_col) {
 			return false;
 		}
 	}
-	std::cout << "not in status false" << std::endl;
 	if (diff_row + diff_col == 1 || diff_row * diff_col == 1) {
 		return true;
 	}
