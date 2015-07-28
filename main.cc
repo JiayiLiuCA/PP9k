@@ -1,6 +1,5 @@
 #include "board.h"
 #include <iostream>
-#include "textdisplay.h"
 
 int main(int argc, char* argv[]) {
 	std::string file = "";
