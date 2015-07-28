@@ -89,7 +89,7 @@ void Board::remove(int r, int c) {
 		theBoard[r][c] = NULL;
 		updateGrid(r, c);
 		td->notify(r, c);
-		if(graphmode)gd->notify(r, c);
+		if(graphmode && !Istesting)gd->notify(r, c);
 	}
 	else std::cout << "invalid remove" << std::endl;
 }
@@ -130,7 +130,7 @@ void Board::add(int r, int c, char p, bool move) {
 			updateGrid(r, c);
 		}
 		td->notify(r, c, p);
-		if(graphmode) gd->notify(r, c, p);
+		if(graphmode && !Istesting) gd->notify(r, c, p);
 	}
 	else std::cout << "not valid add" << std::endl;
 }
@@ -640,12 +640,11 @@ void Board::preundo() {
 			theBoard[0][4]->setMove(false); theBoard[0][0]->setr(0); theBoard[0][0]->setc(0); theBoard[0][0]->setRange(); 
 			theBoard[0][0]->setMove(false); updatePiece(0,4); updatePiece(0,0); updateGrid(0,0); updateGrid(0,4); td->notify(0,2); 
 			td->notify(0, 3); td->notify(0, 4, 'k'); 
-			if(graphmode) {
-			gd->notify(0, 0, 'r');  
-			gd->notify(0,2); 
-			gd->notify(0, 3); 
-			gd->notify(0, 4, 'k'); 
-			gd->notify(0, 0, 'r'); 
+			if(graphmode && !Istesting) {
+				gd->notify(0,2); 
+				gd->notify(0, 3); 
+				gd->notify(0, 4, 'k'); 
+				gd->notify(0, 0, 'r'); 
 			}
 		}
 		if(dir == '+' && king_name == 'k') {
@@ -654,7 +653,7 @@ void Board::preundo() {
 			theBoard[0][4]->setMove(false); theBoard[0][7]->setr(0); theBoard[0][7]->setc(7); theBoard[0][7]->setRange(); 
 			theBoard[0][7]->setMove(false); updatePiece(0,4);updatePiece(0,7); updateGrid(0,7); updateGrid(0,4); td->notify(0,6); 
 			td->notify(0, 5); td->notify(0, 4, 'k'); td->notify(0, 7, 'r'); 
-			if(graphmode) {
+			if(graphmode && !Istesting) {
 				gd->notify(0,6); 
 				gd->notify(0, 5); 
 				gd->notify(0, 4, 'k'); 
@@ -667,7 +666,7 @@ void Board::preundo() {
 			theBoard[7][4]->setMove(false); theBoard[7][0]->setr(7); theBoard[7][0]->setc(0); theBoard[7][0]->setRange(); 
 			theBoard[7][0]->setMove(false); updatePiece(7,4); updatePiece(7,0); updateGrid(7,0); updateGrid(7,4); td->notify(7 ,2); 
 			td->notify(7, 3); td->notify(7, 4, 'K'); td->notify(7, 0, 'R'); 
-			if(graphmode) {
+			if(graphmode && !Istesting) {
 				gd->notify(7 ,2); 
 				gd->notify(7, 3); 
 				gd->notify(7, 4, 'K'); 
@@ -680,7 +679,7 @@ void Board::preundo() {
 			theBoard[7][4]->setMove(false); theBoard[7][7]->setr(7); theBoard[7][7]->setc(7); theBoard[7][7]->setRange(); 
 			theBoard[7][7]->setMove(false); updatePiece(7,4);updatePiece(7,7); updateGrid(7,7); updateGrid(7,4); td->notify(7, 6); td->notify(7, 5); 
 			td->notify(7, 4, 'K'); td->notify(7, 7, 'R'); 
-			if(graphmode) {
+			if(graphmode && !Istesting) {
 				gd->notify(7, 6); 
 				gd->notify(7, 5); 
 				gd->notify(7, 4, 'K'); 
@@ -708,7 +707,7 @@ void Board::preundo() {
 		theBoard[r][c] = theBoard[newr][newc];
 		theBoard[newr][newc] = NULL;
 		td->notify(newr, newc);
-		if(graphmode) gd->notify(newr, newc);
+		if(graphmode && !Istesting) gd->notify(newr, newc);
 		theBoard[r][c]->setr(r);
 		theBoard[r][c]->setc(c);
 		theBoard[r][c]->setRange();
@@ -717,12 +716,12 @@ void Board::preundo() {
 			enpassant = static_cast<Pawn*>(theBoard[r][newc]);
 			updateEnpassant = true;
 			td->notify(r, newc, name);
-			if(graphmode)gd->notify(r, newc, name);
+			if(graphmode && !Istesting)gd->notify(r, newc, name);
 		}
 		else if(name != '_') {
 			add(newr, newc, name, status2);
 			td->notify(newr, newc, name);
-			if(graphmode)gd->notify(newr, newc, name);
+			if(graphmode && !Istesting)gd->notify(newr, newc, name);
 		}
 		updatePiece(newr, newc);
 		updatePiece(r, c);
@@ -730,9 +729,9 @@ void Board::preundo() {
 		updateGrid(newr, newc);
 		theBoard[r][c]->setMove(status1);
 		td->notify(r, c, theBoard[r][c]->getName());
-		if(graphmode)gd->notify(r, c, theBoard[r][c]->getName());
+		if(graphmode && !Istesting)gd->notify(r, c, theBoard[r][c]->getName());
 		td->notify(r, c, theBoard[r][c]->getName());
-		if(graphmode)gd->notify(r, c, theBoard[r][c]->getName());
+		if(graphmode && !Istesting)gd->notify(r, c, theBoard[r][c]->getName());
 	}
 	stack.pop_back();
 }
@@ -787,9 +786,9 @@ void Board::move(int oldr, int oldc, int newr, int newc) {
 	theBoard[newr][newc]->setMove(true);
 	if((name != 'p' && name != 'P') || abs(newr - oldr) != 2) updateEnpassant = false;
 	td->notify(oldr, oldc);
-	if(graphmode) gd->notify(oldr, oldc);
+	if(graphmode && !Istesting) gd->notify(oldr, oldc);
 	td->notify(newr, newc, name);
-	if(graphmode) gd->notify(newr, newc, name);
+	if(graphmode && !Istesting) gd->notify(newr, newc, name);
 }
 
 void Board::setPlaying(bool play) { playing = play; }
